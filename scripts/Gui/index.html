@@ -1,0 +1,605 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>BGSI Macro UI</title>
+  <link rel="stylesheet" href="style.css">
+
+</head>
+<body>
+  <div class="container">
+  <div class="macrotitle">
+        <img src="../../images/Seeds/SugarAppleIcon.webp"
+        style="width: 35px; height: 35px; margin-bottom: 3px; vertical-align: middle;">
+        Epic's Grow a Garden Macro
+  </div>
+  <div class="window-controls" onclick="ahk.Dragger.Func(this)" id="ahkTitleBar">
+      <button class="minimizeButton" onclick="ahk.global.WinMinimize('A')">_</button>
+      <button class="closeButton" onclick="ahk.global.WinClose('A')">x</button>
+  </div>
+    <div class="tabs">
+      <button onclick="switchTab('main')" aria-label="Main tab">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide-house-icon lucide-house">
+          <path d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8"/>
+          <path d="M3 10a2 2 0 0 1 .709-1.528l7-5.999a2 2 0 0 1 2.582 0l7 5.999A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+        </svg>
+        Main
+      </button>
+
+      <button onclick="switchTab('Seeds')" aria-label="Seeds tab">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide-gift-icon lucide-gift">
+          <rect x="3" y="8" width="18" height="4" rx="1"/>
+          <path d="M12 8v13"/>
+          <path d="M19 12v7a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2v-7"/>
+          <path d="M7.5 8a2.5 2.5 0 0 1 0-5A4.8 8 0 0 1 12 8a4.8 8 0 0 1 4.5-5 2.5 2.5 0 0 1 0 5"/>
+        </svg>
+        Seeds
+      </button>
+
+      <button onclick="switchTab('Gears')" aria-label="Gears tab">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide-arrow-up-down-icon lucide-arrow-up-down">
+          <path d="m21 16-4 4-4-4"/>
+          <path d="M17 20V4"/>
+          <path d="m3 8 4-4 4 4"/>
+          <path d="M7 4v16"/>
+        </svg>
+        Gears
+      </button>
+
+      <button onclick="switchTab('Eggs')" aria-label="Eggs tab">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide-bot-icon lucide-bot">
+          <path d="M12 8V4H8"/>
+          <rect width="16" height="12" x="4" y="8" rx="2"/>
+          <path d="M2 14h2"/>
+          <path d="M20 14h2"/>
+          <path d="M15 13v2"/>
+          <path d="M9 13v2"/>
+        </svg>
+        Eggs
+      </button>
+
+      <button onclick="switchTab('Event')" aria-label="Event tab">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide-trophy-icon lucide-trophy">
+          <path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/>
+          <path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/>
+          <path d="M4 22h16"/>
+          <path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/>
+          <path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/>
+          <path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/>
+        </svg>
+        Event
+      </button>
+    </div>
+
+    <div id="main" class="tab active">
+      <label>Webhook URL:</label>
+      <input type="text" id="url" placeholder="https://discord.com/api/webhooks/WebhookHere">
+
+      <label>Discord ID:</label>
+      <input type="text" id="discordID" placeholder="1234567890">
+
+      <label>Private Link:</label>
+      <input type="text" id="vipLink" placeholder="https://www.roblox.com/games/126884695634066/Grow-a-Garden?privateServerLinkCode=28062830835932767537940880155560">
+
+      <div class="donate-section">
+        <div class="credits">
+          <span>Macro By: _epic. </span>
+            <span id="random-message"></span>
+            <div></div>
+            <img class="donate-btn" onclick="ahk.global.run('https://www.roblox.com/games/17723449397/Bee-Swarm-Vicious-Hop#!/store')" alt="Me">
+        </div>
+      </div>
+
+
+    </div>
+
+
+    <div id="Seeds" class="tab">  
+      <div class="rewards-grid">
+
+<div class="reward-box">
+  <div class="reward-header">
+    <img src="../../images/Seeds/CarrotProduce.webp" style="width: 20px; height: 20px; margin-right: 3px; vertical-align: middle;">
+    <span>Carrot</span>
+  </div>
+  <div class="reward-options">
+    <label><input type="checkbox" id="CarrotSeed">Claim</label>
+  </div>
+</div>
+
+<div class="reward-box">
+  <div class="reward-header">
+    <img src="../../images/Seeds/Strawberry.webp" style="width: 20px; height: 20px; margin-right: 3px; vertical-align: middle;">
+    <span>Strawberry</span>
+  </div>
+  <div class="reward-options">
+    <label><input type="checkbox" id="StrawberrySeed">Claim</label>
+  </div>
+</div>
+
+<div class="reward-box">
+  <div class="reward-header">
+    <img src="../../images/Seeds/Blueberry.webp" style="width: 20px; height: 20px; margin-right: 3px; vertical-align: middle;">
+    <span>Blueberry</span>
+  </div>
+  <div class="reward-options">
+    <label><input type="checkbox" id="BlueberrySeed">Claim</label>
+  </div>
+</div>
+
+<div class="reward-box">
+  <div class="reward-header">
+    <img src="../../images/Seeds/Tomato.webp" style="width: 20px; height: 20px; margin-right: 3px; vertical-align: middle;">
+    <span>Tomato</span>
+  </div>
+  <div class="reward-options">
+    <label><input type="checkbox" id="TomatoSeed">Claim</label>
+  </div>
+</div>
+
+<div class="reward-box">
+  <div class="reward-header">
+    <img src="../../images/Seeds/Cauliflower_Produce.webp" style="width: 20px; height: 20px; margin-right: 3px; vertical-align: middle;">
+    <span>Cauliflower</span>
+  </div>
+  <div class="reward-options">
+    <label><input type="checkbox" id="CauliflowerSeed">Claim</label>
+  </div>
+</div>
+
+<div class="reward-box">
+  <div class="reward-header">
+    <img src="../../images/Seeds/Watermelonfruiticon.webp" style="width: 20px; height: 20px; margin-right: 3px; vertical-align: middle;">
+    <span>Watermelon</span>
+  </div>
+  <div class="reward-options">
+    <label><input type="checkbox" id="WatermelonSeed">Claim</label>
+  </div>
+</div>
+
+<div class="reward-box">
+  <div class="reward-header">
+    <img src="../../images/Seeds/RafflesiaIcon.webp" style="width: 20px; height: 20px; margin-right: 3px; vertical-align: middle;">
+    <span>Rafflesia</span>
+  </div>
+  <div class="reward-options">
+    <label><input type="checkbox" id="RafflesiaSeed">Claim</label>
+  </div>
+</div>
+
+<div class="reward-box">
+  <div class="reward-header">
+    <img src="../../images/Seeds/Green_apple_produce.webp" style="width: 20px; height: 20px; margin-right: 3px; vertical-align: middle;">
+    <span>Green Apple</span>
+  </div>
+  <div class="reward-options">
+    <label><input type="checkbox" id="GreenAppleSeed">Claim</label>
+  </div>
+</div>
+
+<div class="reward-box">
+  <div class="reward-header">
+    <img src="../../images/Seeds/Avocadocrop2.webp" style="width: 20px; height: 20px; margin-right: 3px; vertical-align: middle;">
+    <span>Avocado</span>
+  </div>
+  <div class="reward-options">
+    <label><input type="checkbox" id="AvocadoSeed">Claim</label>
+  </div>
+</div>
+
+<div class="reward-box">
+  <div class="reward-header">
+    <img src="../../images/Seeds/BananaPic.webp" style="width: 20px; height: 20px; margin-right: 3px; vertical-align: middle;">
+    <span>Banana</span>
+  </div>
+  <div class="reward-options">
+    <label><input type="checkbox" id="BananaSeed">Claim</label>
+  </div>
+</div>
+
+<div class="reward-box">
+  <div class="reward-header">
+    <img src="../../images/Seeds/PineappleFruitIcon.webp" style="width: 20px; height: 20px; margin-right: 3px; vertical-align: middle;">
+    <span>Pineapple</span>
+  </div>
+  <div class="reward-options">
+    <label><input type="checkbox" id="PineappleSeed">Claim</label>
+  </div>
+</div>
+
+<div class="reward-box">
+  <div class="reward-header">
+    <img src="../../images/Seeds/Kiwi_(Plant).webp" style="width: 20px; height: 20px; margin-right: 3px; vertical-align: middle;">
+    <span>Kiwi</span>
+  </div>
+  <div class="reward-options">
+    <label><input type="checkbox" id="KiwiSeed">Claim</label>
+  </div>
+</div>
+
+<div class="reward-box">
+  <div class="reward-header">
+    <img src="../../images/Seeds/BellPepper1.webp" style="width: 20px; height: 20px; margin-right: 3px; vertical-align: middle;">
+    <span>Bell Pepper</span>
+  </div>
+  <div class="reward-options">
+    <label><input type="checkbox" id="BellPepperSeed">Claim</label>
+  </div>
+</div>
+
+<div class="reward-box">
+  <div class="reward-header">
+    <img src="../../images/Seeds/PricklyPear.webp" style="width: 20px; height: 20px; margin-right: 3px; vertical-align: middle;">
+    <span>Prickly Pear</span>
+  </div>
+  <div class="reward-options">
+    <label><input type="checkbox" id="PricklyPearSeed">Claim</label>
+  </div>
+</div>
+
+<div class="reward-box">
+  <div class="reward-header">
+    <img src="../../images/Seeds/LoquatProduce.webp" style="width: 20px; height: 20px; margin-right: 3px; vertical-align: middle;">
+    <span>Loquat</span>
+  </div>
+  <div class="reward-options">
+    <label><input type="checkbox" id="LoquatSeed">Claim</label>
+  </div>
+</div>
+
+<div class="reward-box">
+  <div class="reward-header">
+    <img src="../../images/Seeds/FeijoaIcon.webp" style="width: 20px; height: 20px; margin-right: 3px; vertical-align: middle;">
+    <span>Feijoa</span>
+  </div>
+  <div class="reward-options">
+    <label><input type="checkbox" id="FeijoaSeed">Claim</label>
+  </div>
+</div>
+
+<div class="reward-box">
+  <div class="reward-header">
+    <img src="../../images/Seeds/Pitcherproduce.webp" style="width: 20px; height: 20px; margin-right: 3px; vertical-align: middle;">
+    <span>Pitcher Plant</span>
+  </div>
+  <div class="reward-options">
+    <label><input type="checkbox" id="PitcherPlant">Claim</label>
+  </div>
+</div>
+
+<div class="reward-box">
+  <div class="reward-header">
+    <img src="../../images/Seeds/SugarAppleIcon.webp" style="width: 20px; height: 20px; margin-right: 3px; vertical-align: middle;">
+    <span>Sugar Apple</span>
+  </div>
+  <div class="reward-options">
+    <label><input type="checkbox" id="SugarApple">Claim</label>
+  </div>
+</div>
+
+      </div>
+    </div>
+
+    <div id="Gears" class="tab">  
+      <div class="rewards-grid">
+
+<div class="reward-box">
+  <div class="reward-header">
+    <img src="../../images/Gears/Watering_Can.webp" style="width: 20px; height: 20px; margin-right: 3px; vertical-align: middle;">
+    <span>Watering Can</span>
+  </div>
+  <div class="reward-options">
+    <label><input type="checkbox" id="WateringCan">Claim</label>
+  </div>
+</div>
+
+<div class="reward-box">
+  <div class="reward-header">
+    <img src="../../images/Gears/Trowel.webp" style="width: 20px; height: 20px; margin-right: 3px; vertical-align: middle;">
+    <span>Trowel</span>
+  </div>
+  <div class="reward-options">
+    <label><input type="checkbox" id="Trowel">Claim</label>
+  </div>
+</div>
+
+<div class="reward-box">
+  <div class="reward-header">
+    <img src="../../images/Gears/Recall_Wrench_PNG.webp" style="width: 20px; height: 20px; margin-right: 3px; vertical-align: middle;">
+    <span>Recall Wrench</span>
+  </div>
+  <div class="reward-options">
+    <label><input type="checkbox" id="RecallWrench">Claim</label>
+  </div>
+</div>
+
+<div class="reward-box">
+  <div class="reward-header">
+    <img src="../../images/Gears/Basic_Sprinkler.webp" style="width: 20px; height: 20px; margin-right: 3px; vertical-align: middle;">
+    <span>Basic Sprinkler</span>
+  </div>
+  <div class="reward-options">
+    <label><input type="checkbox" id="BasicSprinkler">Claim</label>
+  </div>
+</div>
+
+<div class="reward-box">
+  <div class="reward-header">
+    <img src="../../images/Gears/Advanced_Sprinkler.webp" style="width: 20px; height: 20px; margin-right: 3px; vertical-align: middle;">
+    <span>Advanced Sprinkler</span>
+  </div>
+  <div class="reward-options">
+    <label><input type="checkbox" id="AdvancedSprinkler">Claim</label>
+  </div>
+</div>
+
+<div class="reward-box">
+  <div class="reward-header">
+    <img src="../../images/Gears/Godly_Sprinkler.webp" style="width: 20px; height: 20px; margin-right: 3px; vertical-align: middle;">
+    <span>Godly Sprinkler</span>
+  </div>
+  <div class="reward-options">
+    <label><input type="checkbox" id="GodlySprinkler">Claim</label>
+  </div>
+</div>
+
+<div class="reward-box">
+  <div class="reward-header">
+    <img src="../../images/Gears/Magnifying_Glass_Icon.webp" style="width: 20px; height: 20px; margin-right: 3px; vertical-align: middle;">
+    <span>Magnifying Glass</span>
+  </div>
+  <div class="reward-options">
+    <label><input type="checkbox" id="MagnifyingGlass">Claim</label>
+  </div>
+</div>
+
+<div class="reward-box">
+  <div class="reward-header">
+    <img src="../../images/Gears/TanningMirror.webp" style="width: 20px; height: 20px; margin-right: 3px; vertical-align: middle;">
+    <span>Tanning Mirror</span>
+  </div>
+  <div class="reward-options">
+    <label><input type="checkbox" id="TanningMirror">Claim</label>
+  </div>
+</div>
+
+<div class="reward-box">
+  <div class="reward-header">
+    <img src="../../images/Gears/Master_Sprinkler.webp" style="width: 20px; height: 20px; margin-right: 3px; vertical-align: middle;">
+    <span>Master Sprinkler</span>
+  </div>
+  <div class="reward-options">
+    <label><input type="checkbox" id="MasterSprinkler">Claim</label>
+  </div>
+</div>
+
+<div class="reward-box">
+  <div class="reward-header">
+    <img src="../../images/Gears/CleaningSpray.webp" style="width: 20px; height: 20px; margin-right: 3px; vertical-align: middle;">
+    <span>Cleaning Spray</span>
+  </div>
+  <div class="reward-options">
+    <label><input type="checkbox" id="CleaningSpray">Claim</label>
+  </div>
+</div>
+
+<div class="reward-box">
+  <div class="reward-header">
+    <img src="../../images/Gears/Favorite_Tool.webp" style="width: 20px; height: 20px; margin-right: 3px; vertical-align: middle;">
+    <span>Favorite Tool</span>
+  </div>
+  <div class="reward-options">
+    <label><input type="checkbox" id="FavoriteTool">Claim</label>
+  </div>
+</div>
+
+<div class="reward-box">
+  <div class="reward-header">
+    <img src="../../images/Gears/Harvest_tool.webp" style="width: 20px; height: 20px; margin-right: 3px; vertical-align: middle;">
+    <span>Harvest Tool</span>
+  </div>
+  <div class="reward-options">
+    <label><input type="checkbox" id="HarvestTool">Claim</label>
+  </div>
+</div>
+
+<div class="reward-box">
+  <div class="reward-header">
+    <img src="../../images/Gears/Friendship_Pot_(1).webp" style="width: 20px; height: 20px; margin-right: 3px; vertical-align: middle;">
+    <span>Friendship Pot</span>
+  </div>
+  <div class="reward-options">
+    <label><input type="checkbox" id="FriendshipPot">Claim</label>
+      </div>
+    </div>
+  </div>
+</div>
+
+    <div id="Eggs" class="tab">  
+      <div class="rewards-grid">
+
+    <div class="reward-box">
+      <div class="reward-header">
+        <img src="../../images/Eggs/Common_Egg.webp" style="width: 20px; height: 20px; margin-right: 3px; vertical-align: middle;">
+        <span>Common Egg</span>
+      </div>
+      <div class="reward-options">
+        <label><input type="checkbox" id="CommonEgg">Claim</label>
+      </div>
+    </div>
+
+
+
+    <div class="reward-box">
+      <div class="reward-header">
+        <img src="../../images/Eggs/Mythical_Egg.webp" style="width: 20px; height: 20px; margin-right: 3px; vertical-align: middle;">
+        <span>Mythical Egg</span>
+      </div>
+      <div class="reward-options">
+        <label><input type="checkbox" id="MythicalEgg">Claim</label>
+      </div>
+    </div>
+
+
+
+    <div class="reward-box">
+      <div class="reward-header">
+        <img src="../../images/Eggs/Bugeggimage.webp" style="width: 20px; height: 20px; margin-right: 3px; vertical-align: middle;">
+        <span>Bug Egg</span>
+      </div>
+      <div class="reward-options">
+        <label><input type="checkbox" id="BugEgg">Claim</label>
+      </div>
+    </div>
+
+
+
+    <div class="reward-box">
+      <div class="reward-header">
+        <img src="../../images/Eggs/CommonSummerEgg.webp" style="width: 20px; height: 20px; margin-right: 3px; vertical-align: middle;">
+        <span>Common Summer Egg</span>
+      </div>
+      <div class="reward-options">
+        <label><input type="checkbox" id="CommonSummerEgg">Claim</label>
+      </div>
+    </div>
+
+
+
+    <div class="reward-box">
+      <div class="reward-header">
+        <img src="../../images/Eggs/RareSummerEgg.webp" style="width: 20px; height: 20px; margin-right: 3px; vertical-align: middle;">
+        <span>Rare Summer Egg</span>
+      </div>
+      <div class="reward-options">
+        <label><input type="checkbox" id="RareSummerEgg">Claim</label>
+      </div>
+    </div>
+
+
+
+    <div class="reward-box">
+      <div class="reward-header">
+        <img src="../../images/Eggs/ParadiseSummerEgg.webp" style="width: 20px; height: 20px; margin-right: 3px; vertical-align: middle;">
+        <span>Paradise Egg</span>
+      </div>
+      <div class="reward-options">
+        <label><input type="checkbox" id="ParadiseEgg">Claim</label>
+      </div>
+    </div>
+
+<div class="reward-box">
+  <div class="reward-header">
+    <img src="../../images/Eggs/BeeEgg.webp" style="width: 20px; height: 20px; margin-right: 3px; vertical-align: middle;">
+    <span>Bee Egg</span>
+  </div>
+  <div class="reward-options">
+    <label><input type="checkbox" id="BeeEgg">Claim</label>
+  </div>
+</div>
+      </div>
+    </div>
+
+    <div id="Event" class="tab">  
+      <div class="rewards-grid">
+
+
+<div class="reward-box">
+  <div class="reward-header">
+    <img src="../../images/Summer/Summerseedpack.webp" style="width: 20px; height: 20px; margin-right: 3px; vertical-align: middle;">
+    <span>Summer Seed Pack</span>
+  </div>
+  <div class="reward-options">
+    <label><input type="checkbox" id="SummerSeedPack">Claim</label>
+  </div>
+</div>
+
+<div class="reward-box">
+  <div class="reward-header">
+    <img src="../../images/Summer/DelphiniumProduce.webp" style="width: 20px; height: 20px; margin-right: 3px; vertical-align: middle;">
+    <span>Delphinium</span>
+  </div>
+  <div class="reward-options">
+    <label><input type="checkbox" id="DelphiniumSeed">Claim</label>
+  </div>
+</div>
+
+<div class="reward-box">
+  <div class="reward-header">
+    <img src="../../images/Summer/LilyOfTheValleyCrop.webp" style="width: 20px; height: 20px; margin-right: 3px; vertical-align: middle;">
+    <span>Lily Of The Valley</span>
+  </div>
+  <div class="reward-options">
+    <label><input type="checkbox" id="LilyoftheValleySeed">Claim</label>
+  </div>
+</div>
+
+<div class="reward-box">
+  <div class="reward-header">
+    <img src="../../images/Summer/TravelersFruitPlant.webp" style="width: 20px; height: 20px; margin-right: 3px; vertical-align: middle;">
+    <span>Traveler's Fruit</span>
+  </div>
+  <div class="reward-options">
+    <label><input type="checkbox" id="TravelersFruitSeed">Claim</label>
+  </div>
+</div>
+
+<div class="reward-box">
+  <div class="reward-header">
+    <img src="../../images/Summer/Mutationsprayburnt.webp" style="width: 20px; height: 20px; margin-right: 3px; vertical-align: middle;">
+    <span>Mutation Spray Burnt</span>
+  </div>
+  <div class="reward-options">
+    <label><input type="checkbox" id="BurntMutationSpray">Claim</label>
+  </div>
+</div>
+
+<div class="reward-box">
+  <div class="reward-header">
+    <img src="../../images/Summer/OasisCrate.webp" style="width: 20px; height: 20px; margin-right: 3px; vertical-align: middle;">
+    <span>Oasis Crate</span>
+  </div>
+  <div class="reward-options">
+    <label><input type="checkbox" id="OasisCrate">Claim</label>
+  </div>
+</div>
+
+<div class="reward-box">
+  <div class="reward-header">
+    <img src="../../images/Summer/OasisEgg.webp" style="width: 20px; height: 20px; margin-right: 3px; vertical-align: middle;">
+    <span>Oasis Egg</span>
+  </div>
+  <div class="reward-options">
+    <label><input type="checkbox" id="OasisEgg">Claim</label>
+  </div>
+</div>
+
+<div class="reward-box">
+  <div class="reward-header">
+    <img src="../../images/Summer/HamsterPet.webp" style="width: 20px; height: 20px; margin-right: 3px; vertical-align: middle;">
+    <span>Hamster</span>
+  </div>
+  <div class="reward-options">
+    <label><input type="checkbox" id="Hamster">Claim</label>
+  </div>
+</div>
+
+        
+        
+      </div>
+    </div>
+
+
+
+
+    <hr>
+    <div class="footer">
+      <button onclick="ahkButtonClick('Start')">Start (F1)</button>
+      <button onclick="ahkButtonClick('Stop')">Stop (F2)</button>
+      <button onclick="onSaveClick(this)">Save All</button>
+    </div>
+  </div>
+
+<script src="script.js"></script>
+</body>
+</html>
