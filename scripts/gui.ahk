@@ -134,7 +134,7 @@ SaveSettings(settingsJson) {
     IniFile := A_ScriptDir . "\settings.ini"
 
     for key, val in settings {
-        if ["url", "discordID", "VipLink"].Has(key) {
+        if (key == "url" || key == "discordID" || key == "VipLink") {
             IniWrite(val, IniFile, "Settings", key)
         }
     }

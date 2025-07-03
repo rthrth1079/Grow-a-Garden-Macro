@@ -46,7 +46,7 @@
   const cfg = {
     url:       document.getElementById('url').value,
     discordID: document.getElementById('discordID').value,
-    VipLink:   document.getElementById('vipLink').value,
+    VipLink:   document.getElementById('VipLink').value,
     seedItems : {},
     gearItems: {},
     EggItems: {},
@@ -78,7 +78,7 @@ function applySettings(a) {
 
     document.getElementById('url').value       = s.url;
     document.getElementById('discordID').value = s.discordID;
-    document.getElementById('vipLink').value   = s.VipLink;
+    document.getElementById('VipLink').value   = s.VipLink;
 
     for (const seed in s.SeedItems) {
         const formattedSeed = seed.replace(/\s+/g, '');
