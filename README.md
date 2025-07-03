@@ -3,7 +3,9 @@
 A macro for **Grow a Garden** that automatically buys your selected seeds, gear, and items from the Summer Event shop.
 
 ✅ It works **anywhere**, even **outside** of Grow a Garden.
+
 ✅ Supports **auto-reconnect** and sends **images via Discord webhook**.
+
 ✅ Does not require **UI navigation** and the macro works using your cursor.
 
 > **Important:** Make sure your **Recall Wrench** is in the **second hotbar slot** 
