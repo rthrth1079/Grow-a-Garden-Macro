@@ -6,7 +6,7 @@ A macro for **Grow a Garden** that automatically buys your selected seeds, gear,
 ✅ Supports **auto-reconnect** and sends **images via Discord webhook**.
 ✅ Does not require **UI navigation** and the macro works using your cursor.
 
-> **Important:** Make sure your **Recall Wrench** is in the **second hotbar slot** — the macro can auto-equip it if it's in your inventory.
+> **Important:** Make sure your **Recall Wrench** is in the **second hotbar slot** 
 
 ---
 
