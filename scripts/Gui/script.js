@@ -4,9 +4,7 @@
   }
 
   
-	function ahkButtonClick(ele) {
-		ahk.ButtonClick.Func(ele);
-	}
+
 	function ahkSave(ele) {
 		ahk.Save.Func(ele);
 	}
@@ -16,18 +14,20 @@
 
 
   function onSaveClick() {
-    const EventItems = [
-        "Summer Seed Pack", "Delphinium Seed", "Lily of the Valley Seed", 
-        "Travelers Fruit Seed", "Burnt Mutation Spray", 
-        "Oasis Crate", "Oasis Egg", "Hamster",
-    ]
+    // const EventItems = [
+    //     "Summer Seed Pack", "Delphinium Seed", "Lily of the Valley Seed", 
+    //     "Travelers Fruit Seed", "Burnt Mutation Spray", 
+    //     "Oasis Crate", "Oasis Egg", "Hamster",
+    // ]
 
     const seedItems = [
-        "Carrot Seed", "Strawberry Seed", "Blueberry Seed", "Tomato Seed"
-        , "Cauliflower Seed", "Watermelon Seed", "Rafflesia Seed"
-        , "Green Apple Seed", "Avocado Seed", "Banana Seed", "Pineapple Seed"
-        , "Kiwi Seed", "Bell Pepper Seed", "Prickly Pear Seed", "Loquat Seed"
-        , "Feijoa Seed", "Pitcher Plant", "Sugar Apple",
+            "Carrot Seed", "Strawberry Seed", "Blueberry Seed", "Orange Tulip", "Tomato Seed"
+             , "Daffodll Seed", "Watermelon Seed", "Pumpkin Seed"
+             , "Apple Seed", "Bamboo Seed", "Coconut Seed", "Cactus Seed"
+             , "Dragon Fruit Seed", "Mango Seed", "Grape Seed", "Mushroom Seed"
+             , "Pepper Seed", "Cacao Seed", "Beanstalk Seed", "Ember Lily", "Sugar Apple", "Burning Bud",
+
+
     ]
 
     const gearItems = [
@@ -50,10 +50,11 @@
     seedItems : {},
     gearItems: {},
     EggItems: {},
-    EventItems: {},
+    // EventItems: {},
   };
 
-  const allLists = { seedItems, gearItems, EggItems, EventItems };
+  const allLists = { seedItems, gearItems, EggItems, };
+    // EventItems 
 
   for (const [listName, items] of Object.entries(allLists)) {
     items.forEach(item => {
@@ -92,10 +93,10 @@ function applySettings(a) {
         const formattedEgg = egg.replace(/\s+/g, '');
         document.getElementById(formattedEgg).checked = !!+s.EggItems[egg];
     }
-    for (const event in s.EventItems) {
-        const formattedEvent = event.replace(/\s+/g, '');
-        document.getElementById(formattedEvent).checked = !!+s.EventItems[event];
-    }
+    // for (const event in s.EventItems) {
+    //     const formattedEvent = event.replace(/\s+/g, '');
+    //     document.getElementById(formattedEvent).checked = !!+s.EventItems[event];
+    // }
 }
 
 

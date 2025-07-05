@@ -1,7 +1,7 @@
 
 #Requires AutoHotkey v2.0
 
-version := "v1.0.1"
+version := "v1.0.2"
 settingsFile := "settings.ini"
 
 
@@ -162,18 +162,19 @@ SendSettings(){
 	settingsFile := A_ScriptDir . "\settings.ini"
 	IniFile := A_ScriptDir . "\settings.ini"
 	
-    EventItems := [
-        "Summer Seed Pack", "Delphinium Seed", "Lily of the Valley Seed", 
-        "Travelers Fruit Seed", "Burnt Mutation Spray", 
-        "Oasis Crate", "Oasis Egg", "Hamster"
-    ]
+    ; EventItems := [
+    ;     "Summer Seed Pack", "Delphinium Seed", "Lily of the Valley Seed", 
+    ;     "Travelers Fruit Seed", "Burnt Mutation Spray", 
+    ;     "Oasis Crate", "Oasis Egg", "Hamster"
+    ; ]
 
     seedItems := [
-        "Carrot Seed", "Strawberry Seed", "Blueberry Seed", "Tomato Seed",
-        "Cauliflower Seed", "Watermelon Seed", "Rafflesia Seed",
-        "Green Apple Seed", "Avocado Seed", "Banana Seed", "Pineapple Seed",
-        "Kiwi Seed", "Bell Pepper Seed", "Prickly Pear Seed", "Loquat Seed",
-        "Feijoa Seed", "Pitcher Plant", "Sugar Apple"
+            "Carrot Seed", "Strawberry Seed", "Blueberry Seed", "Orange Tulip", "Tomato Seed"
+             , "Daffodll Seed", "Watermelon Seed", "Pumpkin Seed"
+             , "Apple Seed", "Bamboo Seed", "Coconut Seed", "Cactus Seed"
+             , "Dragon Fruit Seed", "Mango Seed", "Grape Seed", "Mushroom Seed"
+             , "Pepper Seed", "Cacao Seed", "Beanstalk Seed", "Ember Lily", "Sugar Apple", "Burning Bud",
+
     ]
 
     gearItems := [
@@ -193,7 +194,8 @@ SendSettings(){
         IniWrite("", IniFile, "Settings", "url")
         IniWrite("", IniFile, "Settings", "discordID")
         IniWrite("", IniFile, "Settings", "VipLink")
-        IniWrite("0", IniFile, "Settings", "SummerHarvest")
+        IniWrite("``", IniFile, "Settings", "bagkey")
+        ; IniWrite("0", IniFile, "Settings", "SummerHarvest")
         for i in seedItems {
             IniWrite("1", IniFile, "Seeds", StrReplace(i, " ", ""))
         }
@@ -203,9 +205,9 @@ SendSettings(){
         for i in EggItems {
             IniWrite("1", IniFile, "Eggs", StrReplace(i, " ", ""))
         }
-        for i in EventItems {
-            IniWrite("1", IniFile, "Event", StrReplace(i, " ", ""))
-        }
+        ; for i in EventItems {
+        ;     IniWrite("1", IniFile, "Event", StrReplace(i, " ", ""))
+        ; }
     }
 
     SettingsJson := { 
@@ -215,7 +217,7 @@ SendSettings(){
       , SeedItems: Map()
       , GearItems: Map()
       , EggItems:  Map()
-      , EventItems: Map()
+    ;   , EventItems: Map()
     }
 
     for item in seedItems {
@@ -233,10 +235,10 @@ SendSettings(){
         SettingsJson.EggItems[key] := IniRead(settingsFile, "Eggs", key, "0")
     }
 
-    for item in EventItems {
-        key := StrReplace(item, " ", "")
-        SettingsJson.EventItems[key] := IniRead(settingsFile, "Event", key, "0")
-    }
+    ; for item in EventItems {
+    ;     key := StrReplace(item, " ", "")
+    ;     SettingsJson.EventItems[key] := IniRead(settingsFile, "Event", key, "0")
+    ; }
 
 	Sleep(200)
 	MyWindow.PostWebMessageAsJson(JSON.stringify(SettingsJson))

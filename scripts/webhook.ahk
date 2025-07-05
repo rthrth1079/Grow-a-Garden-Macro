@@ -3,6 +3,7 @@
  * @param {string} statusColor RGB color codes. Example: 0xe67e22
  */
 PlayerStatus(statusTitle, statusColor, statusDescription := "", Mentions := True, content := "", statusImage := True, statusTimestamp := True) {
+    url := IniRead(settingsFile, "Settings", "url")
     try {
         FileExist("ss.jpg") ? FileDelete("ss.jpg") : ""
     } catch Error as e {
