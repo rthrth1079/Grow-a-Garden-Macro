@@ -22,10 +22,14 @@ RewardChecker() {
         Rewardlist.Push("Eggs")
     }
     if (currentTime - Lastevent >= eventTimer && IniRead(settingsFile, "Settings", "DinoEvent") == "1") {
-        Rewardlist.Push("Event")
+        if !(Mod(A_Min, 4) == 0){
+            Rewardlist.Push("Event")
+        }
     }
     if (currentTime - LastGearCraftingTime >= GearCraftingTime && IniRead(settingsFile, "GearCrafting", "GearCrafting") == "1") {
-        Rewardlist.Push("GearCrafting")
+        if !(Mod(A_Min, 4) == 0){
+            Rewardlist.Push("GearCrafting")
+        }
     }
     return Rewardlist
 }

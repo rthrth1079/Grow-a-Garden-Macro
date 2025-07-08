@@ -414,12 +414,13 @@ CheckStock(index, list, crafter := 0){
     hwnd := GetRobloxHWND()
     GetRobloxClientPos(hwnd)
     captureWidth := 150
-    captureHeight := windowHeight // 2
+    captureHeight := windowHeight // 2 + 100
 
     captureX := windowX + (windowWidth // 2) - (captureWidth // 2) - 150
     captureY := windowY + (windowHeight // 2) - (captureHeight // 2)
 
     pBMScreen := Gdip_BitmapFromScreen(captureX "|" captureY "|" captureWidth "|" captureHeight)
+    Gdip_SaveBitmapToFile(pBMScreen,"ss.png")
     If (Gdip_ImageSearch(pBMScreen, bitmaps["GreenStock"], &OutputList, , , , , 3,,3) = 1 || Gdip_ImageSearch(pBMScreen, bitmaps["GreenStock2"], &OutputList , , , , , 3,,3) = 1) {
         Cords := StrSplit(OutputList, ",")
         x := Cords[1] + captureX 
@@ -862,7 +863,6 @@ Disconnect(){
 }
 
 MainLoop() {
-    MyWindow.Destroy()
 
     if (GetRobloxHWND()){
         ResizeRoblox()
@@ -909,12 +909,8 @@ F3::
     hwnd := GetRobloxHWND()
     GetRobloxClientPos(hwnd)
     pBMScreen := Gdip_BitmapFromScreen(windowX "|" windowY "|" windowWidth "|" windowHeight)
-    Gdip_SaveBitmapToFile(pBMScreen,"ss.png")
+    ; Gdip_SaveBitmapToFile(pBMScreen,"ss.png")
     Gdip_DisposeImage(pBMScreen)
-    loop {
-        GearCraft()
-
-    }
 
 
 
