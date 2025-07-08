@@ -417,7 +417,7 @@ CheckStock(index, list, crafter := 0){
     captureHeight := windowHeight // 2 + 100
 
     captureX := windowX + (windowWidth // 2) - (captureWidth // 2) - 150
-    captureY := windowY + (windowHeight // 2) - (captureHeight // 2)
+    captureY := windowY + (windowHeight // 2) - (captureHeight // 2) + 20
 
     pBMScreen := Gdip_BitmapFromScreen(captureX "|" captureY "|" captureWidth "|" captureHeight)
     If (Gdip_ImageSearch(pBMScreen, bitmaps["GreenStock"], &OutputList, , , , , 3,,3) = 1 || Gdip_ImageSearch(pBMScreen, bitmaps["GreenStock2"], &OutputList , , , , , 3,,3) = 1) {
@@ -907,8 +907,14 @@ F3::
     ResizeRoblox()
     hwnd := GetRobloxHWND()
     GetRobloxClientPos(hwnd)
-    pBMScreen := Gdip_BitmapFromScreen(windowX "|" windowY "|" windowWidth "|" windowHeight)
-    ; Gdip_SaveBitmapToFile(pBMScreen,"ss.png")
+    captureWidth := 150
+    captureHeight := windowHeight // 2 + 100
+
+    captureX := windowX + (windowWidth // 2) - (captureWidth // 2) - 150
+    captureY := windowY + (windowHeight // 2) - (captureHeight // 2) + 20
+
+    pBMScreen := Gdip_BitmapFromScreen(captureX "|" captureY "|" captureWidth "|" captureHeight)
+    Gdip_SaveBitmapToFile(pBMScreen,"ss.png")
     Gdip_DisposeImage(pBMScreen)
 
 
