@@ -420,7 +420,6 @@ CheckStock(index, list, crafter := 0){
     captureY := windowY + (windowHeight // 2) - (captureHeight // 2)
 
     pBMScreen := Gdip_BitmapFromScreen(captureX "|" captureY "|" captureWidth "|" captureHeight)
-    Gdip_SaveBitmapToFile(pBMScreen,"ss.png")
     If (Gdip_ImageSearch(pBMScreen, bitmaps["GreenStock"], &OutputList, , , , , 3,,3) = 1 || Gdip_ImageSearch(pBMScreen, bitmaps["GreenStock2"], &OutputList , , , , , 3,,3) = 1) {
         Cords := StrSplit(OutputList, ",")
         x := Cords[1] + captureX 
