@@ -907,15 +907,8 @@ F3::
     ResizeRoblox()
     hwnd := GetRobloxHWND()
     GetRobloxClientPos(hwnd)
-    captureWidth := 150
-    captureHeight := windowHeight // 2 + 100
-
-    captureX := windowX + (windowWidth // 2) - (captureWidth // 2) - 150
-    captureY := windowY + (windowHeight // 2) - (captureHeight // 2) + 20
-
-    pBMScreen := Gdip_BitmapFromScreen(captureX "|" captureY "|" captureWidth "|" captureHeight)
-    Gdip_SaveBitmapToFile(pBMScreen,"ss.png")
-    Gdip_DisposeImage(pBMScreen)
+    ; Gdip_SaveBitmapToFile(pBMScreen,"ss.png")
+    ; Gdip_DisposeImage(pBMScreen)
 
 
 
