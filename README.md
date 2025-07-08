@@ -22,7 +22,8 @@ Make sure you have the **required materials** in your inventory — the macro wi
 > ⚠️ Before turning on the macro, make sure **nothing is already crafting**. The macro will automatically cancel a craft if the item is placed but **has not started yet**.
 
 The **DNA Machine** feature can be enabled to automatically convert pets to Dino Eggs.
-Place the pets you want to sacrifice in your hotbar 2 through 0. 
+
+**In your hotbar besides the 1st slot, place the pets you want to sacrifice in your hotbar.**
 
 ---
 
