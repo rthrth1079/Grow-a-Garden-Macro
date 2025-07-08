@@ -1,6 +1,6 @@
 # 🍏 Grow a Garden Macro
 
-A macro for **Grow a Garden** that automatically buys your selected seeds, gear, and items from the Summer Event shop.
+A macro for **Grow a Garden** that automatically buys your selected seeds, gear, and even crafts gears and more!
 
 ✅ It works **anywhere**, even **outside** of Grow a Garden.
 
@@ -8,7 +8,21 @@ A macro for **Grow a Garden** that automatically buys your selected seeds, gear,
 
 ✅ Does not require **UI navigation** and the macro works using your cursor.
 
-> **Important:** Make sure your **Recall Wrench** is in the **second hotbar slot** 
+> **Important:** Make sure your **Recall Wrench** is in the **first hotbar slot**
+
+---
+
+## 🧪 Crafting & DNA Machine
+
+The **Crafting tab** allows you to craft items automatically!
+Make sure you have the **required materials** in your inventory — the macro will search and click them for you.
+
+> ⚠️ If you're using fruits, ensure they are **not mutated**, or they will not be detected.
+
+> ⚠️ Before turning on the macro, make sure **nothing is already crafting**. The macro will automatically cancel a craft if the item is placed but **has not started yet**.
+
+The **DNA Machine** feature can be enabled to automatically convert pets to Dino Eggs.
+Place the pets you want to sacrifice in your hotbar 2 through 0. 
 
 ---
 

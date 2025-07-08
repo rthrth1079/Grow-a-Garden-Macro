@@ -3,10 +3,13 @@ nowUnix() {
 }
 
 
-
+global Lastevent := nowUnix()
+global LastGearCraftingTime := nowUnix()
 RewardChecker() {
 
     Rewardlist := []
+
+    eventTimer := 3600 + 120 ; 1 hour in seconds
 
     currentTime := nowUnix()
     if (Mod(A_Min,5) == 0) {
@@ -18,12 +21,12 @@ RewardChecker() {
     if (Mod(A_Min,30) == 0) {
         Rewardlist.Push("Eggs")
     }
-    if (Mod(A_Min,30) == 0) {
+    if (currentTime - Lastevent >= eventTimer && IniRead(settingsFile, "Settings", "DinoEvent") == "1") {
         Rewardlist.Push("Event")
     }
-    ; if (Mod(A_Hour, 2) == 0) {
-    ;     Rewardlist.Push("Cosmetic")
-    ; }
+    if (currentTime - LastGearCraftingTime >= GearCraftingTime && IniRead(settingsFile, "GearCrafting", "GearCrafting") == "1") {
+        Rewardlist.Push("GearCrafting")
+    }
     return Rewardlist
 }
 
@@ -48,9 +51,13 @@ RewardInterupt() {
         if (v = "Eggs") {
             BuyEggs()
         }
-        ; if (v = "Event") {
-        ;     BuyEvent()
-        ; }
+        if (v = "Event") {
+            BuyEvent()
+            global Lastevent := nowUnix()
+        }
+        if (v = "GearCrafting") {
+            GearCraft()
+        }
     }
     
     if (variable.Length > 0)

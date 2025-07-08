@@ -1,7 +1,7 @@
 
 #Requires AutoHotkey v2.0
 
-version := "v1.0.2"
+version := "v1.0.3"
 settingsFile := "settings.ini"
 
 
@@ -134,7 +134,7 @@ SaveSettings(settingsJson) {
     IniFile := A_ScriptDir . "\settings.ini"
 
     for key, val in settings {
-        if (key == "url" || key == "discordID" || key == "VipLink") {
+        if (key == "url" || key == "discordID" || key == "VipLink" || key == "DinoEvent") {
             IniWrite(val, IniFile, "Settings", key)
         }
     }
@@ -143,7 +143,8 @@ SaveSettings(settingsJson) {
         "seedItems", "Seeds",
         "gearItems", "Gears",
         "EggItems",  "Eggs",
-        "EventItems", "Event"
+        "GearCraftingItems", "GearCrafting",
+        ; "eventItems", "Event"
     )
     for groupName, sectionName in sectionMap {
         if settings.Has(groupName) {
@@ -153,8 +154,7 @@ SaveSettings(settingsJson) {
             }
         }
     }
-
-    Reload
+    MsgBox("Saved settings.",,"T0.5")
 }
 
 
@@ -190,12 +190,30 @@ SendSettings(){
         "Bee Egg", "Bug Egg"
     ]
 
+    GearCraftingItems := [
+        "GearCrafting", ; This is to enable/disable setting.
+        "Lighting Rod",
+        "Reclaimer",
+        "Tropical Mist Sprinkler",
+        "Berry Blusher Sprinkler",
+        "Spice Spirtzer Sprinkler",
+        "Sweet Soaker Sprinkler",
+        "Flower Froster Sprinkler",
+        "Stalk Sprout Sprinkler",
+        "Mutation Spray Choc",
+        "Mutation Spray Chilled",
+        "Mutation Spray Shocked",
+        "Anti Bee Egg",
+        "Pack Bee"
+    ]
+
+
     if (!FileExist(IniFile)) {
         IniWrite("", IniFile, "Settings", "url")
         IniWrite("", IniFile, "Settings", "discordID")
         IniWrite("", IniFile, "Settings", "VipLink")
         IniWrite("``", IniFile, "Settings", "bagkey")
-        ; IniWrite("0", IniFile, "Settings", "SummerHarvest")
+        IniWrite("0", IniFile, "Settings", "DinoEvent")
         for i in seedItems {
             IniWrite("1", IniFile, "Seeds", StrReplace(i, " ", ""))
         }
@@ -204,6 +222,9 @@ SendSettings(){
         }
         for i in EggItems {
             IniWrite("1", IniFile, "Eggs", StrReplace(i, " ", ""))
+        }
+        for i in GearCraftingItems {
+            IniWrite("0", IniFile, "GearCrafting", StrReplace(i, " ", ""))
         }
         ; for i in EventItems {
         ;     IniWrite("1", IniFile, "Event", StrReplace(i, " ", ""))
@@ -214,10 +235,11 @@ SendSettings(){
         url:       IniRead(settingsFile, "Settings", "url")
       , discordID: IniRead(settingsFile, "Settings", "discordID")
       , VipLink:   IniRead(settingsFile, "Settings", "VipLink")
+      , DinoEvent: IniRead(settingsFile, "Settings", "DinoEvent")
       , SeedItems: Map()
       , GearItems: Map()
       , EggItems:  Map()
-    ;   , EventItems: Map()
+      , GearCraftingItems: Map()
     }
 
     for item in seedItems {
@@ -235,10 +257,10 @@ SendSettings(){
         SettingsJson.EggItems[key] := IniRead(settingsFile, "Eggs", key, "0")
     }
 
-    ; for item in EventItems {
-    ;     key := StrReplace(item, " ", "")
-    ;     SettingsJson.EventItems[key] := IniRead(settingsFile, "Event", key, "0")
-    ; }
+    for item in GearCraftingItems {
+        key := StrReplace(item, " ", "")
+        SettingsJson.GearCraftingItems[key] := IniRead(settingsFile, "GearCrafting", key, "0")
+    }
 
 	Sleep(200)
 	MyWindow.PostWebMessageAsJson(JSON.stringify(SettingsJson))

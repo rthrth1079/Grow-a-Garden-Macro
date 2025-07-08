@@ -14,11 +14,7 @@
 
 
   function onSaveClick() {
-    // const EventItems = [
-    //     "Summer Seed Pack", "Delphinium Seed", "Lily of the Valley Seed", 
-    //     "Travelers Fruit Seed", "Burnt Mutation Spray", 
-    //     "Oasis Crate", "Oasis Egg", "Hamster",
-    // ]
+
 
     const seedItems = [
             "Carrot Seed", "Strawberry Seed", "Blueberry Seed", "Orange Tulip", "Tomato Seed"
@@ -43,26 +39,45 @@
         "Bee Egg", "Bug Egg",            
     ]
 
+
+
+    const GearCraftingItems = [
+        "GearCrafting", // This to enable/disable setting.
+        "Lighting Rod", "Reclaimer",
+        "Tropical Mist Sprinkler",
+        "Berry Blusher Sprinkler",
+        "Spice Spirtzer Sprinkler",
+        "Sweet Soaker Sprinkler",
+        "Flower Froster Sprinkler",
+        "Stalk Sprout Sprinkler",
+        "Mutation Spray Choc",
+        "Mutation Spray Chilled",
+        "Mutation Spray Shocked",
+        "Anti Bee Egg",
+        "Pack Bee",
+    ]
+
+
   const cfg = {
     url:       document.getElementById('url').value,
     discordID: document.getElementById('discordID').value,
     VipLink:   document.getElementById('VipLink').value,
+    DinoEvent:   +document.getElementById('DinoEvent').checked,
     seedItems : {},
     gearItems: {},
     EggItems: {},
-    // EventItems: {},
+    GearCraftingItems: {},
   };
 
-  const allLists = { seedItems, gearItems, EggItems, };
-    // EventItems 
+  const allLists = { seedItems, gearItems, EggItems, GearCraftingItems, };
 
   for (const [listName, items] of Object.entries(allLists)) {
     items.forEach(item => {
     const key = item.replace(/\s+/g, ''); // ← fix here
-      const element = document.getElementById(key);
-      if (element) {
-        cfg[listName][item] = element.checked;
-      }
+    const element = document.getElementById(key);
+    if (element) {
+      cfg[listName][item] = element.checked;
+    }
     });
   }
 
@@ -80,6 +95,7 @@ function applySettings(a) {
     document.getElementById('url').value       = s.url;
     document.getElementById('discordID').value = s.discordID;
     document.getElementById('VipLink').value   = s.VipLink;
+    document.getElementById('DinoEvent').checked  = !!+s.DinoEvent
 
     for (const seed in s.SeedItems) {
         const formattedSeed = seed.replace(/\s+/g, '');
@@ -93,10 +109,11 @@ function applySettings(a) {
         const formattedEgg = egg.replace(/\s+/g, '');
         document.getElementById(formattedEgg).checked = !!+s.EggItems[egg];
     }
-    // for (const event in s.EventItems) {
-    //     const formattedEvent = event.replace(/\s+/g, '');
-    //     document.getElementById(formattedEvent).checked = !!+s.EventItems[event];
-    // }
+    for (const GearCraft in s.GearCraftingItems) {
+        const formattedGearCraft = GearCraft.replace(/\s+/g, '');
+        document.getElementById(formattedGearCraft).checked = !!+s.GearCraftingItems[GearCraft];
+    }
+
 }
 
 
