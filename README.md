@@ -19,7 +19,7 @@ Make sure you have the **required materials** in your inventory — the macro wi
 
 > ⚠️ If you're using fruits, ensure they are **not mutated**, or they will not be detected.
 
-> ⚠️ Before turning on the macro, make sure **nothing is already crafting**. The macro will automatically cancel a craft if the item is placed but **has not started yet**.
+> ⚠️ If your crafting reclaimers, dont have common crates in your inventory or else the macro will accidently select them instead of common eggs.
 
 The **DNA Machine** feature can be enabled to automatically convert pets to Dino Eggs.
 

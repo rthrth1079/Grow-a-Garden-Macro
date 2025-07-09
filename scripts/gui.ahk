@@ -1,7 +1,7 @@
 
 #Requires AutoHotkey v2.0
 
-version := "v1.0.3"
+version := "v1.0.4"
 settingsFile := "settings.ini"
 
 
@@ -212,7 +212,6 @@ SendSettings(){
         IniWrite("", IniFile, "Settings", "url")
         IniWrite("", IniFile, "Settings", "discordID")
         IniWrite("", IniFile, "Settings", "VipLink")
-        IniWrite("``", IniFile, "Settings", "bagkey")
         IniWrite("0", IniFile, "Settings", "DinoEvent")
         for i in seedItems {
             IniWrite("1", IniFile, "Seeds", StrReplace(i, " ", ""))

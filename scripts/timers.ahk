@@ -2,13 +2,15 @@ nowUnix() {
     return DateDiff(A_NowUTC, "19700101000000", "Seconds")
 }
 
-
-global Lastevent := nowUnix()
-global LastGearCraftingTime := nowUnix()
+Lastevent := nowUnix()
+LastGearCraftingTime := nowUnix()
 RewardChecker() {
+    global Lastevent, LastGearCraftingTime
+
 
     Rewardlist := []
 
+    ; eventTimer := 2 ; 1 hour in seconds
     eventTimer := 3600 + 120 ; 1 hour in seconds
 
     currentTime := nowUnix()
@@ -21,19 +23,20 @@ RewardChecker() {
     if (Mod(A_Min,30) == 0) {
         Rewardlist.Push("Eggs")
     }
-    if (currentTime - Lastevent >= eventTimer && IniRead(settingsFile, "Settings", "DinoEvent") == "1") {
-        if !(Mod(A_Min, 4) == 0){
+    if (currentTime - Lastevent >= eventTimer && IniRead(settingsFile, "Settings", "DinoEvent") + 0 == 1) {
+        if !(A_Min == 4 || A_Min == 8) {
             Rewardlist.Push("Event")
         }
+
     }
-    if (currentTime - LastGearCraftingTime >= GearCraftingTime && IniRead(settingsFile, "GearCrafting", "GearCrafting") == "1") {
-        if !(Mod(A_Min, 4) == 0){
+    if (currentTime - LastGearCraftingTime >= GearCraftingTime && IniRead(settingsFile, "GearCrafting", "GearCrafting") + 0 == 1) {
+        if !(A_Min == 4 || A_Min == 8) {
             Rewardlist.Push("GearCrafting")
         }
+        
     }
     return Rewardlist
 }
-
 
 ; Calls RewardChecker -> RewardChecked functions to see if we are able to run those things
 RewardInterupt() {

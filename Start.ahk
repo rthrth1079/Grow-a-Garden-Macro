@@ -123,10 +123,7 @@ CheckDisconnnect(){
                         PlayerStatus("Detected Loading Screen", "0x0060c0", ,false, ,false)
                         MouseMove windowX + windowWidth//2, windowY + windowHeight//2
                         Sleep(15000)
-                        relativeMouseMove(0.95, 0.5)
-                        Send(AKey)
-                        Send(AKey)
-                        Send(AKey)
+                        Click
                         Click
                         break
                     }
@@ -202,12 +199,35 @@ CloseChat(){
     Gdip_DisposeImage(pBMScreen)
 }
 
+openBag(){  
+    ActivateRoblox()
+    hwnd := GetRobloxHWND()
+    GetRobloxClientPos(hwnd)
+    pBMScreen := Gdip_BitmapFromScreen(windowX "|" windowY "|" windowWidth * 0.5 "|" windowHeight //8)
+    if (Gdip_ImageSearch(pBMScreen, bitmaps["Openbag"] , &OutputList, , , , , 25) = 1) {
+        Cords := StrSplit(OutputList, ",")
+        x := Cords[1] + windowX + 50
+        y := Cords[2] + windowY
+        MouseMove(x, y)
+        Sleep(300)
+        Click
+        Sleep(500)
+    }
+    Gdip_DisposeImage(pBMScreen)
+
+}
+
+closeBag(){
+    relativeMouseMove(0.95, 0.5)
+    Click
+    Sleep(500)
+}
+
 equipRecall(){
     ActivateRoblox()
     hwnd := GetRobloxHWND()
     GetRobloxClientPos(hwnd)
-    key := IniRead(settingsFile, "Settings", "bagkey")
-    Send("{" key "}")
+    openBag()
     Sleep(1000)
     cordx := 0
     cordy := 0
@@ -224,8 +244,11 @@ equipRecall(){
         Sleep(500)
         Send("recall")
         Sleep(300)
+        Gdip_DisposeImage(pBMScreen)
+    } else {
+        PlayerStatus("Could not detect Search in inventory", "0xFF0000")
+        Gdip_DisposeImage(pBMScreen)
     }
-    Gdip_DisposeImage(pBMScreen)
 
 
     pBMScreen := Gdip_BitmapFromScreen(windowX "|" windowY "|" windowWidth "|" windowHeight )
@@ -258,13 +281,7 @@ equipRecall(){
     Send("{Click up}")
     Sleep(500)
     clearSearch()
-    Sleep(500)
-    relativeMouseMove(0.95, 0.5)
-    Click
-    Sleep(500)
-    Send("{" key "}")
-    Sleep(500)
-    Click
+    closeBag()
     Gdip_DisposeImage(pBMScreen)
 
 }
@@ -273,19 +290,22 @@ clearSearch(){
     hwnd := GetRobloxHWND()
     GetRobloxClientPos(hwnd)
     pBMScreen := Gdip_BitmapFromScreen(windowX "|" windowY + 30 "|" windowWidth "|" windowHeight - 30)
-    if (Gdip_ImageSearch(pBMScreen, bitmaps["x"] , &OutputList, , , , , 75,,2) = 1) {
+    if (Gdip_ImageSearch(pBMScreen, bitmaps["x"] , &OutputList, , , , , 20,,6) = 1) {
         Cords := StrSplit(OutputList, ",")
         x := Cords[1] + windowX 
         y := Cords[2] + windowY + 30
-        relativeMouseMove(0.95, 0.5)
-        Sleep(100)
+        MouseMove(x, y)
+        Sleep(750)
+        Click
         Click
         Sleep(500)
-        key := IniRead(settingsFile, "Settings", "bagkey")
-        Send("{" key "}")
-        Sleep(500)
+    }
+    if (Gdip_ImageSearch(pBMScreen, bitmaps["Favorite"] , &OutputList, , , , , 20,,6) = 1) {
+        Cords := StrSplit(OutputList, ",")
+        x := Cords[1] + windowX 
+        y := Cords[2] + windowY + 30
         MouseMove(x, y)
-        Sleep(300)
+        Sleep(750)
         Click
         Sleep(500)
     }
@@ -323,7 +343,12 @@ Clickbutton(button){
         capY := windowY + windowHeight * 0.2065
         capW := windowWidth * 0.1
         capH := windowHeight * 0.1667
-    } 
+    } else if (button == "Robux"){
+        capX := windowX + 5
+        capY := windowY
+        capW := windowWidth
+        capH := windowHeight 
+    }
 
     pBMScreen := Gdip_BitmapFromScreen(capX "|" capY "|" capW "|" capH)
 
@@ -361,6 +386,7 @@ ChangeCamera(){
 CameraCorrection(){
     Clickbutton("Xbutton")
     Clickbutton("Xbutton2")
+    Clickbutton("Robux")
     Sleep(300)
     ChangeCamera()
 
@@ -390,8 +416,8 @@ CameraCorrection(){
     Sleep(250)
 
     loop 10 {
-        Clickbutton("Sell") ; sell button
-        Clickbutton("Seeds") ; seeds button
+        Clickbutton("Sell") 
+        Clickbutton("Seeds") 
     }
     Sleep(500)
     Clickbutton("Seeds")
@@ -569,13 +595,12 @@ BuyGears(){
 
 
 
-global currentnumber := 1
+currentnumber := 1
 BuyEvent(){
     if (IniRead(settingsFile, "Settings", "DinoEvent") == "0"){
         return
     }
 
-    global currentnumber
     PlayerStatus("Going to sacrifice a pet!", "0x22e6a8",,false,,false)
     ActivateRoblox()
     Clickbutton("Xbutton")
@@ -592,7 +617,7 @@ BuyEvent(){
     Send("{" Dkey " up}")
     Sleep(500)
     Send("{" Ekey "}")
-    Sleep(500)
+    Sleep(1000)
     PlayerStatus("Collected ancient pet!!", "0x22e6a8",,false)
     
     Send("{" Wkey " down}")
@@ -600,23 +625,22 @@ BuyEvent(){
     Send("{" Wkey " up}")
     Sleep(300)
     Send("{" Dkey " down}")
-    HyperSleep(350)
+    HyperSleep(100)
     Send("{" Dkey " up}")
 
-    currentnumber += 1
-    Sleep(1000)
+    global currentnumber += 1
     if (currentnumber + 0 == 10) {
         currentnumber := 0 
         IniWrite("0", settingsFile, "Settings", "DinoEvent")
         PlayerStatus("Finished with selling all pets!", "0x22e6a8",,false,,false)
     }
-    Sleep(500)
-    Send("{" currentnumber "}")
+    Sleep(2500)
+    Send(currentnumber)
     Sleep(500)
     Send("{" Ekey "}")
     Sleep(1000)
     clickOption("3")
-    PlayerStatus("Sacrificed a pet!", "0x22e6a8",,false)
+    PlayerStatus("Sacrificed a pet in " currentnumber " hotbar slot" , "0x22e6a8",,false)
 }
 
 
@@ -690,7 +714,11 @@ Crafting(Recipeitems, settingName, Names){
             Send("{c}")
             Sleep(300)
             Send("{" Ekey "}")
-            Sleep(1000)
+            Sleep(2500)
+            if (Clickbutton("Robux") == 1){
+                PlayerStatus("Crafting not finished. Closing Robux prompt.","0xe67e22",,false)
+                return item.CraftTime
+            }
             Clickbutton("Xbutton")
             Clickbutton("Xbutton2")
             Sleep(500)
@@ -701,19 +729,24 @@ Crafting(Recipeitems, settingName, Names){
             ; Choose to craft item
             buyShop(Names, settingName, 1)
             ; Search for the name 
-            key := IniRead(settingsFile, "Settings", "bagkey")
-            Send("{" key "}")
-            Sleep(1500)
+            openBag()
             clearSearch()
+            Sleep(1500)
             cordx := 0
             cordy := 0
             pBMScreen := Gdip_BitmapFromScreen(windowX "|" windowY + 30 "|" windowWidth "|" windowHeight - 30)
-            if (Gdip_ImageSearch(pBMScreen, bitmaps["Search"] , &OutputList, , , , , 25) = 1) {
+            if (Gdip_ImageSearch(pBMScreen, bitmaps["Search"] , &OutputList, , , , , 25,,2) = 1) {
                 Cords := StrSplit(OutputList, ",")
                 x := Cords[1] + windowX
                 y := Cords[2] + windowY + 30
                 cordx := x
                 cordy := y
+                Gdip_DisposeImage(pBMScreen)
+            } else {
+                PlayerStatus("Could not detect Search in inventory", "0xFF0000")
+                Gdip_DisposeImage(pBMScreen)
+                closeBag()
+                return item.CraftTime
             }
             Gdip_DisposeImage(pBMScreen)
             ; Clicked on the search bar, now type the name
@@ -747,9 +780,7 @@ Crafting(Recipeitems, settingName, Names){
                 }
                 clearSearch()
             }
-            relativeMouseMove(0.95, 0.5)
-            Click
-            Sleep(1000)
+            closeBag()
             Send("{" Ekey "}")
             Send("{" Ekey "}")
             Sleep(1000)
@@ -903,15 +934,13 @@ F3::
 {
 
 
-    ActivateRoblox()
-    ResizeRoblox()
-    hwnd := GetRobloxHWND()
-    GetRobloxClientPos(hwnd)
+    ; ActivateRoblox()
+    ; ResizeRoblox()
+    ; hwnd := GetRobloxHWND()
+    ; GetRobloxClientPos(hwnd)
+    ; pBMScreen := Gdip_BitmapFromScreen(windowX "|" windowY  "|" windowWidth "|" windowHeight)
     ; Gdip_SaveBitmapToFile(pBMScreen,"ss.png")
     ; Gdip_DisposeImage(pBMScreen)
-
-
-
 }
 
 
