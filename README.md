@@ -70,11 +70,10 @@ Before using the macro, install **AutoHotkey v2.0**:
 
 ## 📬 Contact
 
-> Feel free to join the discord server for questions or support at [Click Here](https://discord.gg/Vc465gUXHk)
+Need help extracting ZIPs or setting things up?
 
-Need help extracting ZIPs or setting things up? DM me!
-
-* **Discord:** `_epic.`
+* **Discord Server:** [link](https://discord.com/invite/Vc465gUXHk)
+* **Discord user:** `_epic.`
 * **GitHub:** [epicisgood/Grow-a-Garden-Macro](https://github.com/epicisgood/Grow-a-Garden-Macro)
 * **Donate:** [Give me Robux!](https://www.roblox.com/games/3780570380/Donation-area#!/store)
 
