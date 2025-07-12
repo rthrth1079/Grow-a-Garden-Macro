@@ -21,22 +21,24 @@
              , "Daffodll Seed", "Watermelon Seed", "Pumpkin Seed"
              , "Apple Seed", "Bamboo Seed", "Coconut Seed", "Cactus Seed"
              , "Dragon Fruit Seed", "Mango Seed", "Grape Seed", "Mushroom Seed"
-             , "Pepper Seed", "Cacao Seed", "Beanstalk Seed", "Ember Lily", "Sugar Apple", "Burning Bud",
+             , "Pepper Seed", "Cacao Seed", "Beanstalk Seed", "Ember Lily", "Sugar Apple", "Burning Bud", "Gaint Pinecone Seed"
 
 
     ]
 
     const gearItems = [
         "Watering Can", "Trowel", "Recall Wrench", 
-        "Basic Sprinkler", "Advanced Sprinkler", "Godly Sprinkler", "Magnifying Glass",
+        "Basic Sprinkler", "Advanced Sprinkler",  "Medium Toy", "Medium Treat",
+        "Godly Sprinkler", "Magnifying Glass",
         "Tanning Mirror", "Master Sprinkler", "Cleaning Spray",
-        "Favorite Tool", "Harvest Tool", "Friendship Pot",
+        "Favorite Tool", "Harvest Tool", "Friendship Pot", "Levelup Lollipop",
     ]
 
     const EggItems = [
         "Common Egg", "Common Summer Egg",  
         "Rare Summer Egg", "Mythical Egg","Paradise Egg",       
-        "Bee Egg", "Bug Egg",            
+        // "Bee Egg", 
+        "Bug Egg",            
     ]
 
 

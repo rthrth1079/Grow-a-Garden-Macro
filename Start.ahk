@@ -492,7 +492,7 @@ buyShop(itemList, itemType, crafter := 0){
         Sleep(350)
         if (A_index >= 19){ ; last items
             relativeMouseMove(0.5, 0.5)
-            ScrollDown(0.3) ; 0.25 means a quarter of normal scroll
+            ScrollDown(0.5) ; 0.25 means a quarter of normal scroll
             Sleep 100
         }
         if (CheckSetting(StrReplace(item, " ", ""), itemType)){
@@ -578,7 +578,7 @@ BuySeeds(){
              , "Daffodll Seed", "Watermelon Seed", "Pumpkin Seed"
              , "Apple Seed", "Bamboo Seed", "Coconut Seed", "Cactus Seed"
              , "Dragon Fruit Seed", "Mango Seed", "Grape Seed", "Mushroom Seed"
-             , "Pepper Seed", "Cacao Seed", "Beanstalk Seed", "Ember Lily", "Sugar Apple", "Burning Bud",
+             , "Pepper Seed", "Cacao Seed", "Beanstalk Seed", "Ember Lily", "Sugar Apple", "Burning Bud", "Gaint Pinecone Seed"
 
     ]
 
@@ -605,9 +605,10 @@ BuySeeds(){
 BuyGears(){
     gearItems := [
         "Watering Can", "Trowel", "Recall Wrench", 
-        "Basic Sprinkler", "Advanced Sprinkler", "Godly Sprinkler", "Magnifying Glass",
+        "Basic Sprinkler", "Advanced Sprinkler", "Medium Toy", "Medium Treat",
+        "Godly Sprinkler", "Magnifying Glass",
         "Tanning Mirror", "Master Sprinkler", "Cleaning Spray",
-        "Favorite Tool", "Harvest Tool", "Friendship Pot",
+        "Favorite Tool", "Harvest Tool", "Friendship Pot", "Levelup Lollipop"
     ]
 
 
@@ -636,73 +637,37 @@ BuyEggs(){
     Click
     Sleep(1000)
     Send("{s Down}")
-    HyperSleep(800)
-    ; HyperSleep(500)
+    HyperSleep(600)
     Send("{s Up}")
     Sleep(1000)
     Send("{" Ekey "}")
-    ; if !DetectShop("egg"){
-    ;     CloseRoblox()
-    ;     return 0
-    ; }
-    ; eggitems := [
-    ;     "Common Egg", "Common Summer Egg", "Rare Summer Egg", 
-    ;     "Mythical Egg", "Bee Egg", "Paradise Egg", "Bug Egg"
-    ; ]
-    ; buyShop(eggitems, "Eggs")
-
-    
-    Sleep(500)
-    CheckEggStock()
-
-    loop 2 {
-        Sleep(1000)
-        Send("{s Down}")
-        Sleep(200)
-        Send("{s Up}")
-        Sleep(1000)
-        Send("{" Ekey "}")
-        Sleep(500)
-        CheckEggStock()
+    Sleep(2000)
+    Loop 4 {
+        Send("{WheelUp}")
+        Sleep 50
     }
+    Sleep(500)
 
-}
+    MouseMove windowWidth * (1600 / 1920), windowHeight * (150 / 1080)
+    Click
+    Loop 4 {
+        Send("{WheelDown}")
+        Sleep 50
+    }
+    Sleep(2500)
 
-
-
-CheckEggStock(){
-    ActivateRoblox()
-    hwnd := GetRobloxHWND()
-    GetRobloxClientPos(hwnd)
-
+    if !DetectShop("egg"){
+        CloseRoblox()
+        return 0
+    }
     eggitems := [
         "Common Egg", "Common Summer Egg", "Rare Summer Egg", 
-        "Mythical Egg", "Paradise Egg", "Bee Egg", "Bug Egg"
+        "Mythical Egg", "Paradise Egg", "Bug Egg"
     ]
+    buyShop(eggitems, "Eggs")
 
-    for egg in eggitems{
-        captureWidth := windowWidth * 390 // 1920
-        captureHeight := windowHeight * 100 // 1080
-
-        captureX := windowX + (windowWidth // 2) - (captureWidth // 2) + windowWidth * 20 // 1920
-        captureY := windowY + (windowHeight // 2) - (captureHeight // 2) - windowHeight * 170 // 1080
-
-        pBMScreen := Gdip_BitmapFromScreen(captureX "|" captureY "|" captureWidth "|" captureHeight)
-        if (Gdip_ImageSearch(pBMScreen,bitmaps[egg],,,,,,4,,2)){
-            if (CheckSetting(StrReplace(egg," ", ""), "Eggs")){ 
-                CheckStock(A_Index, eggitems)
-            } else {
-                PlayerStatus("Skipping " Egg "!", "0x22e6a8",,false,,false)
-            }
-            Sleep(500)
-            CloseClutter()
-            Sleep(200)
-            Gdip_DisposeImage(pBMScreen)
-            return 1
-        }
-        Gdip_DisposeImage(pBMScreen)
-    }
 }
+
 
 
 
@@ -722,8 +687,12 @@ BuyEvent(){
     Sleep(200)
     Click
     Sleep(1500)
+    Send("{WheelUp}")
+    Send("{" Skey " down}")
+    HyperSleep(200)
+    Send("{" Skey " up}")
     Send("{" Dkey " down}")
-    HyperSleep(8700)
+    HyperSleep(8650)
     Send("{" Dkey " up}")
     Sleep(500)
     Send("{" Ekey "}")
@@ -1015,7 +984,9 @@ F3::
     ; pBMScreen := Gdip_BitmapFromScreen(windowX "|" windowY  "|" windowWidth "|" windowHeight)
     ; Gdip_SaveBitmapToFile(pBMScreen,"ss.png")
     ; Gdip_DisposeImage(pBMScreen)
-    BuySeeds()
+    ; BuySeeds()
+    ; BuyGears()
+    BuyEvent()
 }
 
 
