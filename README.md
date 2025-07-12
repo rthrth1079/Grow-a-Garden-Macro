@@ -6,7 +6,7 @@ A macro for **Grow a Garden** that automatically buys your selected seeds, gear,
 
 ✅ Supports **auto-reconnect** and sends **images via Discord webhook**.
 
-✅ Does not require **UI navigation** and the macro works using your cursor.
+✅ The macro does NOT require **UI navigation** and the macro works using your cursor.
 
 > **Important:** Make sure your **Recall Wrench** is in the **first hotbar slot**
 
@@ -19,7 +19,7 @@ Make sure you have the **required materials** in your inventory — the macro wi
 
 > ⚠️ If you're using fruits, ensure they are **not mutated**, or they will not be detected.
 
-> ⚠️ If your crafting reclaimers, dont have common crates in your inventory or else the macro will accidently select them instead of common eggs.
+> ⚠️ If your crafting reclaimers, don't have common crates in your inventory or else the macro will accidently select them instead of Common Eggs.
 
 The **DNA Machine** feature can be enabled to automatically convert pets to Dino Eggs.
 
@@ -70,11 +70,10 @@ Before using the macro, install **AutoHotkey v2.0**:
 
 ## 📬 Contact
 
-> This macro is **only** hosted on **GitHub**. I do **not** have a Discord server.
+Need help extracting ZIPs or setting things up?
 
-Need help extracting ZIPs or setting things up? DM me!
-
-* **Discord:** `_epic.`
+* **Discord Server:** [link](https://discord.com/invite/Vc465gUXHk)
+* **Discord user:** `_epic.`
 * **GitHub:** [epicisgood/Grow-a-Garden-Macro](https://github.com/epicisgood/Grow-a-Garden-Macro)
 * **Donate:** [Give me Robux!](https://www.roblox.com/games/3780570380/Donation-area#!/store)
 
