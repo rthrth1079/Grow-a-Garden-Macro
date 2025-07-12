@@ -483,7 +483,7 @@ buyShop(itemList, itemType, crafter := 0){
             }
             Sleep(500)
         } else {
-            if (itemType == "Event"){
+            if (itemType == "Event" || itemType == "Eggs"){
                 relativeMouseMove(0.4,0.8)
             } else {
                 relativeMouseMove(0.4,0.845)
@@ -991,6 +991,7 @@ F3::
     ; Gdip_DisposeImage(pBMScreen)
     ; BuySeeds()
     ; BuyGears()
+    BuyEggs()
     ; BuyEvent()
 }
 
