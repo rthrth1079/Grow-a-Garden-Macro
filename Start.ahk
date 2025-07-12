@@ -991,7 +991,7 @@ F3::
     ; Gdip_DisposeImage(pBMScreen)
     ; BuySeeds()
     ; BuyGears()
-    BuyEggs()
+    ; BuyEggs()
     ; BuyEvent()
 }
 
