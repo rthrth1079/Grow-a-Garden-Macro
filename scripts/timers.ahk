@@ -11,7 +11,7 @@ RewardChecker() {
     Rewardlist := []
 
     ; eventTimer := 2 ; 1 hour in seconds
-    eventTimer := 3600 + 120 ; 1 hour in seconds
+    eventTimer := 3600 + 200 ; 1 hour in seconds
 
     currentTime := nowUnix()
     if (Mod(A_Min,5) == 0) {
@@ -23,14 +23,17 @@ RewardChecker() {
     if (Mod(A_Min,30) == 0) {
         Rewardlist.Push("Eggs")
     }
+    ; if (Mod(A_Min,30) == 0  && IniRead(settingsFile, "Settings", "TravelingMerchant") + 0 == 1) {
+    ;     Rewardlist.Push("TravelingMerchant")
+    ; }
     if (currentTime - Lastevent >= eventTimer && IniRead(settingsFile, "Settings", "DinoEvent") + 0 == 1) {
-        if !(A_Min == 4 || A_Min == 8) {
+        if !(A_Min == 4 || A_Min == 9) {
             Rewardlist.Push("Event")
         }
 
     }
     if (currentTime - LastGearCraftingTime >= GearCraftingTime && IniRead(settingsFile, "GearCrafting", "GearCrafting") + 0 == 1) {
-        if !(A_Min == 4 || A_Min == 8) {
+        if !(A_Min == 4 || A_Min == 9) {
             Rewardlist.Push("GearCrafting")
         }
         
@@ -49,6 +52,10 @@ RewardInterupt() {
         if (A_index == 1) {
             CameraCorrection()
         }
+        if (Disconnect()){
+            CameraCorrection()
+        }
+        
         if (v = "Seeds") {
             BuySeeds()
         }
@@ -58,12 +65,18 @@ RewardInterupt() {
         if (v = "Eggs") {
             BuyEggs()
         }
+        ; if (v = "TravelingMerchant") {
+        ;     BuyMerchant()
+        ; }
         if (v = "Event") {
             BuyEvent()
+            Sleep(2000)
             global Lastevent := nowUnix()
         }
         if (v = "GearCrafting") {
             GearCraft()
+            Sleep(2000)
+            global LastGearCraftingTime := nowUnix()
         }
     }
     

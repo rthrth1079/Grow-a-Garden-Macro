@@ -17,7 +17,7 @@
 
 
     const seedItems = [
-            "Carrot Seed", "Strawberry Seed", "Blueberry Seed", "Orange Tulip", "Tomato Seed"
+            "Carrot Seed", "Strawberry Seed", "Blueberry Seed", "Orange Tulip", "Tomato Seed", "Corn Seed"
              , "Daffodll Seed", "Watermelon Seed", "Pumpkin Seed"
              , "Apple Seed", "Bamboo Seed", "Coconut Seed", "Cactus Seed"
              , "Dragon Fruit Seed", "Mango Seed", "Grape Seed", "Mushroom Seed"

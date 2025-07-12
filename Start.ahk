@@ -329,7 +329,7 @@ relativeMouseMove(relx, rely) {
 }
 
 
-Clickbutton(button){
+Clickbutton(button, clickit := 1){
     hwnd := GetRobloxHWND()
     GetRobloxClientPos(hwnd)    
     
@@ -353,16 +353,19 @@ Clickbutton(button){
     pBMScreen := Gdip_BitmapFromScreen(capX "|" capY "|" capW "|" capH)
 
     if (Gdip_ImageSearch(pBMScreen, bitmaps[button], &OutputList, , , , , 25,,7) = 1) {
-        Cords := StrSplit(OutputList, ",")
-        x := Cords[1] + capX - 2
-        y := Cords[2] + capY 
-        MouseMove(x, y)
-        Sleep(50)
-        Click
+        if (clickit == 1){
+            Cords := StrSplit(OutputList, ",")
+            x := Cords[1] + capX - 2
+            y := Cords[2] + capY 
+            MouseMove(x, y)
+            Sleep(50)
+            Click
+        }
         Gdip_DisposeImage(pBMScreen)
         return 1
     }
     Gdip_DisposeImage(pBMScreen)
+    return 0
 }
 
 
@@ -384,9 +387,7 @@ ChangeCamera(){
 
 
 CameraCorrection(){
-    Clickbutton("Xbutton")
-    Clickbutton("Xbutton2")
-    Clickbutton("Robux")
+    CloseClutter()
     Sleep(300)
     ChangeCamera()
 
@@ -473,6 +474,7 @@ buyShop(itemList, itemType, crafter := 0){
     for (item in itemlist){
         if (A_index == 1){
             relativeMouseMove(0.5,0.4)
+            Sleep(100)
             Loop 40 {
                 Send("{WheelUp}")
                 Sleep 20
@@ -488,22 +490,18 @@ buyShop(itemList, itemType, crafter := 0){
 
         Click
         Sleep(350)
-        if (A_index == 19 || A_index == 20 || A_index == 21){ ; last items
+        if (A_index >= 19){ ; last items
             relativeMouseMove(0.5, 0.5)
-            ScrollDown(0.25) ; 0.25 means a quarter of normal scroll
+            ScrollDown(0.3) ; 0.25 means a quarter of normal scroll
             Sleep 100
         }
         if (CheckSetting(StrReplace(item, " ", ""), itemType)){
             CheckStock(A_Index, itemlist, crafter)
+        } else {
+            Sleep(200)
         }
     }
-    Sleep(500)
-    Clickbutton("Xbutton")
-    Clickbutton("Xbutton2")
-    Sleep(2000)
-    Clickbutton("Xbutton")
-    Clickbutton("Xbutton2")
-    Sleep(300)
+    CloseShop()
 }
 
 
@@ -538,9 +536,45 @@ clickOption(option){
 }
 
 
+DetectShop(shop){
+    loop 15 {
+        Sleep(500)
+        if (Clickbutton("Xbutton",0) == 1 || Clickbutton("Xbutton2",0) == 1){
+            Sleep(333)
+            PlayerStatus("Detected " shop " shop opened", "0x22e6a8",,false,,false)
+            return 1
+        }
+    }
+    PlayerStatus("Failed to open " shop " shop", "0x22e6a8",,false,,true)
+    return 0
+}
+
+
+CloseShop(){
+    loop 15 {
+        Sleep(500)
+        if (Clickbutton("Xbutton") == 1 || Clickbutton("Xbutton2") == 1){
+            Sleep(1000)
+            PlayerStatus("Closed shop!", "0x22e6a8",,false,,false)
+            return 1
+        }
+    }
+    PlayerStatus("Failed to close shop.", "0xFF0000",,false,,true)
+    return 0
+
+}
+
+
+CloseClutter(){
+    Clickbutton("Xbutton")
+    Clickbutton("Xbutton2")
+    Clickbutton("Robux")
+    Sleep(300)
+}
+
 BuySeeds(){
     seedItems := [
-            "Carrot Seed", "Strawberry Seed", "Blueberry Seed", "Orange Tulip", "Tomato Seed"
+            "Carrot Seed", "Strawberry Seed", "Blueberry Seed", "Orange Tulip", "Tomato Seed", "Corn Seed"
              , "Daffodll Seed", "Watermelon Seed", "Pumpkin Seed"
              , "Apple Seed", "Bamboo Seed", "Coconut Seed", "Cactus Seed"
              , "Dragon Fruit Seed", "Mango Seed", "Grape Seed", "Mushroom Seed"
@@ -551,15 +585,16 @@ BuySeeds(){
 
     PlayerStatus("Going to buy Seeds!", "0x22e6a8",,false,,false)
     Clickbutton("Seeds")
-    Click
-    Sleep(1000)
-    Clickbutton("Xbutton")
-    Clickbutton("Xbutton2")
+    Sleep(1500)
+    CloseClutter()
     Sleep(300)
     Send("{" Ekey "}")
-    Sleep(2500)
-    PlayerStatus("Buying seeds!", "0x22e6a8",,false)
+    if !DetectShop("Seeds"){
+        CloseRoblox()
+        return 0
+    }
     buyShop(seedItems, "Seeds")
+
 }
 
 
@@ -577,19 +612,96 @@ BuyGears(){
 
 
     PlayerStatus("Going to buy Gears!", "0x22e6a8",,false,,false)
-    ActivateRoblox()
+    CloseClutter()
     Send("1")
-    Clickbutton("Xbutton")
-    Clickbutton("Xbutton2")
     Sleep(300)
     relativeMouseMove(0.5, 0.5)
     Click
     Sleep(1500)
     Send("{" Ekey "}")
     clickOption('1')
-    Sleep(2500)
-    PlayerStatus("Buying Gears!", "0x22e6a8",,false)
+    if !DetectShop("gear"){
+        CloseRoblox()
+        return 0
+    }
     buyShop(gearItems, "Gears")
+}
+
+
+BuyEggs(){
+    PlayerStatus("Going to buy Eggs!", "0x22e6a8",,false,,false)
+    ActivateRoblox()
+    Send("1")
+    MouseMove windowX + windowWidth//2, windowY + windowHeight//2
+    Click
+    Sleep(1000)
+    Send("{s Down}")
+    HyperSleep(800)
+    ; HyperSleep(500)
+    Send("{s Up}")
+    Sleep(1000)
+    Send("{" Ekey "}")
+    ; if !DetectShop("egg"){
+    ;     CloseRoblox()
+    ;     return 0
+    ; }
+    ; eggitems := [
+    ;     "Common Egg", "Common Summer Egg", "Rare Summer Egg", 
+    ;     "Mythical Egg", "Bee Egg", "Paradise Egg", "Bug Egg"
+    ; ]
+    ; buyShop(eggitems, "Eggs")
+
+    
+    Sleep(500)
+    CheckEggStock()
+
+    loop 2 {
+        Sleep(1000)
+        Send("{s Down}")
+        Sleep(200)
+        Send("{s Up}")
+        Sleep(1000)
+        Send("{" Ekey "}")
+        Sleep(500)
+        CheckEggStock()
+    }
+
+}
+
+
+
+CheckEggStock(){
+    ActivateRoblox()
+    hwnd := GetRobloxHWND()
+    GetRobloxClientPos(hwnd)
+
+    eggitems := [
+        "Common Egg", "Common Summer Egg", "Rare Summer Egg", 
+        "Mythical Egg", "Paradise Egg", "Bee Egg", "Bug Egg"
+    ]
+
+    for egg in eggitems{
+        captureWidth := windowWidth * 390 // 1920
+        captureHeight := windowHeight * 100 // 1080
+
+        captureX := windowX + (windowWidth // 2) - (captureWidth // 2) + windowWidth * 20 // 1920
+        captureY := windowY + (windowHeight // 2) - (captureHeight // 2) - windowHeight * 170 // 1080
+
+        pBMScreen := Gdip_BitmapFromScreen(captureX "|" captureY "|" captureWidth "|" captureHeight)
+        if (Gdip_ImageSearch(pBMScreen,bitmaps[egg],,,,,,4,,2)){
+            if (CheckSetting(StrReplace(egg," ", ""), "Eggs")){ 
+                CheckStock(A_Index, eggitems)
+            } else {
+                PlayerStatus("Skipping " Egg "!", "0x22e6a8",,false,,false)
+            }
+            Sleep(500)
+            CloseClutter()
+            Sleep(200)
+            Gdip_DisposeImage(pBMScreen)
+            return 1
+        }
+        Gdip_DisposeImage(pBMScreen)
+    }
 }
 
 
@@ -602,9 +714,7 @@ BuyEvent(){
     }
 
     PlayerStatus("Going to sacrifice a pet!", "0x22e6a8",,false,,false)
-    ActivateRoblox()
-    Clickbutton("Xbutton")
-    Clickbutton("Xbutton2")
+    CloseClutter()
     Sleep(300)
     Send("1")
     Sleep(300)
@@ -649,9 +759,7 @@ GearCraft(){
         return
     }
     PlayerStatus("Going to craft Gears!", "0x22e6a8",,false,,false)
-    ActivateRoblox()
-    Clickbutton("Xbutton")
-    Clickbutton("Xbutton2")
+    CloseClutter()
     Sleep(300)
     Send("1")
     Sleep(300)
@@ -694,11 +802,15 @@ GearCraft(){
     ]
 
 
-    global GearCraftingTime := Crafting(GearRecipe, "GearCrafting", GearNames) + 20
-    global LastGearCraftingTime := nowUnix()
+    global GearCraftingTime := Crafting(GearRecipe, "GearCrafting", GearNames) + 200
     Sleep(1000)
 
 }
+
+
+
+
+
 
 GearCraftingTime := 100000 ; Default crafting time, will be overwritten by the first item in the recipe
 
@@ -719,13 +831,13 @@ Crafting(Recipeitems, settingName, Names){
                 PlayerStatus("Crafting not finished. Closing Robux prompt.","0xe67e22",,false)
                 return item.CraftTime
             }
-            Clickbutton("Xbutton")
-            Clickbutton("Xbutton2")
-            Sleep(500)
+            CloseClutter()
             PlayerStatus("Claimed " item.Name "!", "0x22e6a8",,false)
             Send("{" Ekey "}")
-            Sleep(1500)
-
+            if !DetectShop("crafting"){
+                CloseRoblox()
+                return item.CraftTime
+            }
             ; Choose to craft item
             buyShop(Names, settingName, 1)
             ; Search for the name 
@@ -784,9 +896,7 @@ Crafting(Recipeitems, settingName, Names){
             Send("{" Ekey "}")
             Send("{" Ekey "}")
             Sleep(1000)
-            Clickbutton("Xbutton")
-            Clickbutton("Xbutton2")
-            Sleep(500)            
+            CloseClutter()
             PlayerStatus("Crafting " item.Name "!", "0x22e6a8",,false)
             Clickbutton("Garden")
             return item.CraftTime
@@ -796,73 +906,37 @@ Crafting(Recipeitems, settingName, Names){
 }
 
 
-BuyEggs(){
-    PlayerStatus("Going to buy Eggs!", "0x22e6a8",,false,,false)
-    ActivateRoblox()
-    Send("1")
-    MouseMove windowX + windowWidth//2, windowY + windowHeight//2
-    Click
-    Sleep(1000)
-    Send("{s Down}")
-    Sleep(800)
-    Send("{s Up}")
-    Sleep(1000)
-    Send("{" Ekey "}")
-    Sleep(500)
-    CheckEggStock()
-
-    loop 2 {
-        Sleep(1000)
-        Send("{s Down}")
-        Sleep(200)
-        Send("{s Up}")
-        Sleep(1000)
-        Send("{" Ekey "}")
-        Sleep(500)
-        CheckEggStock()
-    }
-
-}
 
 
+; BuyMerchant(){
+;     seedItems := [
+;         "Mushroom Seed","Mushroom Seed","Mushroom Seed","Mushroom Seed","Mushroom Seed","Mushroom Seed",
+;         "Mushroom Seed","Mushroom Seed","Mushroom Seed","Mushroom Seed","Mushroom Seed","Mushroom Seed",
+;     ]
 
-CheckEggStock(){
-    ActivateRoblox()
-    hwnd := GetRobloxHWND()
-    GetRobloxClientPos(hwnd)
+;     PlayerStatus("Going to buy Traveling Merchant!", "0x22e6a8",,false,,false)
+;     Clickbutton("Seeds")
+;     Sleep(1500)
+;     CloseClutter()
+;     Sleep(300)
+;     Send("{" Akey " down}")
+;     HyperSleep(250)
+;     Send("{" Akey " down}")
+    
+;     Send("{" Wkey " down}")
+;     HyperSleep(750)
+;     Send("{" Wkey " down}")
+    
+;     Send("{" Dkey " down}")
+;     HyperSleep(250)
+;     Send("{" Dkey " down}")
 
-    eggitems := [
-        "Common Egg", "Common Summer Egg", "Rare Summer Egg", 
-        "Mythical Egg", "Paradise Egg", "Bee Egg", "Bug Egg"
-    ]
-
-    for egg in eggitems{
-        captureWidth := windowWidth * 390 // 1920
-        captureHeight := windowHeight * 100 // 1080
-
-        captureX := windowX + (windowWidth // 2) - (captureWidth // 2) + windowWidth * 20 // 1920
-        captureY := windowY + (windowHeight // 2) - (captureHeight // 2) - windowHeight * 170 // 1080
-
-        pBMScreen := Gdip_BitmapFromScreen(captureX "|" captureY "|" captureWidth "|" captureHeight)
-        if (Gdip_ImageSearch(pBMScreen,bitmaps[egg],,,,,,4,,2)){
-            if (CheckSetting(StrReplace(egg," ", ""), "Eggs")){ 
-                CheckStock(A_Index, eggitems)
-            } else {
-                PlayerStatus("Skipping " Egg "!", "0x22e6a8",,false,,false)
-            }
-            Sleep(500)
-            Clickbutton("Xbutton")
-            Clickbutton("Xbutton2")
-            Sleep(200)
-            Gdip_DisposeImage(pBMScreen)
-            return 1
-        }
-        Gdip_DisposeImage(pBMScreen)
-    }
-}
-
-
-
+;     Send("{" Ekey "}")
+;     if !DetectShop("traveling merchant"){
+;         return 0
+;     }
+;     buyShop(seedItems, "Seeds")
+; }
 
 
 
@@ -941,13 +1015,7 @@ F3::
     ; pBMScreen := Gdip_BitmapFromScreen(windowX "|" windowY  "|" windowWidth "|" windowHeight)
     ; Gdip_SaveBitmapToFile(pBMScreen,"ss.png")
     ; Gdip_DisposeImage(pBMScreen)
+    BuySeeds()
 }
 
 
-
-; traveling merchant list
-; summerList := [
-;     "Cauliflower Seed", "Rafflesia Seed", "Green Apple Seed", "Avocado Seed", "Banana Seed", 
-;     "Pineapple Seed", "Kiwi Seed", "Bell Pepper Seed", "Prickly Pear Seed", "Loquat Seed", 
-;     "Feijoa Seed", "Pithcer Plant"
-; ]

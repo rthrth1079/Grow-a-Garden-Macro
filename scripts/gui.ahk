@@ -1,7 +1,7 @@
 
 #Requires AutoHotkey v2.0
 
-version := "v1.0.4"
+version := "v1.0.5"
 settingsFile := "settings.ini"
 
 
@@ -28,7 +28,7 @@ MyWindow.Navigate("scripts/Gui/index.html")
 MyWindow.AddHostObjectToScript("ButtonClick", { func: WebButtonClickEvent })
 MyWindow.AddHostObjectToScript("Save", { func: SaveSettings })
 MyWindow.AddHostObjectToScript("ReadSettings", { func: SendSettings })
-MyWindow.Show("w650 h475")
+MyWindow.Show("w650 h470")
 
 
 GetUpdateData() {
@@ -169,7 +169,7 @@ SendSettings(){
     ; ]
 
     seedItems := [
-            "Carrot Seed", "Strawberry Seed", "Blueberry Seed", "Orange Tulip", "Tomato Seed"
+            "Carrot Seed", "Strawberry Seed", "Blueberry Seed", "Orange Tulip", "Tomato Seed", "Corn Seed"
              , "Daffodll Seed", "Watermelon Seed", "Pumpkin Seed"
              , "Apple Seed", "Bamboo Seed", "Coconut Seed", "Cactus Seed"
              , "Dragon Fruit Seed", "Mango Seed", "Grape Seed", "Mushroom Seed"
@@ -213,6 +213,7 @@ SendSettings(){
         IniWrite("", IniFile, "Settings", "discordID")
         IniWrite("", IniFile, "Settings", "VipLink")
         IniWrite("0", IniFile, "Settings", "DinoEvent")
+        IniWrite("0", IniFile, "Settings", "TravelingMerchant")
         for i in seedItems {
             IniWrite("1", IniFile, "Seeds", StrReplace(i, " ", ""))
         }
@@ -277,10 +278,6 @@ VipLink         := IniRead(settingsFile, "Settings", "VipLink")
 
 
 PlayerStatus("Connected to discord!", "0x34495E", , false, , false)
-
-
-
-
 
 
 
