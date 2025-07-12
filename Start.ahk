@@ -384,13 +384,7 @@ ChangeCamera(){
     Sleep(1000)
 }
 
-
-
-CameraCorrection(){
-    CloseClutter()
-    Sleep(300)
-    ChangeCamera()
-
+ZoomAlign(){
     relativeMouseMove(0.5,0.5)
     Click
     Loop 40 {
@@ -406,6 +400,14 @@ CameraCorrection(){
     Sleep(100)
     Click
     Sleep(250)
+}
+
+CameraCorrection(){
+    CloseClutter()
+    Sleep(300)
+    ChangeCamera()
+
+    ZoomAlign()
 
     Click("Right", "Down")
     Sleep(200)
@@ -511,6 +513,8 @@ ScrollDown(amount := 1) {
 
 ; 1 = 1st option, 2 = 2nd option, etc for example the gear shop to open the shop
 clickOption(option){
+    Sleep(500)
+    ZoomAlign()
     Sleep(2000)
     Loop 4 {
         Send("{WheelUp}")
@@ -641,6 +645,8 @@ BuyEggs(){
     Send("{s Up}")
     Sleep(1000)
     Send("{" Ekey "}")
+    Sleep(500)
+    ZoomAlign()
     Sleep(2000)
     Loop 4 {
         Send("{WheelUp}")
@@ -687,7 +693,6 @@ BuyEvent(){
     Sleep(200)
     Click
     Sleep(1500)
-    Send("{WheelUp}")
     Send("{" Skey " down}")
     HyperSleep(200)
     Send("{" Skey " up}")
@@ -986,7 +991,7 @@ F3::
     ; Gdip_DisposeImage(pBMScreen)
     ; BuySeeds()
     ; BuyGears()
-    BuyEvent()
+    ; BuyEvent()
 }
 
 
