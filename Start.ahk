@@ -808,7 +808,7 @@ BuyEvent(){
     Send("{" Dkey " up}")
 
     currentnumber += 1
-    if (currentnumber + 0 == 10) {
+    if (currentnumber + 0 >= 10) {
         PlayerStatus("Selling only common pets!", "0x22e6a8",,false,,false)
         openBag()
         clearSearch()
