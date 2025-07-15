@@ -32,11 +32,6 @@ Before using the macro, install **AutoHotkey v2.0**:
 2. **Run the Macro**
 
    * Double-click `start.ahk`
-   * Or run it manually:
-
-     ```sh
-     start.ahk
-     ```
 
 3. **Set Up Discord Webhook (Optional)**
 
