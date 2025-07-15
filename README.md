@@ -1,6 +1,6 @@
-# 🍏 Grow a Garden Macro
+# 🍏 Epic's Grow a Garden Macro
 
-A macro for **Grow a Garden** that automatically buys your selected seeds, gear, and even crafts gears and more!
+A macro for **Grow a Garden** that automatically buys your selected seeds, gear, and crafting benches and more!
 
 ✅ It works **anywhere**, even **outside** of Grow a Garden.
 
@@ -10,24 +10,10 @@ A macro for **Grow a Garden** that automatically buys your selected seeds, gear,
 
 > **Important:** Make sure your **Recall Wrench** is in the **first hotbar slot**
 
----
+<img width="500" height="400" alt="image" src="https://github.com/user-attachments/assets/fa1e1de8-ad75-4a77-b1e9-187d6526a51e" />
 
-## 🧪 Crafting & DNA Machine
 
-The **Crafting tab** allows you to craft items automatically!
-Make sure you have the **required materials** in your inventory — the macro will search and click them for you.
-
-> ⚠️ If you're using fruits, ensure they are **not mutated**, or they will not be detected.
-
-> ⚠️ If your crafting reclaimers, don't have common crates in your inventory or else the macro will accidently select them instead of Common Eggs.
-
-The **DNA Machine** feature can be enabled to automatically convert pets to Dino Eggs.
-
-**In your hotbar besides the 1st slot, place the pets you want to sacrifice in your hotbar.**
-
----
-
-## ⚙️ Prerequisites
+## ⚙️ Requirements
 
 Before using the macro, install **AutoHotkey v2.0**:
 
@@ -46,11 +32,6 @@ Before using the macro, install **AutoHotkey v2.0**:
 2. **Run the Macro**
 
    * Double-click `start.ahk`
-   * Or run it manually:
-
-     ```sh
-     start.ahk
-     ```
 
 3. **Set Up Discord Webhook (Optional)**
 
@@ -68,12 +49,38 @@ Before using the macro, install **AutoHotkey v2.0**:
 
 ---
 
+## 📦 Macro Setup
+
+### 🔧 Gear and Seed Crafting Tab
+
+To enable crafting automation, **check** the box labeled `Craft Gears/Seeds/Event`?. This allows the macro to automatically craft **any recipe** you want — including items like **Reclaimers**, **Lightning Rods**, or **Event Seeds**.
+
+> ⚠️ **Important for Reclaimers**:
+> If you have **Common Crates** in your inventory, they can interfere with the macro. It's recommended to **remove them** before crafting Reclaimers.
+
+> 🍓 **Fruit Detection Tip**:
+> For fruits required in the crafting menu, **make sure the “KG” text is visible** in your inventory. Essentially try to have unmuted fruits in your inventory so it can see the "KG" text.
+
+---
+
+### 🧬 Dino Machine Automation (Prehistoric Update!)
+
+In the new **Prehistoric Update**, the macro now supports automation with the **DNA Machine**:
+
+1. It will cycle through your **hotbar slots (excluding the 1st slot)** to use items on the DNA machine.
+2. Once the hotbar is cleared, the macro enters the **Dog Bunny Lab** and **sells only those Common pets**.
+3. So I recommend having a bunch of common pets in your inventory unfavorited so the macro and can use it for the DNA machine.
+
+---
+
+
+
 ## 📬 Contact
 
 Need help extracting ZIPs or setting things up?
 
 * **Discord Server:** [link](https://discord.com/invite/Vc465gUXHk)
-* **Discord user:** `_epic.`
+* **Discord user:** [`_epic.`](https://discord.com/users/726162926851063919)
 * **GitHub:** [epicisgood/Grow-a-Garden-Macro](https://github.com/epicisgood/Grow-a-Garden-Macro)
 * **Donate:** [Give me Robux!](https://www.roblox.com/games/3780570380/Donation-area#!/store)
 

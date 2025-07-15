@@ -58,14 +58,27 @@ SC_LShift:="sc02a" ; LShift
 #Include gui.ahk
 #Include webhook.ahk
 #Include timers.ahk
-#Include functions.ahk
 
 
 
+
+HyperSleep(ms) {
+    static freq := (DllCall("QueryPerformanceFrequency", "Int64*", &f := 0), f)
+    DllCall("QueryPerformanceCounter", "Int64*", &begin := 0)
+    current := 0, finish := begin + ms * freq / 1000
+    while (current < finish) {
+        if ((finish - current) > 30000) {
+            DllCall("Winmm.dll\timeBeginPeriod", "UInt", 1)
+            DllCall("Sleep", "UInt", 1)
+            DllCall("Winmm.dll\timeEndPeriod", "UInt", 1)
+        }
+        DllCall("QueryPerformanceCounter", "Int64*", &current)
+    }
+}
 
 
 CheckDisconnnect(){
-    global VipLink
+    static VipLink := IniRead(settingsFile, "Settings", "VipLink")
     hwnd := GetRobloxHWND()
     GetRobloxClientPos()
     pBMScreen := Gdip_BitmapFromScreen(windowX "|" windowY + 30 "|" windowWidth "|" windowHeight - 30)
@@ -83,15 +96,23 @@ CheckDisconnnect(){
         else if RegExMatch(VipLink, "code=([a-f0-9]+)&type=Server", &match)
             shareCode := match[1]
 
+        ; if linkCode {
+        ;     DeepLink := "roblox://placeID=" PlaceID "&linkCode=" linkCode
+        ; } else if shareCode {
+        ;     DeepLink := "roblox://navigation/share_links?code=" shareCode "&type=Server"
+        ; } else {
+        ;     DeepLink := "roblox://placeID=" PlaceID
+        ; }
+        
         if linkCode {
-            DeepLink := "roblox://placeID=" PlaceID "&linkCode=" linkCode
+        DeepLink := "https://www.roblox.com/games/" PlaceID "/Grow-a-Garden?privateServerLinkCode=" linkCode 
         } else if shareCode {
-            DeepLink := "roblox://navigation/share_links?code=" shareCode "&type=Server"
+            DeepLink := "https://www.roblox.com/share?code=" shareCode "&type=Server"
         } else {
             DeepLink := "roblox://placeID=" PlaceID
         }
         try Run DeepLink
-
+        Sleep(2000)
 
         loop 20 {
             if GetRobloxHWND() {
@@ -135,6 +156,33 @@ CheckDisconnnect(){
                     Gdip_DisposeImage(pBMScreen)
                     Sleep 1000 // 2 
                 }
+                ; This will close the web window the url launched in for priv links
+                Sleep(500)
+            for hwnd in WinGetList(,, "Program Manager")
+                {
+                    p := WinGetProcessName("ahk_id " hwnd)
+                    if (InStr(p, "Roblox") || InStr(p, "AutoHotkey"))
+                        continue ; skip roblox and AHK windows
+                    title := WinGetTitle("ahk_id " hwnd)
+                    if (title = "")
+                        continue ; skip empty title windows
+                    s := WinGetStyle("ahk_id " hwnd)
+                    if ((s & 0x8000000) || !(s & 0x10000000))
+                        continue ; skip NoActivate and invisible windows
+                    s := WinGetExStyle("ahk_id " hwnd)
+                    if ((s & 0x80) || (s & 0x40000) || (s & 0x8))
+                        continue ; skip ToolWindow and AlwaysOnTop windows
+                    try
+                    {
+                        WinActivate "ahk_id " hwnd
+                        WinMaximize("ahk_id " hwnd)
+                        Sleep 500
+                        Send "^{w}"
+                    }
+                    break
+                }
+                Sleep(500)
+
                 loop {
                     ActivateRoblox()
                     captureWidth := 10
@@ -368,6 +416,41 @@ Clickbutton(button, clickit := 1){
     return 0
 }
 
+ChangeCameraFollow(){
+    Send("{" EscKey "}")
+    Sleep(250)
+    Send("{Tab}")
+    Sleep(250)
+    Send("{Down}")
+    Sleep(250)
+    Send("{Right}")
+    Sleep(250)
+    Send("{Right}")
+    Sleep 250
+    checkFollow()
+    Send("{" EscKey "}")
+    Sleep(1000)
+}
+
+
+checkFollow(){  
+    ActivateRoblox()
+    hwnd := GetRobloxHWND()
+    GetRobloxClientPos(hwnd)
+    loop 10 {
+        pBMScreen := Gdip_BitmapFromScreen(windowX "|" windowY "|" windowWidth "|" windowHeight)
+        if (Gdip_ImageSearch(pBMScreen, bitmaps["Follow"] , &OutputList, , , , , 25) = 1) {
+            Gdip_DisposeImage(pBMScreen)
+            return 1
+        } else {
+            Send("{Right}")
+            Sleep(1000)
+            Gdip_DisposeImage(pBMScreen)
+        }
+    }
+
+}
+
 
 ChangeCamera(){
     Send("{" EscKey "}")
@@ -405,7 +488,7 @@ ZoomAlign(){
 CameraCorrection(){
     CloseClutter()
     Sleep(300)
-    ChangeCamera()
+    ChangeCameraFollow()
 
     ZoomAlign()
 
@@ -463,7 +546,7 @@ CheckStock(index, list, crafter := 0){
         } else {
             SpamClick(6)
         }
-        Sleep(150)
+        Sleep(200)
         PlayerStatus("Bought " list[index] "s!", "0x22e6a8",,false)
         return 1
     }
@@ -489,14 +572,17 @@ buyShop(itemList, itemType, crafter := 0){
                 relativeMouseMove(0.4,0.845)
             }
         }
-
+        if (A_index >= 19){
+            if ((A_Index - 19) / 8 == 0.5){
+                ScrollDown(0.75)
+                Sleep(500)
+            } else {
+                ScrollDown(0.25  + (A_Index - 19) / 8)
+                Sleep(500)
+            }
+        }
         Click
         Sleep(350)
-        if (A_index >= 19){ ; last items
-            relativeMouseMove(0.5, 0.5)
-            ScrollDown(0.5) ; 0.25 means a quarter of normal scroll
-            Sleep 100
-        }
         if (CheckSetting(StrReplace(item, " ", ""), itemType)){
             CheckStock(A_Index, itemlist, crafter)
         } else {
@@ -582,7 +668,7 @@ BuySeeds(){
              , "Daffodll Seed", "Watermelon Seed", "Pumpkin Seed"
              , "Apple Seed", "Bamboo Seed", "Coconut Seed", "Cactus Seed"
              , "Dragon Fruit Seed", "Mango Seed", "Grape Seed", "Mushroom Seed"
-             , "Pepper Seed", "Cacao Seed", "Beanstalk Seed", "Ember Lily", "Sugar Apple", "Burning Bud", "Gaint Pinecone Seed"
+             , "Pepper Seed", "Cacao Seed", "Beanstalk Seed", "Ember Lily", "Sugar Apple", "Burning Bud", "Giant Pinecone Seed"
 
     ]
 
@@ -595,6 +681,9 @@ BuySeeds(){
     Send("{" Ekey "}")
     if !DetectShop("Seeds"){
         CloseRoblox()
+        if (Disconnect()){
+            CameraCorrection()
+        }
         return 0
     }
     buyShop(seedItems, "Seeds")
@@ -627,6 +716,9 @@ BuyGears(){
     clickOption('1')
     if !DetectShop("gear"){
         CloseRoblox()
+        if (Disconnect()){
+            CameraCorrection()
+        }
         return 0
     }
     buyShop(gearItems, "Gears")
@@ -664,6 +756,9 @@ BuyEggs(){
 
     if !DetectShop("egg"){
         CloseRoblox()
+        if (Disconnect()){
+            CameraCorrection()
+        }
         return 0
     }
     eggitems := [
@@ -678,12 +773,12 @@ BuyEggs(){
 
 
 
-currentnumber := 1
 BuyEvent(){
     if (IniRead(settingsFile, "Settings", "DinoEvent") == "0"){
         return
     }
-
+    
+    static currentnumber := 1
     PlayerStatus("Going to sacrifice a pet!", "0x22e6a8",,false,,false)
     CloseClutter()
     Sleep(300)
@@ -694,10 +789,10 @@ BuyEvent(){
     Click
     Sleep(1500)
     Send("{" Skey " down}")
-    HyperSleep(200)
+    HyperSleep(150)
     Send("{" Skey " up}")
     Send("{" Dkey " down}")
-    HyperSleep(8650)
+    HyperSleep(8600)
     Send("{" Dkey " up}")
     Sleep(500)
     Send("{" Ekey "}")
@@ -712,24 +807,66 @@ BuyEvent(){
     HyperSleep(100)
     Send("{" Dkey " up}")
 
-    global currentnumber += 1
+    currentnumber += 1
     if (currentnumber + 0 == 10) {
-        currentnumber := 0 
-        IniWrite("0", settingsFile, "Settings", "DinoEvent")
-        PlayerStatus("Finished with selling all pets!", "0x22e6a8",,false,,false)
+        PlayerStatus("Selling only common pets!", "0x22e6a8",,false,,false)
+        openBag()
+        clearSearch()
+        Sleep(1500)
+        pBMScreen := Gdip_BitmapFromScreen(windowX "|" windowY + 30 "|" windowWidth "|" windowHeight - 30)
+        if (Gdip_ImageSearch(pBMScreen, bitmaps["Search"] , &OutputList, , , , , 25,,2) = 1) {
+            Cords := StrSplit(OutputList, ",")
+            x := Cords[1] + windowX
+            y := Cords[2] + windowY + 30
+            MouseMove(x,y)
+            Sleep(200)
+            Click
+            Sleep(200)
+            searchlist := "dog bunny lab" ; Add additional names to this string if u want it to also sell those pets!
+            Send(searchlist)
+            Sleep(3000)
+            Gdip_DisposeImage(pBMScreen)
+            Sleep(100)
+            pBMScreen := Gdip_BitmapFromScreen(windowX "|" windowY + 30 "|" windowWidth "|" windowHeight - 30)
+            if (Gdip_ImageSearch(pBMScreen, bitmaps["Pets"], &OutputList, , , , , 25) = 1) {
+                Cords := StrSplit(OutputList, ",")
+                x := Cords[1] + windowX
+                y := Cords[2] + windowY + 30
+                MouseMove(x, y)
+                Sleep(250)
+                Click
+                Sleep(250)
+                closeBag()
+                Gdip_DisposeImage(pBMScreen)
+            } else {
+                PlayerStatus("Missing common pets!", "0xff0000")
+                Gdip_DisposeImage(pBMScreen)
+                closeBag()
+            }
+        } else {
+            PlayerStatus("Could not detect Search in inventory", "0xFF0000")
+            Gdip_DisposeImage(pBMScreen)
+            closeBag()
+        }
+        Sleep(500)
+        Send("{" Ekey "}")
+        Sleep(1000)
+        clickOption("3")
+        PlayerStatus("Sacrificed a pet from Common Eggs" , "0x22e6a8",,false)
+    } else {
+        Sleep(2500)
+        Send(currentnumber)
+        Sleep(500)
+        Send("{" Ekey "}")
+        Sleep(1000)
+        clickOption("3")
+        PlayerStatus("Sacrificed a pet in " currentnumber " hotbar slot" , "0x22e6a8",,false)
     }
-    Sleep(2500)
-    Send(currentnumber)
-    Sleep(500)
-    Send("{" Ekey "}")
-    Sleep(1000)
-    clickOption("3")
-    PlayerStatus("Sacrificed a pet in " currentnumber " hotbar slot" , "0x22e6a8",,false)
 }
 
 
 GearCraft(){
-    if (IniRead(settingsFile, "GearCrafting", "GearCrafting") == "0"){
+    if (IniRead(settingsFile, "GearCrafting", "GearCrafting") + 0 == 0){
         return
     }
     PlayerStatus("Going to craft Gears!", "0x22e6a8",,false,,false)
@@ -757,7 +894,11 @@ GearCraft(){
         { Name: "Mutation Spray Chilled", Materials: ["Cleaning Spray", "Godly Sprinkler"], CraftTime: 300 },
         { Name: "Mutation Spray Shocked", Materials: ["Cleaning Spray", "Lighting Rod"], CraftTime: 1800 },
         { Name: "Anti Bee Egg", Materials: ["Bee Egg item"], CraftTime: 7200 },
-        { Name: "Pack Bee", Materials: ["Anti Bee Egg item", "Sunflower", "Purple Dahila"], CraftTime: 14400 }
+        { Name: "Small Toy", Materials: ["Common Egg item", "Coconut Seed", "Coconut"], CraftTime: 600 },
+        { Name: "Small Treat", Materials: ["Common Egg item", "Dragon Fruit Seed", "Blueberry"], CraftTime: 600 },
+        { Name: "Pack Bee", Materials: ["Anti Bee Egg item", "Sunflower", "Purple Dahila"], CraftTime: 14400 },
+        
+        
     ]
     GearNames := [
         "Lighting Rod",
@@ -772,7 +913,9 @@ GearCraft(){
         "Mutation Spray Chilled",
         "Mutation Spray Shocked",
         "Anti Bee Egg",
-        "Pack Bee"
+        "Small Toy",
+        "Small Treat",
+        "Pack Bee",
     ]
 
 
@@ -782,11 +925,54 @@ GearCraft(){
 }
 
 
+SeedCraft(){
+    if (IniRead(settingsFile, "SeedCrafting", "SeedCrafting") + 0 == 0){
+        return
+    }
+    PlayerStatus("Going to craft Seeds!", "0x22e6a8",,false,,false)
+    CloseClutter()
+    Sleep(300)
+    Send("1")
+    Sleep(300)
+    relativeMouseMove(0.5, 0.5)
+    Click
+    Sleep(1500)
+    Send("{" WKey " down}")
+    HyperSleep(800)
+    Send("{" WKey " up}")
+    Sleep(1000)
+    SeedRecipe := [
+        { Name: "Horsetail", Materials: ["Stonebite Seed", "Bamboo", "Corn"], CraftTime: 900 },
+        { Name: "Lingonberry", Materials: ["Blueberry", "Blueberry", "Blueberry", "Horsetail"], CraftTime: 900 },
+        { Name: "Amber Spine", Materials: ["Cactus", "Pumpkin", "Horsetail"], CraftTime: 1800 },
+        { Name: "Grand Volcania", Materials: ["Ember Lily", "Dinosaur Egg item", "Ancient Seed Pack"], CraftTime: 2700 },
+        
+        
+    ]
+    SeedNames := [
+        "Horsetail",
+        "Lingonberry",
+        "Amber Spine",
+        "Grand Volcania",
+    ]
+
+
+    global SeedCraftingTime := Crafting(SeedRecipe, "SeedCrafting", SeedNames) + 200
+    Sleep(1000)
+
+}
+
+
+
+
 
 
 
 
 GearCraftingTime := 100000 ; Default crafting time, will be overwritten by the first item in the recipe
+EventCraftingtime := 100000 ; Default crafting time, will be overwritten by the first item in the recipe
+SeedCraftingtime := 100000 ; Default crafting time, will be overwritten by the first item in the recipe
+
 
 Crafting(Recipeitems, settingName, Names){
     ActivateRoblox()
@@ -810,6 +996,9 @@ Crafting(Recipeitems, settingName, Names){
             Send("{" Ekey "}")
             if !DetectShop("crafting"){
                 CloseRoblox()
+                if (Disconnect()){
+                    CameraCorrection()
+                }
                 return item.CraftTime
             }
             ; Choose to craft item
@@ -834,7 +1023,6 @@ Crafting(Recipeitems, settingName, Names){
                 closeBag()
                 return item.CraftTime
             }
-            Gdip_DisposeImage(pBMScreen)
             ; Clicked on the search bar, now type the name
 
             for Material in item.Materials {
@@ -882,35 +1070,45 @@ Crafting(Recipeitems, settingName, Names){
 
 
 
-; BuyMerchant(){
-;     seedItems := [
-;         "Mushroom Seed","Mushroom Seed","Mushroom Seed","Mushroom Seed","Mushroom Seed","Mushroom Seed",
-;         "Mushroom Seed","Mushroom Seed","Mushroom Seed","Mushroom Seed","Mushroom Seed","Mushroom Seed",
-;     ]
+BuyMerchant(){
+    if (IniRead(settingsFile, "Settings", "TravelingMerchant") + 0  == 0){
+        return
+    }
+    seedItems := [
+        "Mushroom Seed","Mushroom Seed","Mushroom Seed","Mushroom Seed","Mushroom Seed","Mushroom Seed",
+        "Mushroom Seed","Mushroom Seed","Mushroom Seed","Mushroom Seed","Mushroom Seed","Mushroom Seed",
+    ]
 
-;     PlayerStatus("Going to buy Traveling Merchant!", "0x22e6a8",,false,,false)
-;     Clickbutton("Seeds")
-;     Sleep(1500)
-;     CloseClutter()
-;     Sleep(300)
-;     Send("{" Akey " down}")
-;     HyperSleep(250)
-;     Send("{" Akey " down}")
+    PlayerStatus("Going to buy Traveling Merchant!", "0x22e6a8",,false,,false)
+    Clickbutton("Seeds")
+    Sleep(1500)
+    CloseClutter()
+    Sleep(300)
+    Send("{" Akey " down}")
+    HyperSleep(250)
+    Send("{" Akey " up}")
     
-;     Send("{" Wkey " down}")
-;     HyperSleep(750)
-;     Send("{" Wkey " down}")
+    Send("{" Wkey " down}")
+    HyperSleep(1200)
+    Send("{" Wkey " up}")
     
-;     Send("{" Dkey " down}")
-;     HyperSleep(250)
-;     Send("{" Dkey " down}")
+    Send("{" Dkey " down}")
+    HyperSleep(250)
+    Send("{" Dkey " up}")
+    Sleep(1000)
 
-;     Send("{" Ekey "}")
-;     if !DetectShop("traveling merchant"){
-;         return 0
-;     }
-;     buyShop(seedItems, "Seeds")
-; }
+    Send("{" Ekey "}")
+    if DetectShop("traveling merchant"){
+        buyShop(seedItems, "Seeds")
+        return 1
+    }
+    ZoomAlign()
+    clickOption("1")
+    if DetectShop("Onett's bee"){
+        buyShop(seedItems, "Seeds")
+        return 1
+    }
+}
 
 
 
@@ -957,6 +1155,9 @@ MainLoop() {
     BuyEggs()
     BuyEvent()
     GearCraft()
+    SeedCraft()
+    EventCraft()
+    BuyMerchant()
     loop {
         RewardInterupt()
         if (Disconnect()){
@@ -971,10 +1172,6 @@ MainLoop() {
     
     
 }
-
-
-
-
 
 
 
@@ -993,6 +1190,51 @@ F3::
     ; BuyGears()
     ; BuyEggs()
     ; BuyEvent()
+    ; BuyMerchant()
+    ; EventCraft()
+    ; SeedCraft()
+
 }
 
 
+
+
+EventCraft(){
+    if (IniRead(settingsFile, "EventCrafting", "EventCrafting") + 0 == 0){
+        return
+    }
+    PlayerStatus("Going to craft Dino Event items!", "0x22e6a8",,false,,false)
+    CloseClutter()
+    Clickbutton("Seeds")
+    Sleep(500)
+    Send("{" Skey " down}")
+    HyperSleep(450)
+    Send("{" Skey " up}")
+    Sleep(100)
+    Send("{" Akey " down}")
+    HyperSleep(9000)
+    Send("{" Akey " up}")
+    Sleep(1000)
+    EventRecipe := [
+        { Name: "Mutation Spray Amber", Materials: ["Cleaning Spray", "Dinosaur Egg item"], CraftTime: 3600 },
+        { Name: "Ancient Seed Pack", Materials: ["Dinosaur Egg item"], CraftTime: 3600 },
+        { Name: "Archaelogist Crate", Materials: ["Dinosaur Egg item"], CraftTime: 1800 },        
+        { Name: "Dino Crate", Materials: ["Dinosaur Egg item"], CraftTime: 1800 },        
+        { Name: "Dinosaur Egg", Materials: ["Common Egg item", "Bone Blossom"], CraftTime: 1800 },        
+        { Name: "Primal Egg", Materials: ["Dinosaur Egg item", "Bone Blossom"], CraftTime: 1800 },        
+        
+    ]
+    EventNames := [
+        "Mutation Spray Amber",
+        "Ancient Seed Pack",
+        "Dino Crate",
+        "Archaelogist Crate",
+        "Dinosaur Egg",
+        "Primal Egg",
+    ]
+
+
+    global EventCraftingtime := Crafting(EventRecipe, "EventCrafting", EventNames) + 200
+    Sleep(1000)
+
+}

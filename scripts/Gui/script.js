@@ -21,7 +21,7 @@
              , "Daffodll Seed", "Watermelon Seed", "Pumpkin Seed"
              , "Apple Seed", "Bamboo Seed", "Coconut Seed", "Cactus Seed"
              , "Dragon Fruit Seed", "Mango Seed", "Grape Seed", "Mushroom Seed"
-             , "Pepper Seed", "Cacao Seed", "Beanstalk Seed", "Ember Lily", "Sugar Apple", "Burning Bud", "Gaint Pinecone Seed"
+             , "Pepper Seed", "Cacao Seed", "Beanstalk Seed", "Ember Lily", "Sugar Apple", "Burning Bud", "Giant Pinecone Seed"
 
 
     ]
@@ -45,7 +45,8 @@
 
     const GearCraftingItems = [
         "GearCrafting", // This to enable/disable setting.
-        "Lighting Rod", "Reclaimer",
+        "Lighting Rod",
+        "Reclaimer",
         "Tropical Mist Sprinkler",
         "Berry Blusher Sprinkler",
         "Spice Spirtzer Sprinkler",
@@ -56,22 +57,46 @@
         "Mutation Spray Chilled",
         "Mutation Spray Shocked",
         "Anti Bee Egg",
+        "Small Toy",
+        "Small Treat",
         "Pack Bee",
     ]
 
+    const SeedCraftingItems = [
+        "SeedCrafting", // This to enable/disable setting.
+        "Horsetail",
+        "Lingonberry",
+        "Amber Spine",
+        "Grand Volcania",
+    ]
+
+
+    const EventCraftingItems = [
+        "EventCrafting", // This to enable/disable setting.
+        "Mutation Spray Amber",
+        "Ancient Seed Pack",
+        "Dino Crate",
+        "Archaelogist Crate",
+        "Dinosaur Egg",
+        "Primal Egg",
+    ]
 
   const cfg = {
     url:       document.getElementById('url').value,
     discordID: document.getElementById('discordID').value,
     VipLink:   document.getElementById('VipLink').value,
     DinoEvent:   +document.getElementById('DinoEvent').checked,
+    dnaMaxed:   +document.getElementById('dnaMaxed').checked,
+    TravelingMerchant:   +document.getElementById('TravelingMerchant').checked,
     seedItems : {},
     gearItems: {},
     EggItems: {},
     GearCraftingItems: {},
+    SeedCraftingItems: {},
+    EventCraftingItems: {},
   };
 
-  const allLists = { seedItems, gearItems, EggItems, GearCraftingItems, };
+  const allLists = { seedItems, gearItems, EggItems, GearCraftingItems,SeedCraftingItems, EventCraftingItems};
 
   for (const [listName, items] of Object.entries(allLists)) {
     items.forEach(item => {
@@ -98,6 +123,8 @@ function applySettings(a) {
     document.getElementById('discordID').value = s.discordID;
     document.getElementById('VipLink').value   = s.VipLink;
     document.getElementById('DinoEvent').checked  = !!+s.DinoEvent
+    document.getElementById('dnaMaxed').checked  = !!+s.dnaMaxed
+    document.getElementById('TravelingMerchant').checked  = !!+s.TravelingMerchant
 
     for (const seed in s.SeedItems) {
         const formattedSeed = seed.replace(/\s+/g, '');
@@ -114,6 +141,14 @@ function applySettings(a) {
     for (const GearCraft in s.GearCraftingItems) {
         const formattedGearCraft = GearCraft.replace(/\s+/g, '');
         document.getElementById(formattedGearCraft).checked = !!+s.GearCraftingItems[GearCraft];
+    }
+    for (const SeedCraft in s.SeedCraftingItems) {
+        const formattedSeedCraft = SeedCraft.replace(/\s+/g, '');
+        document.getElementById(formattedSeedCraft).checked = !!+s.SeedCraftingItems[SeedCraft];
+    }
+    for (const EventCraft in s.EventCraftingItems) {
+        const formattedEventCraft = EventCraft.replace(/\s+/g, '');
+        document.getElementById(formattedEventCraft).checked = !!+s.EventCraftingItems[EventCraft];
     }
 
 }
