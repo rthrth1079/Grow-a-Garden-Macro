@@ -1,7 +1,7 @@
 
 #Requires AutoHotkey v2.0
 
-version := "v1.0.7"
+version := "v1.0.8"
 settingsFile := "settings.ini"
 
 
@@ -31,31 +31,6 @@ MyWindow.AddHostObjectToScript("ReadSettings", { func: SendSettings })
 MyWindow.Show("w650 h470")
 
 
-GetUpdateData() {
-    request := ComObject("WinHttp.WinHttpRequest.5.1")
-    request.Open("GET", "https://raw.githubusercontent.com/epicisgood/Vichop-Updater/refs/heads/main/update.json", true)
-    request.Send()
-    request.WaitForResponse()
-    if (request.Status = 200) {
-        Response := JSON.Parse(request.ResponseText, true, false)
-        return Response
-    } else {
-        return false
-    }
-}
-
-; data := GetUpdateData()
-Sleep(100)
-; if !data {
-;     MsgBox "Failed to fetch update data. Please check your internet connection or try again later.", "Error", 0x10
-;     ExitApp()
-; }
-
-MyWindow.ExecuteScriptAsync("document.querySelector('#random-message').textContent = '" "" "'")
-MyWindow.ExecuteScriptAsync("document.querySelector('.donate-btn').src = '" "https://cdn-icons-png.flaticon.com/512/189/189715.png" "'")
-
-
-
 
 F1::{
     Start
@@ -66,6 +41,7 @@ F2::{
 }
 
 Start(*) {
+    
     PlayerStatus("Starting " version " Grow A Garden Macro by epic", "0xFFFF00", , false, , false)
     OnError (e, mode) => (mode = "return") * (-1)
     Loop {
@@ -86,6 +62,7 @@ StopMacro(*) {
     ExitApp()
 }
 
+PauseToggle := true
 PauseMacro(*){
     global PauseToggle
     PauseToggle := !PauseToggle
@@ -133,7 +110,7 @@ SaveSettings(settingsJson) {
     IniFile := A_ScriptDir . "\settings.ini"
 
     for key, val in settings {
-        if (key == "url" || key == "discordID" || key == "VipLink" || key == "DinoEvent" || key == "dnaMaxed" || key == "TravelingMerchant") {
+        if (key == "url" || key == "discordID" || key == "VipLink" || key == "TravelingMerchant") {
             IniWrite(val, IniFile, "Settings", key)
         }
     }
@@ -144,9 +121,9 @@ SaveSettings(settingsJson) {
         "EggItems",  "Eggs",
         "GearCraftingItems", "GearCrafting",
         "SeedCraftingItems", "SeedCrafting",
-        "EventCraftingItems", "EventCrafting",
-        ; "eventItems", "Event"
+        "EventItems", "Events",
     )
+
     for groupName, sectionName in sectionMap {
         if settings.Has(groupName) {
             group := settings[groupName]
@@ -161,116 +138,60 @@ SaveSettings(settingsJson) {
 
 SendSettings(){
 	settingsFile := A_ScriptDir . "\settings.ini"
-	IniFile := A_ScriptDir . "\settings.ini"
-	
-    ; EventItems := [
-    ;     "Summer Seed Pack", "Delphinium Seed", "Lily of the Valley Seed", 
-    ;     "Travelers Fruit Seed", "Burnt Mutation Spray", 
-    ;     "Oasis Crate", "Oasis Egg", "Hamster"
-    ; ]
 
-    seedItems := [
-            "Carrot Seed", "Strawberry Seed", "Blueberry Seed", "Orange Tulip", "Tomato Seed", "Corn Seed"
-             , "Daffodll Seed", "Watermelon Seed", "Pumpkin Seed"
-             , "Apple Seed", "Bamboo Seed", "Coconut Seed", "Cactus Seed"
-             , "Dragon Fruit Seed", "Mango Seed", "Grape Seed", "Mushroom Seed"
-             , "Pepper Seed", "Cacao Seed", "Beanstalk Seed", "Ember Lily", "Sugar Apple", "Burning Bud", "Giant Pinecone Seed"
+    seedItems := getItems("Seeds")
 
-    ]
+    gearItems := getItems("Gears")
 
-    gearItems := [
-        "Watering Can", "Trowel", "Recall Wrench", 
-        "Basic Sprinkler", "Advanced Sprinkler", "Medium Toy", "Medium Treat",
-        "Godly Sprinkler", "Magnifying Glass",
-        "Tanning Mirror", "Master Sprinkler", "Cleaning Spray",
-        "Favorite Tool", "Harvest Tool", "Friendship Pot", "Levelup Lollipop",
-    ]
+    EggItems := getItems("Eggs")
 
-    EggItems := [
-        "Common Egg", "Common Summer Egg",  
-        "Rare Summer Egg", "Mythical Egg", "Paradise Egg",       
-        ; "Bee Egg", 
-        "Bug Egg"
-    ]
+    GearCraftingItems := ["GearCrafting"]
 
-    GearCraftingItems := [
-        "GearCrafting", ; This is to enable/disable setting.
-        "Lighting Rod",
-        "Reclaimer",
-        "Tropical Mist Sprinkler",
-        "Berry Blusher Sprinkler",
-        "Spice Spirtzer Sprinkler",
-        "Sweet Soaker Sprinkler",
-        "Flower Froster Sprinkler",
-        "Stalk Sprout Sprinkler",
-        "Mutation Spray Choc",
-        "Mutation Spray Chilled",
-        "Mutation Spray Shocked",
-        "Anti Bee Egg",
-        "Small Toy",
-        "Small Treat",
-        "Pack Bee",
-    ]
+    GearCraftingItems.Push(getItems("GearCrafting")*)
+    
+    SeedCraftingItems := ["SeedCrafting"]
 
-    SeedCraftingItems := [
-        "SeedCrafting", ; This is to enable/disable setting.
-        "Horsetail",
-        "Lingonberry",
-        "Amber Spine",
-        "Grand Volcania",
-    ]
+    SeedCraftingItems.Push(getItems("SeedCrafting")*)
+    
+    EventItems := getItems("Events")
 
-    EventCraftingItems := [
-        "EventCrafting", ; This is to enable/disable setting.
-        "Mutation Spray Amber",
-        "Ancient Seed Pack",
-        "Dino Crate",
-        "Archaelogist Crate",
-        "Dinosaur Egg",
-        "Primal Egg",
-    ]
-
-
-    if (!FileExist(IniFile)) {
-        IniWrite("", IniFile, "Settings", "url")
-        IniWrite("", IniFile, "Settings", "discordID")
-        IniWrite("", IniFile, "Settings", "VipLink")
-        IniWrite("0", IniFile, "Settings", "DinoEvent")
-        IniWrite("1", IniFile, "Settings", "dnaMaxed")
-        IniWrite("0", IniFile, "Settings", "TravelingMerchant")
+    if (!FileExist(settingsFile)) {
+        IniWrite("", settingsFile, "Settings", "url")
+        IniWrite("", settingsFile, "Settings", "discordID")
+        IniWrite("", settingsFile, "Settings", "VipLink")
+        IniWrite("0", settingsFile, "Settings", "TravelingMerchant")
         for i in seedItems {
-            IniWrite("1", IniFile, "Seeds", StrReplace(i, " ", ""))
+            IniWrite("1", settingsFile, "Seeds", StrReplace(i, " ", ""))
         }
         for i in gearItems {
-            IniWrite("1", IniFile, "Gears", StrReplace(i, " ", ""))
+            IniWrite("1", settingsFile, "Gears", StrReplace(i, " ", ""))
         }
         for i in EggItems {
-            IniWrite("1", IniFile, "Eggs", StrReplace(i, " ", ""))
+            IniWrite("1", settingsFile, "Eggs", StrReplace(i, " ", ""))
         }
         for i in GearCraftingItems {
-            IniWrite("0", IniFile, "GearCrafting", StrReplace(i, " ", ""))
+            IniWrite("0", settingsFile, "GearCrafting", StrReplace(i, " ", ""))
         }
         for i in SeedCraftingItems {
-            IniWrite("0", IniFile, "SeedCrafting", StrReplace(i, " ", ""))
+            IniWrite("0", settingsFile, "SeedCrafting", StrReplace(i, " ", ""))
         }
-        for i in EventCraftingItems {
-            IniWrite("0", IniFile, "EventCrafting", StrReplace(i, " ", ""))
+        for i in EventItems {
+            IniWrite("0", settingsFile, "Events", StrReplace(i, " ", ""))
         }
+        Sleep(200)
     }
 
     SettingsJson := { 
         url:       IniRead(settingsFile, "Settings", "url")
       , discordID: IniRead(settingsFile, "Settings", "discordID")
       , VipLink:   IniRead(settingsFile, "Settings", "VipLink")
-      , DinoEvent: IniRead(settingsFile, "Settings", "DinoEvent")
-      , dnaMaxed:  IniRead(settingsFile, "Settings", "dnaMaxed")
       , TravelingMerchant:  IniRead(settingsFile, "Settings", "TravelingMerchant")
       , SeedItems: Map()
       , GearItems: Map()
       , EggItems:  Map()
       , GearCraftingItems: Map()
       , SeedCraftingItems: Map()
-      , EventCraftingItems: Map()
+      , EventItems: Map()
     }
 
     for item in seedItems {
@@ -296,16 +217,18 @@ SendSettings(){
         key := StrReplace(item, " ", "")
         SettingsJson.GearCraftingItems[key] := IniRead(settingsFile, "SeedCrafting", key, "0")
     }
-    for item in EventCraftingItems {
+    for item in EventItems {
         key := StrReplace(item, " ", "")
-        SettingsJson.EventCraftingItems[key] := IniRead(settingsFile, "EventCrafting", key, "0")
+        SettingsJson.EventItems[key] := IniRead(settingsFile, "Events", key, "0")
     }
 
-	Sleep(200)
 	MyWindow.PostWebMessageAsJson(JSON.stringify(SettingsJson))
+
+    MyWindow.ExecuteScriptAsync("document.querySelector('#random-message').textContent = '" "" "'")
+    MyWindow.ExecuteScriptAsync("document.querySelector('.donate-btn').src = '" "https://cdn-icons-png.flaticon.com/512/189/189715.png" "'")
+
 }
 
-SendSettings()
 
 
 
@@ -313,7 +236,9 @@ SendSettings()
 
 
 
-PlayerStatus("Connected to discord!", "0x34495E", , false, , false)
+if (IniRead(settingsFile, "Settings", "url",0)){
+    PlayerStatus("Connected to discord!", "0x34495E", , false, , false)
+}
 
 
 
@@ -367,3 +292,33 @@ CheckUpdate(req)
 AsyncHttpRequest("GET", "https://api.github.com/repos/epicisgood/Grow-a-Garden-Macro/releases/latest", CheckUpdate, Map("accept", "application/vnd.github+json"))
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+; GetUpdateData() {
+;     request := ComObject("WinHttp.WinHttpRequest.5.1")
+;     request.Open("GET", "https://raw.githubusercontent.com/epicisgood/Vichop-Updater/refs/heads/main/update.json", true)
+;     request.Send()
+;     request.WaitForResponse()
+;     if (request.Status = 200) {
+;         Response := JSON.Parse(request.ResponseText, true, false)
+;         return Response
+;     } else {
+;         return false
+;     }
+; }
+
+; data := GetUpdateData()
+; if !data {
+;     MsgBox "Failed to fetch update data. Please check your internet connection or try again later.", "Error", 0x10
+;     ExitApp()
+; }

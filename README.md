@@ -56,22 +56,10 @@ Before using the macro, install **AutoHotkey v2.0**:
 To enable crafting automation, **check** the box labeled `Craft Gears/Seeds/Event`?. This allows the macro to automatically craft **any recipe** you want — including items like **Reclaimers**, **Lightning Rods**, or **Event Seeds**.
 
 > ⚠️ **Important for Reclaimers**:
-> If you have **Common Crates** in your inventory, they can interfere with the macro. It's recommended to **remove them** before crafting Reclaimers.
+> Since Common Eggs are hard to detect, I recommend putting common eggs in your hotbar..
 
 > 🍓 **Fruit Detection Tip**:
 > For fruits required in the crafting menu, **make sure the “KG” text is visible** in your inventory. Essentially try to have unmuted fruits in your inventory so it can see the "KG" text.
-
----
-
-### 🧬 Dino Machine Automation (Prehistoric Update!)
-
-In the new **Prehistoric Update**, the macro now supports automation with the **DNA Machine**:
-
-1. It will cycle through your **hotbar slots (excluding the 1st slot)** to use items on the DNA machine.
-2. Once the hotbar is cleared, the macro enters the **Dog Bunny Lab** and **sells only those Common pets**.
-3. So I recommend having a bunch of common pets in your inventory unfavorited so the macro and can use it for the DNA machine.
-
----
 
 
 

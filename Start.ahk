@@ -95,70 +95,20 @@ CheckDisconnnect(){
             linkCode := match[1]
         else if RegExMatch(VipLink, "code=([a-f0-9]+)&type=Server", &match)
             shareCode := match[1]
-
-        ; if linkCode {
-        ;     DeepLink := "roblox://placeID=" PlaceID "&linkCode=" linkCode
-        ; } else if shareCode {
-        ;     DeepLink := "roblox://navigation/share_links?code=" shareCode "&type=Server"
-        ; } else {
-        ;     DeepLink := "roblox://placeID=" PlaceID
-        ; }
         
         if linkCode {
-        DeepLink := "https://www.roblox.com/games/" PlaceID "/Grow-a-Garden?privateServerLinkCode=" linkCode 
+        DeepLink := "roblox://placeID=" PlaceID "&linkCode=" linkCode
         } else if shareCode {
             DeepLink := "https://www.roblox.com/share?code=" shareCode "&type=Server"
         } else {
             DeepLink := "roblox://placeID=" PlaceID
         }
         try Run DeepLink
-        Sleep(2000)
 
-        loop 20 {
+        loop 60 {
             if GetRobloxHWND() {
-                ActivateRoblox()
-                ResizeRoblox()
-                GetRobloxClientPos(GetRobloxHWND())
-                loop {
-                    ActivateRoblox()
-                    newWidth := windowWidth - 100
-                    newHeight := windowHeight - 60
-                    newX := windowX + (windowWidth - newWidth) // 4
-                    newY := windowY + (windowHeight - newHeight) // 4
-
-                    captureWidth := 10
-                    captureHeight := 10
-                    captureX := windowX  
-                    captureY := windowY + (windowHeight - captureHeight) // 2  
-
-                    pBMScreen := Gdip_BitmapFromScreen(captureX "|" captureY "|" captureWidth "|" captureHeight)
-
-
-                    if !GetRobloxClientPos() {
-                        PlayerStatus("Disconnected from roblox", "0xfa7900", ,false, ,false)
-                        Gdip_DisposeImage(pBMScreen)
-                        return 0
-                    }
-                    If (Gdip_ImageSearch(pBMScreen, bitmaps["loading"], , , , , , 2) = 1) {
-                        Gdip_DisposeImage(pBMScreen)
-                        PlayerStatus("Detected Loading Screen", "0x0060c0", ,false, ,false)
-                        MouseMove windowX + windowWidth//2, windowY + windowHeight//2
-                        Sleep(15000)
-                        Click
-                        Click
-                        break
-                    }
-                    if (A_Index = 30 * 2) { ; Default, 15 seconds.
-                        Gdip_DisposeImage(pBMScreen)
-                        PlayerStatus("Did not detect Loading screen.", "0xff0000", ,false)
-                        return 0
-                    }
-                    Gdip_DisposeImage(pBMScreen)
-                    Sleep 1000 // 2 
-                }
-                ; This will close the web window the url launched in for priv links
                 Sleep(500)
-            for hwnd in WinGetList(,, "Program Manager")
+                for hwnd in WinGetList(,, "Program Manager")
                 {
                     p := WinGetProcessName("ahk_id " hwnd)
                     if (InStr(p, "Roblox") || InStr(p, "AutoHotkey"))
@@ -182,53 +132,31 @@ CheckDisconnnect(){
                     break
                 }
                 Sleep(500)
-
-                loop {
-                    ActivateRoblox()
-                    captureWidth := 10
-                    captureHeight := 10
-                    captureX := windowX  ; Left edge
-                    captureY := windowY + (windowHeight - captureHeight) // 2  
-
-                    pBMScreen := Gdip_BitmapFromScreen(captureX "|" captureY "|" captureWidth "|" captureHeight)
-
-                    if !GetRobloxClientPos() {
-                        PlayerStatus("Disconnected from roblox", "0xfa7900", ,false, ,false)
-                        Gdip_DisposeImage(pBMScreen)
-                        return 0
-                    }
-                    If !(Gdip_ImageSearch(pBMScreen, bitmaps["loading"], , , , , , 2) = 1) {
-                        Gdip_DisposeImage(pBMScreen)
-                        PlayerStatus("Game Succesfully loaded", "0x00a838", ,false)
-                        Sleep(1000)
-                        Send("{Tab}")
-                        Send("1")
-                        Sleep(300)
-                        CloseChat()
-                        Sleep(500)
-                        equipRecall()
-                        Sleep(1000)
-                        return 1
-                    }
-                    if (A_Index = 30 * 2) { ; Default, 15 seconds.
-                        Gdip_DisposeImage(pBMScreen)
-                        PlayerStatus("Join Error.", "0xff0000", ,false)
-                        return 0
-                    }
-                    Gdip_DisposeImage(pBMScreen)
-                    Sleep 1000 // 2 
-                }
-    
+                ActivateRoblox()
+                ResizeRoblox()
+                GetRobloxClientPos(GetRobloxHWND())
+                MouseMove windowX + windowWidth//2, windowY + windowHeight//2
+                Sleep(25000)
+                Click
+                Click
+                PlayerStatus("Game Succesfully loaded", "0x00a838", ,false)
+                Sleep(1000)
+                Send("{Tab}")
+                Send("1")
+                Sleep(300)
+                CloseChat()
+                Sleep(1500)
+                return 1
             }
-            if (A_Index = 20) {
-                return 0
-            }
-            Sleep 1000
+            Sleep(1000)
         }
-    }
-    Gdip_DisposeImage(pBMScreen)
-    return 0
+        Gdip_DisposeImage(pBMScreen)
+        return 0
 
+    } else {
+        Gdip_DisposeImage(pBMScreen)
+        return 0
+    }
 }
 
 CloseChat(){
@@ -277,10 +205,12 @@ equipRecall(){
     GetRobloxClientPos(hwnd)
     openBag()
     Sleep(1000)
+    clearSearch()
+    Sleep(1000)
     cordx := 0
     cordy := 0
     pBMScreen := Gdip_BitmapFromScreen(windowX "|" windowY "|" windowWidth "|" windowHeight )
-    if (Gdip_ImageSearch(pBMScreen, bitmaps["Search"] , &OutputList, , , , , 25) = 1) {
+    if (Gdip_ImageSearch(pBMScreen, bitmaps["Search"] , &OutputList, , , , , 50) = 1) {
         Cords := StrSplit(OutputList, ",")
         x := Cords[1] + windowX
         y := Cords[2] + windowY
@@ -360,6 +290,44 @@ clearSearch(){
     Gdip_DisposeImage(pBMScreen)
 }
 
+SearchItem(searchitems, searchbitmap){
+    pBMScreen := Gdip_BitmapFromScreen(windowX "|" windowY + 30 "|" windowWidth "|" windowHeight - 30)
+    if (Gdip_ImageSearch(pBMScreen, bitmaps["Search"] , &OutputList, , , , , 25,,2) = 1) {
+        Cords := StrSplit(OutputList, ",")
+        x := Cords[1] + windowX
+        y := Cords[2] + windowY + 30
+        MouseMove(x,y)
+        Sleep(200)
+        Click
+        Sleep(200)
+        Send(searchitems)
+        Sleep(3000)
+        Gdip_DisposeImage(pBMScreen)
+        Sleep(100)
+        pBMScreen := Gdip_BitmapFromScreen(windowX "|" windowY + 30 "|" windowWidth "|" windowHeight - 30)
+        if (Gdip_ImageSearch(pBMScreen, bitmaps[searchbitmap], &OutputList, , , , , 25) = 1) {
+            Cords := StrSplit(OutputList, ",")
+            x := Cords[1] + windowX
+            y := Cords[2] + windowY + 30
+            MouseMove(x, y)
+            Sleep(250)
+            Click
+            Sleep(250)
+            closeBag()
+            Gdip_DisposeImage(pBMScreen)
+        } else {
+            PlayerStatus("Missing " searchitems " in inventory!", "0xff0000")
+            Gdip_DisposeImage(pBMScreen)
+            closeBag()
+        }
+    } else {
+        PlayerStatus("Could not detect Search in inventory", "0xFF0000")
+        Gdip_DisposeImage(pBMScreen)
+        closeBag()
+    }
+}
+
+
 CheckSetting(value, item){
     if (IniRead(settingsFile, item, value) == 1){
         return true
@@ -392,14 +360,13 @@ Clickbutton(button, clickit := 1){
         capW := windowWidth * 0.1
         capH := windowHeight * 0.1667
     } else if (button == "Robux"){
-        capX := windowX + 5
-        capY := windowY
-        capW := windowWidth
-        capH := windowHeight 
+        capX := windowX + (windowWidth // 4)
+        capY := windowY + windowHeight // 2
+        capW := windowWidth // 2
+        capH := windowHeight // 4
     }
 
     pBMScreen := Gdip_BitmapFromScreen(capX "|" capY "|" capW "|" capH)
-
     if (Gdip_ImageSearch(pBMScreen, bitmaps[button], &OutputList, , , , , 25,,7) = 1) {
         if (clickit == 1){
             Cords := StrSplit(OutputList, ",")
@@ -412,34 +379,48 @@ Clickbutton(button, clickit := 1){
         Gdip_DisposeImage(pBMScreen)
         return 1
     }
+    if ("Seeds" || "Sell") {    
+        if (Gdip_ImageSearch(pBMScreen, bitmaps[button], &OutputList, , , , , 100,,7) = 1) {
+            if (clickit == 1){
+                Cords := StrSplit(OutputList, ",")
+                x := Cords[1] + capX - 2
+                y := Cords[2] + capY 
+                MouseMove(x, y)
+                Sleep(50)
+                Click
+            }
+            Gdip_DisposeImage(pBMScreen)
+            return 1
+        }
+    }
     Gdip_DisposeImage(pBMScreen)
     return 0
 }
 
-ChangeCameraFollow(){
+ChangeCamera(type){
     Send("{" EscKey "}")
-    Sleep(250)
+    HyperSleep(333)
     Send("{Tab}")
-    Sleep(250)
+    HyperSleep(333)
     Send("{Down}")
-    Sleep(250)
+    HyperSleep(333)
     Send("{Right}")
-    Sleep(250)
+    HyperSleep(333)
     Send("{Right}")
-    Sleep 250
-    checkFollow()
+    HyperSleep(333)
+    checkCamera(type)
     Send("{" EscKey "}")
-    Sleep(1000)
+    HyperSleep(1000)
 }
 
 
-checkFollow(){  
+checkCamera(type){  
     ActivateRoblox()
     hwnd := GetRobloxHWND()
     GetRobloxClientPos(hwnd)
-    loop 10 {
+    loop 8 {
         pBMScreen := Gdip_BitmapFromScreen(windowX "|" windowY "|" windowWidth "|" windowHeight)
-        if (Gdip_ImageSearch(pBMScreen, bitmaps["Follow"] , &OutputList, , , , , 25) = 1) {
+        if (Gdip_ImageSearch(pBMScreen, bitmaps[type] , &OutputList, , , , , 25) = 1) {
             Gdip_DisposeImage(pBMScreen)
             return 1
         } else {
@@ -452,20 +433,7 @@ checkFollow(){
 }
 
 
-ChangeCamera(){
-    Send("{" EscKey "}")
-    Sleep(250)
-    Send("{Tab}")
-    Sleep(250)
-    Send("{Down}")
-    Sleep(250)
-    Send("{Right}")
-    Sleep(250)
-    Send("{Right}")
-    Sleep 250
-    Send("{" EscKey "}")
-    Sleep(1000)
-}
+
 
 ZoomAlign(){
     relativeMouseMove(0.5,0.5)
@@ -485,33 +453,59 @@ ZoomAlign(){
     Sleep(250)
 }
 
-CameraCorrection(){
-    CloseClutter()
-    Sleep(300)
-    ChangeCameraFollow()
 
-    ZoomAlign()
-
-    Click("Right", "Down")
-    Sleep(200)
-    relativeMouseMove(0.5, 0.5)
-    Sleep(200)
-    MouseMove(0, 800, 10, "R")
-    Sleep(200)
-    Click("Right", "Up")
-    Sleep(250)
-
-    loop 10 {
-        Clickbutton("Sell") 
-        Clickbutton("Seeds") 
+CheckAligned(){
+    ActivateRoblox()
+    hwnd := GetRobloxHWND()
+    GetRobloxClientPos(hwnd)
+    pBMScreen := Gdip_BitmapFromScreen(windowX + windowWidth * 0.8 "|" windowY "|" windowWidth * 0.2 "|" windowHeight)
+    if (Gdip_ImageSearch(pBMScreen, bitmaps["Seeds"] , , , , , , 75) = 1) {
+        Gdip_DisposeImage(pBMScreen)
+        return true
+    } else {
+        Gdip_DisposeImage(pBMScreen)
+        return false
     }
-    Sleep(500)
-    Clickbutton("Seeds")
-    Sleep(250)
-    ChangeCamera()
-    Sleep(1000)
-    Clickbutton("Garden") 
-    Sleep(500)
+}
+
+
+CameraCorrection(){
+    loop 3 {
+        Clickbutton("Garden")
+        CloseClutter()
+        Sleep(300)
+        ChangeCamera("Follow")
+    
+        ZoomAlign()
+    
+        Click("Right", "Down")
+        Sleep(200)
+        relativeMouseMove(0.5, 0.5)
+        Sleep(200)
+        MouseMove(0, 800, 10, "R")
+        Sleep(200)
+        Click("Right", "Up")
+        Sleep(250)
+    
+        loop 10 {
+            Clickbutton("Sell") 
+            Clickbutton("Seeds") 
+        }
+        Sleep(500)
+        Clickbutton("Seeds")
+        Sleep(250)
+    
+        ChangeCamera("Classic")
+        Sleep(1000)
+        relativeMouseMove(0.5,0.5)
+        Sleep(500)
+        if (CheckAligned()){
+            PlayerStatus("Aligned Succesfully!","0x2260e6",,false,,false)
+            return true
+        } else {
+            PlayerStatus("Failed alignment.","0xcfe622",,false)
+        }
+    }
 }
 
 SpamClick(amount){
@@ -520,6 +514,104 @@ SpamClick(amount){
         Sleep 20
     }
 }
+
+
+
+
+
+GearCraftingTime := 100000 ; Default crafting time, will be overwritten by the first item in the recipe
+EventCraftingtime := 100000 ; Default crafting time, will be overwritten by the first item in the recipe
+SeedCraftingtime := 100000 ; Default crafting time, will be overwritten by the first item in the recipe
+
+
+Crafting(Recipeitems, settingName, Names){
+    ActivateRoblox()
+    hwnd := GetRobloxHWND()
+    GetRobloxClientPos(hwnd)
+
+    
+    for item in Recipeitems {
+        if (IniRead(settingsFile, settingName, StrReplace(item.name, " ", "")) == "1"){
+            ; Claim Crafting item
+            Send("{c}")
+            Sleep(300)
+            Send("{" Ekey "}")
+            Sleep(2500)
+            if (Clickbutton("Robux") == 1){
+                PlayerStatus("Crafting not finished. Closing Robux prompt.","0xe67e22",,false)
+                return item.CraftTime
+            }
+            CloseClutter()
+            PlayerStatus("Claimed " item.Name "!", "0x22e6a8",,false)
+            Send("{" Ekey "}")
+            if !DetectShop("crafting"){
+                return item.CraftTime
+            }
+            ; Choose to craft item
+            buyShop(Names, settingName, 1)
+            ; Search for the name 
+            openBag()
+            clearSearch()
+            Sleep(1500)
+            cordx := 0
+            cordy := 0
+            pBMScreen := Gdip_BitmapFromScreen(windowX "|" windowY + 30 "|" windowWidth "|" windowHeight - 30)
+            if (Gdip_ImageSearch(pBMScreen, bitmaps["Search"] , &OutputList, , , , , 25,,2) = 1) {
+                Cords := StrSplit(OutputList, ",")
+                x := Cords[1] + windowX
+                y := Cords[2] + windowY + 30
+                cordx := x
+                cordy := y
+                Gdip_DisposeImage(pBMScreen)
+            } else {
+                PlayerStatus("Could not detect Search in inventory", "0xFF0000")
+                Gdip_DisposeImage(pBMScreen)
+                closeBag()
+                return item.CraftTime
+            }
+            ; Clicked on the search bar, now type the name
+
+            for Material in item.Materials {
+                MouseMove(cordx, cordy)
+                Sleep(300)
+                Click
+                Sleep(1000)
+                Send(StrReplace(Material, "item", ""))
+                Sleep(1500)
+                pBMScreen := Gdip_BitmapFromScreen(windowX "|" windowY + 30 "|" windowWidth "|" windowHeight - 30)
+                if (Gdip_ImageSearch(pBMScreen, bitmaps[Material], &OutputList, , , , , 25,,2) = 1) {
+                    Cords := StrSplit(OutputList, ",")
+                    x := Cords[1] + windowX
+                    y := Cords[2] + windowY + 30
+                    MouseMove(x, y)
+                    Sleep(250)
+                    Click
+                    Sleep(1000)
+                    Send("{" Ekey "}")
+                    Sleep(250)
+                    Send("1")
+                    Sleep(100)
+                    Send("1")
+                    Sleep(500)
+                    Gdip_DisposeImage(pBMScreen)
+                } else {
+                    PlayerStatus("Missing " Material " for " item.Name "!", "0xff0000",,false,,pBMScreen)
+                    Gdip_DisposeImage(pBMScreen)
+                }
+                clearSearch()
+            }
+            closeBag()
+            Send("{" Ekey "}")
+            Send("{" Ekey "}")
+            Sleep(1000)
+            CloseClutter()
+            PlayerStatus("Crafting " item.Name "!", "0x22e6a8",,false)
+            return item.CraftTime
+        }
+    }
+    return 99999999
+}
+
 
 CheckStock(index, list, crafter := 0){
     ActivateRoblox()
@@ -598,7 +690,7 @@ ScrollDown(amount := 1) {
 }
 
 ; 1 = 1st option, 2 = 2nd option, etc for example the gear shop to open the shop
-clickOption(option){
+clickOption(option, optionamount){
     Sleep(500)
     ZoomAlign()
     Sleep(2000)
@@ -608,15 +700,56 @@ clickOption(option){
     }
     Sleep(500)
 
-    if (option == "1"){
-        MouseMove windowWidth * (1600 / 1920), windowHeight * (390 / 1080)
-    } else if (option == "2"){
-        MouseMove windowWidth * (1600 / 1920), windowHeight * (570 / 1080)
-    } else if (option == "3"){
-        MouseMove windowWidth * (1600 / 1920), windowHeight * (770 / 1080)
-    } else if (option == "4"){
-        MouseMove windowWidth * (1600 / 1920), windowHeight * (930 / 1080)
+    switch optionamount {
+        case 3: 
+            if (option == 1){
+                MouseMove windowWidth * (1500 / 1920), windowHeight * (390 / 1080)
+            } else if (option == 2){
+                MouseMove windowWidth * (1500 / 1920), windowHeight * (570 / 1080)
+            } else if (option == 3){
+                MouseMove windowWidth * (1500 / 1920), windowHeight * (770 / 1080)
+            }      
+        case 4:
+            if (option == 1){
+                MouseMove windowWidth * (1500 / 1920), windowHeight * (390 / 1080)
+            } else if (option == 2){
+                MouseMove windowWidth * (1500 / 1920), windowHeight * (550 / 1080)
+            } else if (option == 3){
+                MouseMove windowWidth * (1500 / 1920), windowHeight * (750 / 1080)
+            } else if (option == 4){
+                MouseMove windowWidth * (1500 / 1920), windowHeight * (874 / 1080)
+            }
+
+        case 5:
+            if (option == 1){
+                MouseMove windowWidth * (1500 / 1920), windowHeight * (300 / 1080)
+            } else if (option == 2){
+                MouseMove windowWidth * (1500 / 1920), windowHeight * (450 / 1080)
+            } else if (option == 3){
+                MouseMove windowWidth * (1500 / 1920), windowHeight * (580 / 1080)
+            } else if (option == 4){
+                MouseMove windowWidth * (1500 / 1920), windowHeight * (770 / 1080)
+            } else if (option == 5){
+                MouseMove windowWidth * (1500 / 1920), windowHeight * (990 / 1080)
+            }  
+
+        case 6:
+            if (option == 1){
+                MouseMove windowWidth * (1500 / 1920), windowHeight * (200 / 1080)
+            } else if (option == 2){
+                MouseMove windowWidth * (1500 / 1920), windowHeight * (340 / 1080)
+            } else if (option == 3){
+                MouseMove windowWidth * (1500 / 1920), windowHeight * (490 / 1080)
+            } else if (option == 4){
+                MouseMove windowWidth * (1500 / 1920), windowHeight * (670 / 1080)
+            } else if (option == 5){
+                MouseMove windowWidth * (1500 / 1920), windowHeight * (850 / 1080)
+            } else if (option == 6){
+                MouseMove windowWidth * (1500 / 1920), windowHeight * (1030 / 1080)
+
+            }  
     }
+    Sleep(500)
     Click
     Loop 4 {
         Send("{WheelDown}")
@@ -630,7 +763,7 @@ DetectShop(shop){
     loop 15 {
         Sleep(500)
         if (Clickbutton("Xbutton",0) == 1 || Clickbutton("Xbutton2",0) == 1){
-            Sleep(333)
+            Sleep(1000)
             PlayerStatus("Detected " shop " shop opened", "0x22e6a8",,false,,false)
             return 1
         }
@@ -657,37 +790,36 @@ CloseShop(){
 
 CloseClutter(){
     Clickbutton("Xbutton")
+    Sleep(100)
     Clickbutton("Xbutton2")
     Clickbutton("Robux")
     Sleep(300)
 }
 
+getItems(item){
+    fileContent := FileRead("scripts/items.json")
+    jsonData := JSON.parse(fileContent)
+    return jsonData[item]
+}
+
 BuySeeds(){
-    seedItems := [
-            "Carrot Seed", "Strawberry Seed", "Blueberry Seed", "Orange Tulip", "Tomato Seed", "Corn Seed"
-             , "Daffodll Seed", "Watermelon Seed", "Pumpkin Seed"
-             , "Apple Seed", "Bamboo Seed", "Coconut Seed", "Cactus Seed"
-             , "Dragon Fruit Seed", "Mango Seed", "Grape Seed", "Mushroom Seed"
-             , "Pepper Seed", "Cacao Seed", "Beanstalk Seed", "Ember Lily", "Sugar Apple", "Burning Bud", "Giant Pinecone Seed"
+    seedItems := getItems("Seeds")
 
-    ]
-
-
-    PlayerStatus("Going to buy Seeds!", "0x22e6a8",,false,,false)
-    Clickbutton("Seeds")
-    Sleep(1500)
-    CloseClutter()
-    Sleep(300)
-    Send("{" Ekey "}")
-    if !DetectShop("Seeds"){
-        CloseRoblox()
-        if (Disconnect()){
+    loop 3 {
+        PlayerStatus("Going to buy Seeds!", "0x22e6a8",,false,,false)
+        relativeMouseMove(0.5, 0.5)
+        Sleep(500)
+        Clickbutton("Seeds")
+        Sleep(1000)
+        Send("{" Ekey "}")
+        if !DetectShop("Seeds"){
             CameraCorrection()
+            continue
         }
-        return 0
+        buyShop(seedItems, "Seeds")
+        CloseClutter()
+        return 1
     }
-    buyShop(seedItems, "Seeds")
-
 }
 
 
@@ -696,171 +828,50 @@ BuySeeds(){
 
 
 BuyGears(){
-    gearItems := [
-        "Watering Can", "Trowel", "Recall Wrench", 
-        "Basic Sprinkler", "Advanced Sprinkler", "Medium Toy", "Medium Treat",
-        "Godly Sprinkler", "Magnifying Glass",
-        "Tanning Mirror", "Master Sprinkler", "Cleaning Spray",
-        "Favorite Tool", "Harvest Tool", "Friendship Pot", "Levelup Lollipop"
-    ]
+    gearItems := getItems("Gears")
 
-
-    PlayerStatus("Going to buy Gears!", "0x22e6a8",,false,,false)
-    CloseClutter()
-    Send("1")
-    Sleep(300)
-    relativeMouseMove(0.5, 0.5)
-    Click
-    Sleep(1500)
-    Send("{" Ekey "}")
-    clickOption('1')
-    if !DetectShop("gear"){
-        CloseRoblox()
-        if (Disconnect()){
+    loop 3 {
+        PlayerStatus("Going to buy Gears!", "0x22e6a8",,false,,false)
+        Send("1")
+        Sleep(300)
+        relativeMouseMove(0.5, 0.5)
+        Click
+        Sleep(1500)
+        Send("{" Ekey "}")
+        clickOption(1,3)
+        if !DetectShop("gear"){
             CameraCorrection()
+            continue
         }
-        return 0
+        buyShop(gearItems, "Gears")
+        CloseClutter()
+        return 1
     }
-    buyShop(gearItems, "Gears")
 }
 
 
 BuyEggs(){
-    PlayerStatus("Going to buy Eggs!", "0x22e6a8",,false,,false)
-    ActivateRoblox()
-    Send("1")
-    MouseMove windowX + windowWidth//2, windowY + windowHeight//2
-    Click
-    Sleep(1000)
-    Send("{s Down}")
-    HyperSleep(600)
-    Send("{s Up}")
-    Sleep(1000)
-    Send("{" Ekey "}")
-    Sleep(500)
-    ZoomAlign()
-    Sleep(2000)
-    Loop 4 {
-        Send("{WheelUp}")
-        Sleep 50
-    }
-    Sleep(500)
-
-    MouseMove windowWidth * (1600 / 1920), windowHeight * (150 / 1080)
-    Click
-    Loop 4 {
-        Send("{WheelDown}")
-        Sleep 50
-    }
-    Sleep(2500)
-
-    if !DetectShop("egg"){
-        CloseRoblox()
-        if (Disconnect()){
-            CameraCorrection()
-        }
-        return 0
-    }
-    eggitems := [
-        "Common Egg", "Common Summer Egg", "Rare Summer Egg", 
-        "Mythical Egg", "Paradise Egg", "Bug Egg"
-    ]
-    buyShop(eggitems, "Eggs")
-
-}
-
-
-
-
-
-BuyEvent(){
-    if (IniRead(settingsFile, "Settings", "DinoEvent") == "0"){
-        return
-    }
-    
-    static currentnumber := 1
-    PlayerStatus("Going to sacrifice a pet!", "0x22e6a8",,false,,false)
-    CloseClutter()
-    Sleep(300)
-    Send("1")
-    Sleep(300)
-    relativeMouseMove(0.5, 0.5)
-    Sleep(200)
-    Click
-    Sleep(1500)
-    Send("{" Skey " down}")
-    HyperSleep(150)
-    Send("{" Skey " up}")
-    Send("{" Dkey " down}")
-    HyperSleep(8600)
-    Send("{" Dkey " up}")
-    Sleep(500)
-    Send("{" Ekey "}")
-    Sleep(1000)
-    PlayerStatus("Collected ancient pet!!", "0x22e6a8",,false)
-    
-    Send("{" Wkey " down}")
-    HyperSleep(350)
-    Send("{" Wkey " up}")
-    Sleep(300)
-    Send("{" Dkey " down}")
-    HyperSleep(100)
-    Send("{" Dkey " up}")
-
-    currentnumber += 1
-    if (currentnumber + 0 >= 10) {
-        PlayerStatus("Selling only common pets!", "0x22e6a8",,false,,false)
-        openBag()
-        clearSearch()
+    eggitems := getItems("Eggs")
+    loop 3 {
+        PlayerStatus("Going to buy Eggs!", "0x22e6a8",,false,,false)
+        ActivateRoblox()
+        Send("1")
+        MouseMove windowX + windowWidth//2, windowY + windowHeight//2
+        Click
+        Sleep(1000)
+        Send("{s Down}")
+        HyperSleep(600)
+        Send("{s Up}")
         Sleep(1500)
-        pBMScreen := Gdip_BitmapFromScreen(windowX "|" windowY + 30 "|" windowWidth "|" windowHeight - 30)
-        if (Gdip_ImageSearch(pBMScreen, bitmaps["Search"] , &OutputList, , , , , 25,,2) = 1) {
-            Cords := StrSplit(OutputList, ",")
-            x := Cords[1] + windowX
-            y := Cords[2] + windowY + 30
-            MouseMove(x,y)
-            Sleep(200)
-            Click
-            Sleep(200)
-            searchlist := "dog bunny lab" ; Add additional names to this string if u want it to also sell those pets!
-            Send(searchlist)
-            Sleep(3000)
-            Gdip_DisposeImage(pBMScreen)
-            Sleep(100)
-            pBMScreen := Gdip_BitmapFromScreen(windowX "|" windowY + 30 "|" windowWidth "|" windowHeight - 30)
-            if (Gdip_ImageSearch(pBMScreen, bitmaps["Pets"], &OutputList, , , , , 25) = 1) {
-                Cords := StrSplit(OutputList, ",")
-                x := Cords[1] + windowX
-                y := Cords[2] + windowY + 30
-                MouseMove(x, y)
-                Sleep(250)
-                Click
-                Sleep(250)
-                closeBag()
-                Gdip_DisposeImage(pBMScreen)
-            } else {
-                PlayerStatus("Missing common pets!", "0xff0000")
-                Gdip_DisposeImage(pBMScreen)
-                closeBag()
-            }
-        } else {
-            PlayerStatus("Could not detect Search in inventory", "0xFF0000")
-            Gdip_DisposeImage(pBMScreen)
-            closeBag()
+        Send("{" Ekey "}")
+        clickOption(1,6)
+        if !DetectShop("egg"){
+            CameraCorrection()
+            continue
         }
-        Sleep(500)
-        Send("{" Ekey "}")
-        Sleep(1000)
-        clickOption("3")
-        PlayerStatus("Sacrificed a pet from Common Eggs" , "0x22e6a8",,false)
-    } else {
-        Sleep(2500)
-        Send(currentnumber)
-        Sleep(500)
-        Send("{" Ekey "}")
-        Sleep(1000)
-        clickOption("3")
-        PlayerStatus("Sacrificed a pet in " currentnumber " hotbar slot" , "0x22e6a8",,false)
+        buyShop(eggitems, "Eggs")
+        CloseClutter()
+        return 1
     }
 }
 
@@ -870,7 +881,6 @@ GearCraft(){
         return
     }
     PlayerStatus("Going to craft Gears!", "0x22e6a8",,false,,false)
-    CloseClutter()
     Sleep(300)
     Send("1")
     Sleep(300)
@@ -900,26 +910,10 @@ GearCraft(){
         
         
     ]
-    GearNames := [
-        "Lighting Rod",
-        "Reclaimer",
-        "Tropical Mist Sprinkler",
-        "Berry Blusher Sprinkler",
-        "Spice Spirtzer Sprinkler",
-        "Sweet Soaker Sprinkler",
-        "Flower Froster Sprinkler",
-        "Stalk Sprout Sprinkler",
-        "Mutation Spray Choc",
-        "Mutation Spray Chilled",
-        "Mutation Spray Shocked",
-        "Anti Bee Egg",
-        "Small Toy",
-        "Small Treat",
-        "Pack Bee",
-    ]
+    GearNames := getItems("GearCrafting")
 
-
-    global GearCraftingTime := Crafting(GearRecipe, "GearCrafting", GearNames) + 200
+    global GearCraftingTime
+    GearCraftingTime := Crafting(GearRecipe, "GearCrafting", GearNames) + 200
     Sleep(1000)
 
 }
@@ -930,7 +924,6 @@ SeedCraft(){
         return
     }
     PlayerStatus("Going to craft Seeds!", "0x22e6a8",,false,,false)
-    CloseClutter()
     Sleep(300)
     Send("1")
     Sleep(300)
@@ -949,124 +942,14 @@ SeedCraft(){
         
         
     ]
-    SeedNames := [
-        "Horsetail",
-        "Lingonberry",
-        "Amber Spine",
-        "Grand Volcania",
-    ]
+    SeedNames := getItems("SeedCrafting")
 
 
-    global SeedCraftingTime := Crafting(SeedRecipe, "SeedCrafting", SeedNames) + 200
+    global SeedCraftingtime
+    SeedCraftingTime := Crafting(SeedRecipe, "SeedCrafting", SeedNames) + 200
     Sleep(1000)
 
 }
-
-
-
-
-
-
-
-
-GearCraftingTime := 100000 ; Default crafting time, will be overwritten by the first item in the recipe
-EventCraftingtime := 100000 ; Default crafting time, will be overwritten by the first item in the recipe
-SeedCraftingtime := 100000 ; Default crafting time, will be overwritten by the first item in the recipe
-
-
-Crafting(Recipeitems, settingName, Names){
-    ActivateRoblox()
-    hwnd := GetRobloxHWND()
-    GetRobloxClientPos(hwnd)
-
-    
-    for item in Recipeitems {
-        if (IniRead(settingsFile, settingName, StrReplace(item.name, " ", "")) == "1"){
-            ; Claim Crafting item
-            Send("{c}")
-            Sleep(300)
-            Send("{" Ekey "}")
-            Sleep(2500)
-            if (Clickbutton("Robux") == 1){
-                PlayerStatus("Crafting not finished. Closing Robux prompt.","0xe67e22",,false)
-                return item.CraftTime
-            }
-            CloseClutter()
-            PlayerStatus("Claimed " item.Name "!", "0x22e6a8",,false)
-            Send("{" Ekey "}")
-            if !DetectShop("crafting"){
-                CloseRoblox()
-                if (Disconnect()){
-                    CameraCorrection()
-                }
-                return item.CraftTime
-            }
-            ; Choose to craft item
-            buyShop(Names, settingName, 1)
-            ; Search for the name 
-            openBag()
-            clearSearch()
-            Sleep(1500)
-            cordx := 0
-            cordy := 0
-            pBMScreen := Gdip_BitmapFromScreen(windowX "|" windowY + 30 "|" windowWidth "|" windowHeight - 30)
-            if (Gdip_ImageSearch(pBMScreen, bitmaps["Search"] , &OutputList, , , , , 25,,2) = 1) {
-                Cords := StrSplit(OutputList, ",")
-                x := Cords[1] + windowX
-                y := Cords[2] + windowY + 30
-                cordx := x
-                cordy := y
-                Gdip_DisposeImage(pBMScreen)
-            } else {
-                PlayerStatus("Could not detect Search in inventory", "0xFF0000")
-                Gdip_DisposeImage(pBMScreen)
-                closeBag()
-                return item.CraftTime
-            }
-            ; Clicked on the search bar, now type the name
-
-            for Material in item.Materials {
-                MouseMove(cordx, cordy)
-                Sleep(300)
-                Click
-                Sleep(1000)
-                Send(StrReplace(Material, "item", ""))
-                Sleep(1500)
-                pBMScreen := Gdip_BitmapFromScreen(windowX "|" windowY + 30 "|" windowWidth "|" windowHeight - 30)
-                if (Gdip_ImageSearch(pBMScreen, bitmaps[Material], &OutputList, , , , , 25,,2) = 1) {
-                    Cords := StrSplit(OutputList, ",")
-                    x := Cords[1] + windowX
-                    y := Cords[2] + windowY + 30
-                    MouseMove(x, y)
-                    Sleep(250)
-                    Click
-                    Sleep(1000)
-                    Send("{" Ekey "}")
-                    Sleep(250)
-                    Send("1")
-                    Sleep(100)
-                    Send("1")
-                    Sleep(500)
-                    Gdip_DisposeImage(pBMScreen)
-                } else {
-                    PlayerStatus("Missing " Material " for " item.Name "!", "0xff0000",,false,,pBMScreen)
-                    Gdip_DisposeImage(pBMScreen)
-                }
-                clearSearch()
-            }
-            closeBag()
-            Send("{" Ekey "}")
-            Send("{" Ekey "}")
-            Sleep(1000)
-            CloseClutter()
-            PlayerStatus("Crafting " item.Name "!", "0x22e6a8",,false)
-            Clickbutton("Garden")
-            return item.CraftTime
-        }
-    }
-    return 99999999
-}
-
 
 
 
@@ -1082,8 +965,6 @@ BuyMerchant(){
     PlayerStatus("Going to buy Traveling Merchant!", "0x22e6a8",,false,,false)
     Clickbutton("Seeds")
     Sleep(1500)
-    CloseClutter()
-    Sleep(300)
     Send("{" Akey " down}")
     HyperSleep(250)
     Send("{" Akey " up}")
@@ -1100,14 +981,17 @@ BuyMerchant(){
     Send("{" Ekey "}")
     if DetectShop("traveling merchant"){
         buyShop(seedItems, "Seeds")
+        CloseClutter()
         return 1
     }
     ZoomAlign()
-    clickOption("1")
-    if DetectShop("Onett's bee"){
+    clickOption(1,5)
+    if DetectShop("Onett's merchant"){
         buyShop(seedItems, "Seeds")
+        CloseClutter()
         return 1
     }
+    return 0
 }
 
 
@@ -1124,15 +1008,8 @@ BuyMerchant(){
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 Disconnect(){
-    loop {
-        if !(CheckDisconnnect()){
-            return 0
-        } else {
-            return 1
-        }
-        if (A_Index == 3) {
-            IniWrite("", settingsFile, "Settings", "url")
-            PlayerStatus("Changing to public server....", "0x5745ff")
+    loop 3 {
+        if (CheckDisconnnect()){
             return 1
         }
     }
@@ -1149,6 +1026,7 @@ MainLoop() {
     }
 
     CloseChat() 
+    equipRecall()
     CameraCorrection()
     BuySeeds()
     BuyGears()
@@ -1156,7 +1034,6 @@ MainLoop() {
     BuyEvent()
     GearCraft()
     SeedCraft()
-    EventCraft()
     BuyMerchant()
     loop {
         RewardInterupt()
@@ -1186,55 +1063,40 @@ F3::
     ; pBMScreen := Gdip_BitmapFromScreen(windowX "|" windowY  "|" windowWidth "|" windowHeight)
     ; Gdip_SaveBitmapToFile(pBMScreen,"ss.png")
     ; Gdip_DisposeImage(pBMScreen)
-    ; BuySeeds()
-    ; BuyGears()
-    ; BuyEggs()
-    ; BuyEvent()
-    ; BuyMerchant()
-    ; EventCraft()
-    ; SeedCraft()
-
+    PauseMacro()
 }
 
 
 
 
-EventCraft(){
-    if (IniRead(settingsFile, "EventCrafting", "EventCrafting") + 0 == 0){
-        return
-    }
-    PlayerStatus("Going to craft Dino Event items!", "0x22e6a8",,false,,false)
-    CloseClutter()
-    Clickbutton("Seeds")
+
+
+BuyEvent(){
+    PlayerStatus("Going to Zen Event Shop!", "0x22e6a8",,false,,false)
+    Sleep(300)
+    Send("1")
+    Sleep(300)
+    relativeMouseMove(0.5, 0.5)
+    Sleep(200)
+    Click
+    Sleep(1500)
+    Send("{" Dkey " down}")
+    HyperSleep(9500)
+    Send("{" Dkey " up}")
     Sleep(500)
-    Send("{" Skey " down}")
-    HyperSleep(450)
-    Send("{" Skey " up}")
-    Sleep(100)
-    Send("{" Akey " down}")
-    HyperSleep(9000)
-    Send("{" Akey " up}")
-    Sleep(1000)
-    EventRecipe := [
-        { Name: "Mutation Spray Amber", Materials: ["Cleaning Spray", "Dinosaur Egg item"], CraftTime: 3600 },
-        { Name: "Ancient Seed Pack", Materials: ["Dinosaur Egg item"], CraftTime: 3600 },
-        { Name: "Archaelogist Crate", Materials: ["Dinosaur Egg item"], CraftTime: 1800 },        
-        { Name: "Dino Crate", Materials: ["Dinosaur Egg item"], CraftTime: 1800 },        
-        { Name: "Dinosaur Egg", Materials: ["Common Egg item", "Bone Blossom"], CraftTime: 1800 },        
-        { Name: "Primal Egg", Materials: ["Dinosaur Egg item", "Bone Blossom"], CraftTime: 1800 },        
-        
-    ]
-    EventNames := [
-        "Mutation Spray Amber",
-        "Ancient Seed Pack",
-        "Dino Crate",
-        "Archaelogist Crate",
-        "Dinosaur Egg",
-        "Primal Egg",
-    ]
-
-
-    global EventCraftingtime := Crafting(EventRecipe, "EventCrafting", EventNames) + 200
-    Sleep(1000)
-
+    Send("{" Wkey " down}")
+    HyperSleep(300)
+    Send("{" Wkey " up}")
+    Sleep(1500)
+    Send("{" Ekey "}")
+    clickOption(1,5)
+    if !DetectShop("Zen"){
+        return 0 
+    }
+    buyShop(getItems("Events"), "Events")
+    CloseClutter()
+    return 1
 }
+
+
+

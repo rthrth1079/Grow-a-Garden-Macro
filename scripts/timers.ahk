@@ -2,33 +2,25 @@ nowUnix() {
     return DateDiff(A_NowUTC, "19700101000000", "Seconds")
 }
 
-Lastevent := nowUnix()
 LastGearCraftingTime := nowUnix()
 LastSeedCraftingTime := nowUnix()
-LastEventCraftingTime := nowUnix()
 
 
 
-if (IniRead(settingsFile, "Settings", "dnaMaxed") + 0 == 1){
-    eventTimer := 1440 + 200 ; 30 minutes in seconds
-} else {
-    eventTimer := 3600 + 200 ; 1 hour in seconds
-}
 
 FourHours(){
     UtcNow := A_NowUTC
     UtcHour := FormatTime(UtcNow, "H")
-    UtcMinute := FormatTime(UtcNow, "m")
-    if (Mod(UtcHour, 4) == 0 && UtcMinute == 0) {
-        return 1
+    if (Mod(UtcHour, 4) == 0 && A_min == 0) {
+        return true
     } 
-    return 0
+    return false
 
 }
 
 
 RewardChecker() {
-    global Lastevent, LastGearCraftingTime, eventTimer, EventCraftingtime, LastSeedCraftingTime
+    global LastGearCraftingTime, EventCraftingtime, LastSeedCraftingTime
 
 
     Rewardlist := []
@@ -44,14 +36,11 @@ RewardChecker() {
     if (Mod(A_Min,30) == 0) {
         Rewardlist.Push("Eggs")
     }
-    if (FourHours()  && IniRead(settingsFile, "Settings", "TravelingMerchant") + 0 == 1) {
-        Rewardlist.Push("TravelingMerchant")
+    if (A_Min == 0) {
+        Rewardlist.Push("Events")
     }
-    if (currentTime - Lastevent >= eventTimer && IniRead(settingsFile, "Settings", "DinoEvent") + 0 == 1) {
-        if !(A_Min == 4 || A_Min == 9) {
-            Rewardlist.Push("Event")
-        }
-
+    if (FourHours() && IniRead(settingsFile, "Settings", "TravelingMerchant") + 0 == 1) {
+        Rewardlist.Push("TravelingMerchant")
     }
     if (currentTime - LastGearCraftingTime >= GearCraftingTime && IniRead(settingsFile, "GearCrafting", "GearCrafting") + 0 == 1) {
         if !(A_Min == 4 || A_Min == 9) {
@@ -62,12 +51,6 @@ RewardChecker() {
     if (currentTime - LastSeedCraftingTime >= SeedCraftingTime && IniRead(settingsFile, "SeedCrafting", "SeedCrafting") + 0 == 1) {
         if !(A_Min == 4 || A_Min == 9) {
             Rewardlist.Push("SeedCrafting")
-        }
-        
-    }
-    if (currentTime - LastEventCraftingTime >= EventCraftingTime && IniRead(settingsFile, "EventCrafting", "EventCrafting") + 0 == 1) {
-        if !(A_Min == 4 || A_Min == 9) {
-            Rewardlist.Push("EventCrafting")
         }
         
     }
@@ -95,25 +78,20 @@ RewardInterupt() {
         if (v = "Eggs") {
             BuyEggs()
         }
-        if (v = "Event") {
+        if (v = "Events") {
             BuyEvent()
-            Sleep(2000)
-            global Lastevent := nowUnix()
         }
         if (v = "GearCrafting") {
             GearCraft()
             Sleep(2000)
-            global LastGearCraftingTime := nowUnix()
+            global LastGearCraftingTime
+            LastGearCraftingTime := nowUnix()
         }
         if (v = "SeedCrafting") {
             SeedCraft()
             Sleep(2000)
-            global LastSeedCraftingTime := nowUnix()
-        }
-        if (v = "EventCrafting") {
-            EventCraft()
-            Sleep(2000)
-            global LastEventCraftingTime := nowUnix()
+            global LastSeedCraftingTime
+            LastSeedCraftingTime := nowUnix()
         }
         if (v = "TravelingMerchant") {
             BuyMerchant()
@@ -122,6 +100,8 @@ RewardInterupt() {
     
     if (variable.Length > 0)
         if (Mod(A_Min,5) == 0){
+            Clickbutton("Garden")
+            relativeMouseMove(0.5, 0.5)
             thing := 60 - A_Sec 
             ToolTip("Seed Shop: " (r:=Mod(300 - Mod(A_Min*60 + A_Sec, 300), 300))//60 ":" Mod(r,60) 
             "`nGear Shop: " (r:=Mod(300 - Mod(A_Min*60 + A_Sec, 300), 300))//60 ":" Mod(r,60) 
