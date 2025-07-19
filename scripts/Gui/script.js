@@ -19,10 +19,10 @@ async function onSaveClick() {
   const gearItems = await getItems("Gears");
   const EggItems = await getItems("Eggs");
 
-  const GearCraftingItems = [];
+  const GearCraftingItems = ["GearCrafting"];
   GearCraftingItems.push(...await getItems("GearCrafting"));
 
-  const SeedCraftingItems = [];
+  const SeedCraftingItems = ["SeedCrafting"];
   SeedCraftingItems.push(...await getItems("SeedCrafting"));
 
   const EventItems = await getItems("Events");
