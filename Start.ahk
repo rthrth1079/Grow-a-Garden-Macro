@@ -763,7 +763,7 @@ DetectShop(shop){
     loop 15 {
         Sleep(500)
         if (Clickbutton("Xbutton",0) == 1 || Clickbutton("Xbutton2",0) == 1){
-            Sleep(1000)
+            Sleep(2500)
             PlayerStatus("Detected " shop " shop opened", "0x22e6a8",,false,,false)
             return 1
         }
