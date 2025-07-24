@@ -395,7 +395,6 @@ Clickbutton(button, clickit := 1){
     }
 
     pBMScreen := Gdip_BitmapFromScreen(capX "|" capY "|" capW "|" capH)
-    Gdip_SaveBitmapToFile(pBMScreen, 'ss.png')
     if (Gdip_ImageSearch(pBMScreen, bitmaps[button], &OutputList, , , , , 25,,7) = 1) {
         if (clickit == 1){
             Cords := StrSplit(OutputList, ",")
