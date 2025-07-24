@@ -150,6 +150,33 @@ CheckDisconnnect(){
             }
             Sleep(1000)
         }
+        if (A_Index == 60){
+            Sleep(500)
+            for hwnd in WinGetList(,, "Program Manager")
+            {
+                p := WinGetProcessName("ahk_id " hwnd)
+                if (InStr(p, "Roblox") || InStr(p, "AutoHotkey"))
+                    continue ; skip roblox and AHK windows
+                title := WinGetTitle("ahk_id " hwnd)
+                if (title = "")
+                    continue ; skip empty title windows
+                s := WinGetStyle("ahk_id " hwnd)
+                if ((s & 0x8000000) || !(s & 0x10000000))
+                    continue ; skip NoActivate and invisible windows
+                s := WinGetExStyle("ahk_id " hwnd)
+                if ((s & 0x80) || (s & 0x40000) || (s & 0x8))
+                    continue ; skip ToolWindow and AlwaysOnTop windows
+                try
+                {
+                    WinActivate "ahk_id " hwnd
+                    WinMaximize("ahk_id " hwnd)
+                    Sleep 500
+                    Send "^{w}"
+                }
+                break
+            }
+            Sleep(500)
+        }
         Gdip_DisposeImage(pBMScreen)
         return 0
 
@@ -354,19 +381,21 @@ Clickbutton(button, clickit := 1){
         capY := windowY + 30
         capW := windowWidth // 2
         capH := 100
-    } else if (button == "Xbutton" || button == "Xbutton2") {
+    ; } else if (button == "Xbutton" || button == "Xbutton2") {
+    } else if (button == "Xbutton") {
         capX := windowX + windowWidth * 0.6411
         capY := windowY + windowHeight * 0.2065
         capW := windowWidth * 0.1
         capH := windowHeight * 0.1667
     } else if (button == "Robux"){
-        capX := windowX + (windowWidth // 4)
+        capX := windowX windowWidth // 4
         capY := windowY + windowHeight // 2
-        capW := windowWidth // 2
-        capH := windowHeight // 4
+        capW := windowWidth //2
+        capH := windowHeight // 2
     }
 
     pBMScreen := Gdip_BitmapFromScreen(capX "|" capY "|" capW "|" capH)
+    Gdip_SaveBitmapToFile(pBMScreen, 'ss.png')
     if (Gdip_ImageSearch(pBMScreen, bitmaps[button], &OutputList, , , , , 25,,7) = 1) {
         if (clickit == 1){
             Cords := StrSplit(OutputList, ",")
@@ -471,6 +500,13 @@ CheckAligned(){
 
 CameraCorrection(){
     loop 3 {
+        if (Disconnect()){
+            equipRecall()
+            Sleep(500)
+        }
+        Send("{o down}")
+        Sleep 500
+        Send("{o up}")
         Clickbutton("Garden")
         CloseClutter()
         Sleep(300)
@@ -762,7 +798,8 @@ clickOption(option, optionamount){
 DetectShop(shop){
     loop 15 {
         Sleep(500)
-        if (Clickbutton("Xbutton",0) == 1 || Clickbutton("Xbutton2",0) == 1){
+        if (Clickbutton("Xbutton",0) == 1){
+        ; if (Clickbutton("Xbutton",0) == 1 || Clickbutton("Xbutton2",0) == 1){
             Sleep(2500)
             PlayerStatus("Detected " shop " shop opened", "0x22e6a8",,false,,false)
             return 1
@@ -776,7 +813,8 @@ DetectShop(shop){
 CloseShop(){
     loop 15 {
         Sleep(500)
-        if (Clickbutton("Xbutton") == 1 || Clickbutton("Xbutton2") == 1){
+        if (Clickbutton("Xbutton") == 1){
+        ; if (Clickbutton("Xbutton") == 1 || Clickbutton("Xbutton2") == 1){
             Sleep(1000)
             PlayerStatus("Closed shop!", "0x22e6a8",,false,,false)
             return 1
@@ -791,15 +829,35 @@ CloseShop(){
 CloseClutter(){
     Clickbutton("Xbutton")
     Sleep(100)
-    Clickbutton("Xbutton2")
+    ; Clickbutton("Xbutton2")
     Clickbutton("Robux")
     Sleep(300)
 }
 
 getItems(item){
-    fileContent := FileRead("scripts/items.json")
-    jsonData := JSON.parse(fileContent)
-    return jsonData[item]
+    static fileContent := ""
+
+    if !fileContent {
+        try {
+            request := ComObject("WinHttp.WinHttpRequest.5.1")
+            request.Open("GET", "https://raw.githubusercontent.com/epicisgood/GAG-Updater/refs/heads/main/items.json", true)
+            request.Send()
+            request.WaitForResponse()
+            fileContent := JSON.parse(request.ResponseText)
+            global MyWindow
+            MyWindow.ExecuteScriptAsync("document.querySelector('#random-message').textContent = '" fileContent["message"] "'")
+            
+        } catch as e {
+            MsgBox "Request failed " e.Message
+        }
+    }
+    names := []
+    for itemObj in fileContent[item] {
+        names.Push(itemObj["name"])
+    }
+    return names
+    ; jsonData := fileContent
+    ; return jsonData[item]
 }
 
 BuySeeds(){
@@ -893,7 +951,7 @@ GearCraft(){
     Sleep(1000)
     GearRecipe := [
         { Name: "Lighting Rod", Materials: ["Basic Sprinkler", "Advanced Sprinkler", "Godly Sprinkler"], CraftTime: 2700 },
-        { Name: "Reclaimer", Materials: ["Common Egg item", "Harvesting Tool"], CraftTime: 1500 },
+        { Name: "Reclaimer", Materials: ["Common Egg item", "Harvest Tool"], CraftTime: 1500 },
         { Name: "Tropical Mist Sprinkler", Materials: ["Coconut", "Dragon Fruit", "Mango", "Godly Sprinkler"], CraftTime: 3600 },
         { Name: "Berry Blusher Sprinkler", Materials: ["Grape", "Blueberry", "Strawberry", "Godly Sprinkler"], CraftTime: 3600 },
         { Name: "Spice Spirtzer Sprinkler", Materials: ["Pepper", "Ember Lily", "Cacao", "Master Sprinkler"], CraftTime: 3600 },
@@ -904,8 +962,8 @@ GearCraft(){
         { Name: "Mutation Spray Chilled", Materials: ["Cleaning Spray", "Godly Sprinkler"], CraftTime: 300 },
         { Name: "Mutation Spray Shocked", Materials: ["Cleaning Spray", "Lighting Rod"], CraftTime: 1800 },
         { Name: "Anti Bee Egg", Materials: ["Bee Egg item"], CraftTime: 7200 },
-        { Name: "Small Toy", Materials: ["Common Egg item", "Coconut Seed", "Coconut"], CraftTime: 600 },
-        { Name: "Small Treat", Materials: ["Common Egg item", "Dragon Fruit Seed", "Blueberry"], CraftTime: 600 },
+        { Name: "Small Toy", Materials: ["Common Egg item", "Seed Coconut", "Coconut"], CraftTime: 600 },
+        { Name: "Small Treat", Materials: ["Common Egg item", "Seed Dragon Fruit", "Blueberry"], CraftTime: 600 },
         { Name: "Pack Bee", Materials: ["Anti Bee Egg item", "Sunflower", "Purple Dahila"], CraftTime: 14400 },
         
         
@@ -979,19 +1037,34 @@ BuyMerchant(){
     Sleep(1000)
 
     Send("{" Ekey "}")
+    DetectOnett()
     if DetectShop("traveling merchant"){
         buyShop(seedItems, "Seeds")
         CloseClutter()
         return 1
     }
-    ZoomAlign()
-    clickOption(1,5)
-    if DetectShop("Onett's merchant"){
-        buyShop(seedItems, "Seeds")
-        CloseClutter()
-        return 1
-    }
     return 0
+}
+
+DetectOnett(){
+    ActivateRoblox()
+    hwnd := GetRobloxHWND()
+    GetRobloxClientPos(hwnd)
+    capX := windowX + windowWidth * 0.6411
+    capY := windowY + windowHeight * 0.2065
+    capW := windowWidth * 0.1
+    capH := windowHeight * 0.1667
+    
+    pBMScreen := Gdip_BitmapFromScreen(capX "|" capY "|" capW "|" capH)
+    if (Gdip_ImageSearch(pBMScreen, bitmaps["HoneyMerchant"], , , , , , 100) = 1) {
+        PlayerStatus("My goat Onett has arrived!!","0xe1ff00",,false)
+        clickOption(2,5)
+        Gdip_DisposeImage(pBMScreen)
+        return true
+    }
+    Gdip_DisposeImage(pBMScreen)
+    return false
+
 }
 
 
@@ -1038,18 +1111,19 @@ MainLoop() {
     loop {
         RewardInterupt()
         if (Disconnect()){
+            equipRecall()
+            Sleep(500)
             CameraCorrection()
         }
         ToolTip("Seed Shop: " (r:=Mod(300 - Mod(A_Min*60 + A_Sec, 300), 300))//60 ":" Mod(r,60) 
         "`nGear Shop: " (r:=Mod(300 - Mod(A_Min*60 + A_Sec, 300), 300))//60 ":" Mod(r,60) 
-        "`nEgg Shop: " (r:=Mod(1800 - Mod(A_Min*60 + A_Sec, 1800),1800))//60 ":" Mod(r,60)), 1000
+        "`nEgg Shop: " (r:=Mod(1800 - Mod(A_Min*60 + A_Sec, 1800),1800))//60 ":" Mod(r,60),100,100), 1000
         Sleep(1000)
     }
     
     
     
 }
-
 
 
 F3::
@@ -1060,11 +1134,12 @@ F3::
     ; ResizeRoblox()
     ; hwnd := GetRobloxHWND()
     ; GetRobloxClientPos(hwnd)
-    ; pBMScreen := Gdip_BitmapFromScreen(windowX "|" windowY  "|" windowWidth "|" windowHeight)
+    ; pBMScreen := Gdip_BitmapFromScreen(windowX "|" windowY + 30 "|" windowWidth "|" windowHeight - 30)
     ; Gdip_SaveBitmapToFile(pBMScreen,"ss.png")
     ; Gdip_DisposeImage(pBMScreen)
     PauseMacro()
 }
+
 
 
 
@@ -1097,6 +1172,9 @@ BuyEvent(){
     CloseClutter()
     return 1
 }
+
+
+
 
 
 

@@ -1,7 +1,7 @@
 
 #Requires AutoHotkey v2.0
 
-version := "v1.0.9"
+version := "v1.1.0"
 settingsFile := "settings.ini"
 
 
@@ -155,6 +155,7 @@ SendSettings(){
     
     EventItems := getItems("Events")
 
+
     if (!FileExist(settingsFile)) {
         IniWrite("", settingsFile, "Settings", "url")
         IniWrite("", settingsFile, "Settings", "discordID")
@@ -196,37 +197,48 @@ SendSettings(){
 
     for item in seedItems {
         key := StrReplace(item, " ", "")
-        SettingsJson.SeedItems[item] := IniRead(settingsFile, "Seeds", key, "0")
+        value := IniRead(settingsFile, "Seeds", key, "1")
+        IniWrite(value, settingsFile, "Seeds", key)
+        SettingsJson.SeedItems[item] := value
     }
 
     for item in gearItems {
         key := StrReplace(item, " ", "")
-        SettingsJson.GearItems[item] := IniRead(settingsFile, "Gears", key, "0")
+        value := IniRead(settingsFile, "Gears", key, "1")
+        IniWrite(value, settingsFile, "Gears", key)
+        SettingsJson.GearItems[item] := value
     }
 
     for item in EggItems {
         key := StrReplace(item, " ", "")
-        SettingsJson.EggItems[key] := IniRead(settingsFile, "Eggs", key, "0")
+        value := IniRead(settingsFile, "Eggs", key, "1")
+        IniWrite(value, settingsFile, "Eggs", key)
+        SettingsJson.EggItems[key] := value
     }
 
     for item in GearCraftingItems {
         key := StrReplace(item, " ", "")
-        SettingsJson.GearCraftingItems[key] := IniRead(settingsFile, "GearCrafting", key, "0")
+        value := IniRead(settingsFile, "GearCrafting", key, "0")
+        IniWrite(value, settingsFile, "GearCrafting", key)
+        SettingsJson.GearCraftingItems[key] := value
     }
+
     for item in SeedCraftingItems {
         key := StrReplace(item, " ", "")
-        SettingsJson.GearCraftingItems[key] := IniRead(settingsFile, "SeedCrafting", key, "0")
+        value := IniRead(settingsFile, "SeedCrafting", key, "0")
+        IniWrite(value, settingsFile, "SeedCrafting", key)
+        SettingsJson.GearCraftingItems[key] := value
     }
+
     for item in EventItems {
         key := StrReplace(item, " ", "")
-        SettingsJson.EventItems[key] := IniRead(settingsFile, "Events", key, "0")
+        value := IniRead(settingsFile, "Events", key, "0")
+        IniWrite(value, settingsFile, "Events", key)
+        SettingsJson.EventItems[key] := value
     }
 
+
 	MyWindow.PostWebMessageAsJson(JSON.stringify(SettingsJson))
-
-    MyWindow.ExecuteScriptAsync("document.querySelector('#random-message').textContent = '" "" "'")
-    MyWindow.ExecuteScriptAsync("document.querySelector('.donate-btn').src = '" "https://cdn-icons-png.flaticon.com/512/189/189715.png" "'")
-
 }
 
 
@@ -288,37 +300,9 @@ CheckUpdate(req)
 	}
 }
 
-
 AsyncHttpRequest("GET", "https://api.github.com/repos/epicisgood/Grow-a-Garden-Macro/releases/latest", CheckUpdate, Map("accept", "application/vnd.github+json"))
 
 
 
 
 
-
-
-
-
-
-
-
-
-
-; GetUpdateData() {
-;     request := ComObject("WinHttp.WinHttpRequest.5.1")
-;     request.Open("GET", "https://raw.githubusercontent.com/epicisgood/Vichop-Updater/refs/heads/main/update.json", true)
-;     request.Send()
-;     request.WaitForResponse()
-;     if (request.Status = 200) {
-;         Response := JSON.Parse(request.ResponseText, true, false)
-;         return Response
-;     } else {
-;         return false
-;     }
-; }
-
-; data := GetUpdateData()
-; if !data {
-;     MsgBox "Failed to fetch update data. Please check your internet connection or try again later.", "Error", 0x10
-;     ExitApp()
-; }

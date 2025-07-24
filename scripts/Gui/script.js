@@ -7,12 +7,27 @@ function switchTab(tabId) {
 
 
 
-async function getItems(item){
-  const response = await fetch('../items.json');
-  const settings = await response.json();
-  return settings[item]
+let cachedData = null;
 
+async function fetchAllItems() {
+  if (!cachedData) {
+    const response = await fetch('https://raw.githubusercontent.com/epicisgood/GAG-Updater/refs/heads/main/items.json');
+    cachedData = await response.json();
+  }
+  return cachedData;
 }
+
+async function getItems(category) {
+  const data = await fetchAllItems();
+  return data[category].map(item => item.name);
+}
+
+async function getItemJSON(category) {
+  const data = await fetchAllItems();
+  return data[category];
+}
+
+
 
 async function onSaveClick() {
   const seedItems = await getItems("Seeds");
@@ -51,14 +66,14 @@ async function onSaveClick() {
   };
 
   for (const [listName, items] of Object.entries(allLists)) {
-    items.forEach(item => {
-      const key = item.replace(/\s+/g, '');
+    items.forEach(name => {
+      const key = name.replace(/\s+/g, '');
       const element = document.getElementById(key);
       if (element) {
-        cfg[listName][item] = element.checked;
+        cfg[listName][name] = element.checked;
       }
     });
-  }
+}
 
   ahk.Save.Func(JSON.stringify(cfg));
   console.log(cfg);
@@ -68,42 +83,79 @@ async function onSaveClick() {
   
 function applySettings(a) {
     const s = a.data;
-    console.log(s);
+    console.log("Applying settings with these settings: ", s);
 
     document.getElementById('url').value       = s.url;
     document.getElementById('discordID').value = s.discordID;
     document.getElementById('VipLink').value   = s.VipLink;
     document.getElementById('TravelingMerchant').checked  = !!+s.TravelingMerchant
 
-    for (const seed in s.SeedItems) {
-        const formattedSeed = seed.replace(/\s+/g, '');
-        document.getElementById(formattedSeed).checked = !!+s.SeedItems[seed];
-    }
-    for (const gear in s.GearItems) {
-        const formattedGear = gear.replace(/\s+/g, '');
-        document.getElementById(formattedGear).checked = !!+s.GearItems[gear];
-    }
-    for (const egg in s.EggItems) {
-        const formattedEgg = egg.replace(/\s+/g, '');
-        document.getElementById(formattedEgg).checked = !!+s.EggItems[egg];
-    }
-    for (const GearCraft in s.GearCraftingItems) {
-        const formattedGearCraft = GearCraft.replace(/\s+/g, '');
-        document.getElementById(formattedGearCraft).checked = !!+s.GearCraftingItems[GearCraft];
-    }
-    for (const SeedCraft in s.SeedCraftingItems) {
-        const formattedSeedCraft = SeedCraft.replace(/\s+/g, '');
-        document.getElementById(formattedSeedCraft).checked = !!+s.SeedCraftingItems[SeedCraft];
-    }
-    for (const Event in s.EventItems) {
-        const formattedEvent = Event.replace(/\s+/g, '');
-        document.getElementById(formattedEvent).checked = !!+s.EventItems[Event];
+    const allItems = {
+      SeedItems: s.SeedItems,
+      GearItems: s.GearItems,
+      EggItems: s.EggItems,
+      GearCraftingItems: s.GearCraftingItems,
+      SeedCraftingItems: s.SeedCraftingItems,
+      EventItems: s.EventItems,
+    };
+
+    for (const [listName, items] of Object.entries(allItems)) {
+      for (const item in items) {
+        const formattedItem = item.replace(/\s+/g, '');
+        const element = document.getElementById(formattedItem);
+        if (element) {
+          element.checked = !!+items[item];
+        }
+      }
     }
 
 }
 
 
- document.addEventListener("DOMContentLoaded", () => {
+async function AddHtml() {
+  const categories = [
+    { id: "Seeds", imagePath: "Seeds" },
+    { id: "Gears", imagePath: "Gears" },
+    { id: "Eggs", imagePath: "Eggs" },
+    { id: "GearCrafting", imagePath: "CraftingGears" },
+    { id: "SeedCrafting", imagePath: "CraftingSeeds" },
+    { id: "Events", imagePath: "Events" }
+  ];
+
+  for (const category of categories) {
+    const items = await getItemJSON(category.id);
+
+    const rewardGrid = document.querySelector(`#${category.id}Grid`);
+    if (!rewardGrid) continue;
+
+    for (const item of items) {
+      const sanitizedName = item.name.replace(/\s+/g, '');
+      const imgPath = item.image || `../../images/${category.imagePath}/${item.name}.webp`;
+
+      const inputType = (category.id === "GearCrafting" || category.id === "SeedCrafting") ? "radio" : "checkbox";
+      const inputName = (inputType === "radio") ? `name="${category.id}"` : "";
+
+      const div = document.createElement("div");
+      div.className = "reward-box";
+      div.innerHTML = `
+        <div class="reward-header">
+          <img src="${imgPath}" style="width: 32.5px; height: 32.5px; margin-right: 3px; vertical-align: middle;" onerror="this.src='../../images/Other/Placeholder.webp'">
+          <span>${item.name}</span>
+        </div>
+        <div class="reward-options">
+          <label><input type="${inputType}" id="${sanitizedName}" ${inputName}>Claim</label>
+        </div>
+      `;
+
+      rewardGrid.appendChild(div);
+    }
+  }
+}
+
+
+
+document.addEventListener("DOMContentLoaded", async () => {
+    await AddHtml()
     ahk.ReadSettings.Func()
     window.chrome.webview.addEventListener('message', applySettings);
   })
