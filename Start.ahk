@@ -391,9 +391,9 @@ Clickbutton(button, clickit := 1){
         capH := windowHeight * 0.1667
     } else if (button == "Robux"){
         capX := windowX windowWidth // 4
-        capY := windowY + windowHeight // 2
+        capY := windowY 
         capW := windowWidth //2
-        capH := windowHeight // 2
+        capH := windowHeight
     }
 
     pBMScreen := Gdip_BitmapFromScreen(capX "|" capY "|" capW "|" capH)
@@ -1138,7 +1138,8 @@ F3::
     ; pBMScreen := Gdip_BitmapFromScreen(windowX "|" windowY + 30 "|" windowWidth "|" windowHeight - 30)
     ; Gdip_SaveBitmapToFile(pBMScreen,"ss.png")
     ; Gdip_DisposeImage(pBMScreen)
-    PauseMacro()
+    Clickbutton("Robux")
+    ; PauseMacro()
 }
 
 
