@@ -133,10 +133,12 @@ CheckDisconnnect(){
                 }
                 Sleep(500)
                 ActivateRoblox()
+                Sleep(25000)
+                ActivateRoblox()
                 ResizeRoblox()
                 GetRobloxClientPos(GetRobloxHWND())
                 MouseMove windowX + windowWidth//2, windowY + windowHeight//2
-                Sleep(25000)
+                Sleep(500)
                 Click
                 Click
                 PlayerStatus("Game Succesfully loaded", "0x00a838", ,false)
