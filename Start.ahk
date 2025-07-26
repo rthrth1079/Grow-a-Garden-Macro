@@ -689,7 +689,7 @@ buyShop(itemList, itemType, crafter := 0){
         if (A_index == 1){
             relativeMouseMove(0.5,0.4)
             Sleep(100)
-            Loop 40 {
+            Loop 50 {
                 Send("{WheelUp}")
                 Sleep 20
             }
