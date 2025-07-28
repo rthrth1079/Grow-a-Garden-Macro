@@ -92,6 +92,14 @@ ScreenResolution() {
 }
 ScreenResolution()
 
+if (WinExist("Roblox ahk_exe ApplicationFrameHost.exe")){
+        MsgBox "
+        (
+        Please change your roblox to website version, Your corrently are using microsoft version.
+        Download roblox from the official website https://www.roblox.com/download
+        )", "WARNING!!", 0x1030 " T60"
+}
+
 
 
 WebButtonClickEvent(button) {
