@@ -1001,7 +1001,8 @@ BuyMerchant(){
         CloseClutter()
         return 1
     }
-    clickOption(1,5)
+    Send("{" Ekey "}")
+    clickOption(2,5)
     if DetectShop("Onett's merchant"){
         buyShop(merchantItems, "Settings")
         CloseClutter()
