@@ -1052,7 +1052,7 @@ MainLoop() {
     global LastGearCraftingTime := nowUnix()
     SeedCraft()
     global LastSeedCraftingTime := nowUnix()
-    ; BuyMerchant()
+    BuyMerchant()
     global LastEventCraftingtime := nowUnix()
     SetTimer(ShowToolTip,1000)
     loop {
