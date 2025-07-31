@@ -48,6 +48,7 @@ async function onSaveClick() {
     discordID: document.getElementById('discordID').value,
     VipLink: document.getElementById('VipLink').value,
     TravelingMerchant: +document.getElementById('TravelingMerchant').checked,
+    Channeller:  +document.getElementById('Channeller').checked,
     seedItems: {},
     gearItems: {},
     EggItems: {},
@@ -89,6 +90,7 @@ function applySettings(a) {
     document.getElementById('discordID').value = s.discordID;
     document.getElementById('VipLink').value   = s.VipLink;
     document.getElementById('TravelingMerchant').checked  = !!+s.TravelingMerchant
+    document.getElementById('Channeller').checked  = !!+s.Channeller
 
     const allItems = {
       SeedItems: s.SeedItems,

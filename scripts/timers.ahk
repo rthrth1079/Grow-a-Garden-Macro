@@ -2,11 +2,10 @@ nowUnix() {
     return DateDiff(A_NowUTC, "19700101000000", "Seconds")
 }
 
+
 LastGearCraftingTime := nowUnix()
 LastSeedCraftingTime := nowUnix()
-
-
-
+LastEventCraftingtime := nowUnix()
 
 FourHours(){
     UtcNow := A_NowUTC
@@ -54,6 +53,7 @@ RewardChecker() {
         }
         
     }
+
     return Rewardlist
 }
 
@@ -103,10 +103,11 @@ RewardInterupt() {
             Clickbutton("Garden")
             relativeMouseMove(0.5, 0.5)
             thing := 60 - A_Sec 
-            ToolTip("Seed Shop: " (r:=Mod(300 - Mod(A_Min*60 + A_Sec, 300), 300))//60 ":" Mod(r,60) 
-            "`nGear Shop: " (r:=Mod(300 - Mod(A_Min*60 + A_Sec, 300), 300))//60 ":" Mod(r,60) 
-            "`nEgg Shop: " (r:=Mod(1800 - Mod(A_Min*60 + A_Sec, 1800),1800))//60 ":" Mod(r,60)), 1000
-            Sleep((A_sec + thing) * 1000)
+            loop thing {
+                collectChi()
+                ShowToolTip()
+                Sleep(1000)
+            }
 
         }
         return 1

@@ -1,7 +1,7 @@
 
 #Requires AutoHotkey v2.0
 
-version := "v1.1.1"
+version := "v1.1.2"
 settingsFile := "settings.ini"
 
 
@@ -102,6 +102,8 @@ if (WinExist("Roblox ahk_exe ApplicationFrameHost.exe")){
 
 
 
+
+
 WebButtonClickEvent(button) {
 	switch button {
 		case "Start":
@@ -115,10 +117,10 @@ WebButtonClickEvent(button) {
 
 SaveSettings(settingsJson) {
     settings := JSON.Parse(settingsJson)
-    IniFile := A_ScriptDir . "\settings.ini"
+    IniFile := A_WorkingDir . "\settings.ini"
 
     for key, val in settings {
-        if (key == "url" || key == "discordID" || key == "VipLink" || key == "TravelingMerchant") {
+        if (key == "url" || key == "discordID" || key == "VipLink" || key == "TravelingMerchant" || key == "Channeller") {
             IniWrite(val, IniFile, "Settings", key)
         }
     }
@@ -145,8 +147,7 @@ SaveSettings(settingsJson) {
 
 
 SendSettings(){
-	settingsFile := A_ScriptDir . "\settings.ini"
-
+	settingsFile := A_WorkingDir . "\settings.ini"
     seedItems := getItems("Seeds")
 
     gearItems := getItems("Gears")
@@ -168,7 +169,8 @@ SendSettings(){
         IniWrite("", settingsFile, "Settings", "url")
         IniWrite("", settingsFile, "Settings", "discordID")
         IniWrite("", settingsFile, "Settings", "VipLink")
-        IniWrite("0", settingsFile, "Settings", "TravelingMerchant")
+        IniWrite("1", settingsFile, "Settings", "TravelingMerchant")
+        IniWrite("0", settingsFile, "Settings", "Channeller")
         for i in seedItems {
             IniWrite("1", settingsFile, "Seeds", StrReplace(i, " ", ""))
         }
@@ -190,11 +192,20 @@ SendSettings(){
         Sleep(200)
     }
 
+    Other := ["TravelingMerchant", "Channeller"]
+
+    for item in Other {
+        key := StrReplace(item, " ", "")
+        value := IniRead(settingsFile, "Settings", key, "0")
+        IniWrite(value, settingsFile, "Settings", key)
+    }
+    
     SettingsJson := { 
         url:       IniRead(settingsFile, "Settings", "url")
       , discordID: IniRead(settingsFile, "Settings", "discordID")
       , VipLink:   IniRead(settingsFile, "Settings", "VipLink")
       , TravelingMerchant:  IniRead(settingsFile, "Settings", "TravelingMerchant")
+      , Channeller:  IniRead(settingsFile, "Settings", "Channeller")
       , SeedItems: Map()
       , GearItems: Map()
       , EggItems:  Map()

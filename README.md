@@ -12,14 +12,6 @@ A macro for **Grow a Garden** that automatically buys your selected seeds, gear,
 
 <img width="500" height="400" alt="image" src="https://github.com/user-attachments/assets/fa1e1de8-ad75-4a77-b1e9-187d6526a51e" />
 
-
-## ⚙️ Requirements
-
-Before using the macro, install **AutoHotkey v2.0**:
-
-1. Download: [AutoHotkey v2](https://www.autohotkey.com/download/ahk-v2.exe)
-2. Install it on your computer.
-
 ---
 
 ## 📥 Installation
@@ -31,7 +23,7 @@ Before using the macro, install **AutoHotkey v2.0**:
 
 2. **Run the Macro**
 
-   * Double-click `start.ahk`
+   * Double-click `start.bat`
 
 3. **Set Up Discord Webhook (Optional)**
 
