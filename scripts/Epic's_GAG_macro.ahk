@@ -995,15 +995,9 @@ BuyMerchant(){
         "TravelingMerchant", "TravelingMerchant", "TravelingMerchant", "TravelingMerchant", "TravelingMerchant", "TravelingMerchant",
         "TravelingMerchant", "TravelingMerchant", "TravelingMerchant", "TravelingMerchant", "TravelingMerchant", "TravelingMerchant",
         "TravelingMerchant", "TravelingMerchant"
-    ] 
+    ]
+    DetectOnett()
     if DetectShop("traveling merchant"){
-        buyShop(merchantItems, "Settings")
-        CloseClutter()
-        return 1
-    }
-    Send("{" Ekey "}")
-    clickOption(2,5)
-    if DetectShop("Onett's merchant"){
         buyShop(merchantItems, "Settings")
         CloseClutter()
         return 1
@@ -1011,6 +1005,27 @@ BuyMerchant(){
     return 0
 }
 
+DetectOnett(){
+    ActivateRoblox()
+    hwnd := GetRobloxHWND()
+    GetRobloxClientPos(hwnd)
+    capX := windowX + windowWidth * 0.6411
+    capY := windowY + windowHeight * 0.2065
+    capW := windowWidth * 0.1
+    capH := windowHeight * 0.1667
+    
+    pBMScreen := Gdip_BitmapFromScreen(capX "|" capY "|" capW "|" capH)
+    if (Gdip_ImageSearch(pBMScreen, bitmaps["HoneyMerchant"], , , , , , 50) = 1) {
+        PlayerStatus("My goat Onett has arrived!!","0xe1ff00",,false)
+        Send("{" Ekey "}")
+        clickOption(2,5)
+        Gdip_DisposeImage(pBMScreen)
+        return true
+    }
+    Gdip_DisposeImage(pBMScreen)
+    return false
+
+}
 
 
 
@@ -1144,6 +1159,7 @@ F3::
     ; pBMScreen := Gdip_BitmapFromScreen(windowX "|" windowY + 30 "|" windowWidth "|" windowHeight - 30)
     ; Gdip_SaveBitmapToFile(pBMScreen,"ss.png")
     ; Gdip_DisposeImage(pBMScreen)
+    BuyMerchant()
     PauseMacro()
 }
 
