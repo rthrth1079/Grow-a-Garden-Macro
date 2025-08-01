@@ -870,7 +870,7 @@ BuyEggs(){
         Send("1")
         MouseMove windowX + windowWidth//2, windowY + windowHeight//2
         Click
-        Sleep(1000)
+        Sleep(2000)
         Send("{s Down}")
         HyperSleep(600)
         Send("{s Up}")
@@ -900,7 +900,7 @@ GearCraft(){
     Sleep(300)
     relativeMouseMove(0.5, 0.5)
     Click
-    Sleep(1500)
+    Sleep(2000)
     Send("{" WKey " down}")
     HyperSleep(1200)
     Send("{" WKey " up}")
@@ -945,7 +945,7 @@ SeedCraft(){
     Sleep(300)
     relativeMouseMove(0.5, 0.5)
     Click
-    Sleep(1500)
+    Sleep(2000)
     Send("{" WKey " down}")
     HyperSleep(800)
     Send("{" WKey " up}")
@@ -1176,7 +1176,7 @@ collectChi(){
         windowWidth * 0.2 "|"            
         windowHeight * 0.3               
     )
-    if (Gdip_ImageSearch(pBMScreen, bitmaps["Ground"],,,,,,30) = 1) {
+    if !(Gdip_ImageSearch(pBMScreen, bitmaps["Ground"],,,,,,30) = 1) {
         global WKey:="sc01f" ; w 
         global AKey:="sc020" ; a 
         global SKey:="sc011" ; s 
