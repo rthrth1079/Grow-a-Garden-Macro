@@ -1159,6 +1159,7 @@ F3::
     ; pBMScreen := Gdip_BitmapFromScreen(windowX "|" windowY + 30 "|" windowWidth "|" windowHeight - 30)
     ; Gdip_SaveBitmapToFile(pBMScreen,"ss.png")
     ; Gdip_DisposeImage(pBMScreen)
+        collectChi()
     PauseMacro()
 }
 
@@ -1175,7 +1176,7 @@ collectChi(){
         windowWidth * 0.2 "|"            
         windowHeight * 0.3               
     )
-    if (Gdip_ImageSearch(pBMScreen, bitmaps["Ground"],,,,,,100) = 1) {
+    if (Gdip_ImageSearch(pBMScreen, bitmaps["Ground"],,,,,,30) = 1) {
         global WKey:="sc01f" ; w 
         global AKey:="sc020" ; a 
         global SKey:="sc011" ; s 
