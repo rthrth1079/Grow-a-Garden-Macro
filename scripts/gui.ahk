@@ -1,7 +1,7 @@
 
 #Requires AutoHotkey v2.0
 
-version := "v1.1.2"
+version := "v1.1.3"
 settingsFile := "settings.ini"
 
 
@@ -120,7 +120,7 @@ SaveSettings(settingsJson) {
     IniFile := A_WorkingDir . "\settings.ini"
 
     for key, val in settings {
-        if (key == "url" || key == "discordID" || key == "VipLink" || key == "TravelingMerchant" || key == "Channeller") {
+        if (key == "url" || key == "discordID" || key == "VipLink" || key == "TravelingMerchant" || key == "CookingEvent") {
             IniWrite(val, IniFile, "Settings", key)
         }
     }
@@ -154,15 +154,18 @@ SendSettings(){
 
     EggItems := getItems("Eggs")
 
-    GearCraftingItems := ["GearCrafting"]
-
-    GearCraftingItems.Push(getItems("GearCrafting")*)
+    GearCraftingItems := getItems("GearCrafting")
     
-    SeedCraftingItems := ["SeedCrafting"]
-
-    SeedCraftingItems.Push(getItems("SeedCrafting")*)
+    SeedCraftingItems := getItems("SeedCrafting")
     
     EventItems := getItems("Events")
+
+    seedItems.Push("Seeds")
+    gearItems.Push("Gears")
+    EggItems.Push("Eggs")
+    GearCraftingItems.Push("GearCrafting")
+    SeedCraftingItems.Push("SeedCrafting")
+    EventItems.Push("Events")
 
 
     if (!FileExist(settingsFile)) {
@@ -170,7 +173,7 @@ SendSettings(){
         IniWrite("", settingsFile, "Settings", "discordID")
         IniWrite("", settingsFile, "Settings", "VipLink")
         IniWrite("1", settingsFile, "Settings", "TravelingMerchant")
-        IniWrite("0", settingsFile, "Settings", "Channeller")
+        ; IniWrite("0", settingsFile, "Settings", "CookingEvent")
         for i in seedItems {
             IniWrite("1", settingsFile, "Seeds", StrReplace(i, " ", ""))
         }
@@ -192,7 +195,10 @@ SendSettings(){
         Sleep(200)
     }
 
-    Other := ["TravelingMerchant", "Channeller"]
+    Other := [
+        "TravelingMerchant",
+        ; "CookingEvent"
+    ]
 
     for item in Other {
         key := StrReplace(item, " ", "")
@@ -205,7 +211,7 @@ SendSettings(){
       , discordID: IniRead(settingsFile, "Settings", "discordID")
       , VipLink:   IniRead(settingsFile, "Settings", "VipLink")
       , TravelingMerchant:  IniRead(settingsFile, "Settings", "TravelingMerchant")
-      , Channeller:  IniRead(settingsFile, "Settings", "Channeller")
+    ;   , CookingEvent:  IniRead(settingsFile, "Settings", "CookingEvent")
       , SeedItems: Map()
       , GearItems: Map()
       , EggItems:  Map()

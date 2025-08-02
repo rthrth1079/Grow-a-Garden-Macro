@@ -34,21 +34,25 @@ async function onSaveClick() {
   const gearItems = await getItems("Gears");
   const EggItems = await getItems("Eggs");
 
-  const GearCraftingItems = ["GearCrafting"];
-  GearCraftingItems.push(...await getItems("GearCrafting"));
+  const GearCraftingItems = await getItems("GearCrafting");
 
-  const SeedCraftingItems = ["SeedCrafting"];
-  SeedCraftingItems.push(...await getItems("SeedCrafting"));
+  const SeedCraftingItems = await getItems("SeedCrafting");
 
   const EventItems = await getItems("Events");
 
+  seedItems.push("Seeds");
+  gearItems.push("Gears");
+  EggItems.push("Eggs");
+  GearCraftingItems.push("GearCrafting");
+  SeedCraftingItems.push("SeedCrafting");
+  EventItems.push("Events");
 
   const cfg = {
     url: document.getElementById('url').value,
     discordID: document.getElementById('discordID').value,
     VipLink: document.getElementById('VipLink').value,
     TravelingMerchant: +document.getElementById('TravelingMerchant').checked,
-    Channeller:  +document.getElementById('Channeller').checked,
+    // CookingEvent:  +document.getElementById('CookingEvent').checked,
     seedItems: {},
     gearItems: {},
     EggItems: {},
@@ -90,7 +94,7 @@ function applySettings(a) {
     document.getElementById('discordID').value = s.discordID;
     document.getElementById('VipLink').value   = s.VipLink;
     document.getElementById('TravelingMerchant').checked  = !!+s.TravelingMerchant
-    document.getElementById('Channeller').checked  = !!+s.Channeller
+    // document.getElementById('CookingEvent').checked  = !!+s.CookingEvent
 
     const allItems = {
       SeedItems: s.SeedItems,
@@ -107,6 +111,7 @@ function applySettings(a) {
         const element = document.getElementById(formattedItem);
         if (element) {
           element.checked = !!+items[item];
+          console.log(element, items[item])
         }
       }
     }
@@ -116,26 +121,21 @@ function applySettings(a) {
 
 async function AddHtml() {
   const categories = [
-    { id: "Seeds", imagePath: "Seeds" },
-    { id: "Gears", imagePath: "Gears" },
-    { id: "Eggs", imagePath: "Eggs" },
-    { id: "GearCrafting", imagePath: "CraftingGears" },
-    { id: "SeedCrafting", imagePath: "CraftingSeeds" },
-    { id: "Events", imagePath: "Events" }
-  ];
+    "Seeds","Gears", "Eggs", "GearCrafting", "SeedCrafting", "Events"
+    ];
 
   for (const category of categories) {
-    const items = await getItemJSON(category.id);
+    const items = await getItemJSON(category);
 
-    const rewardGrid = document.querySelector(`#${category.id}Grid`);
+    const rewardGrid = document.querySelector(`#${category}Grid`);
     if (!rewardGrid) continue;
 
     for (const item of items) {
       const sanitizedName = item.name.replace(/\s+/g, '');
-      const imgPath = item.image || `../../images/${category.imagePath}/${item.name}.webp`;
+      const imgPath = item.image || `../../images/${category}/${item.name}.webp`;
 
-      const inputType = (category.id === "GearCrafting" || category.id === "SeedCrafting") ? "radio" : "checkbox";
-      const inputName = (inputType === "radio") ? `name="${category.id}"` : "";
+      const inputType = (category === "GearCrafting" || category === "SeedCrafting") ? "radio" : "checkbox";
+      const inputName = (inputType === "radio") ? `name="${category}"` : "";
 
       const div = document.createElement("div");
       div.className = "reward-box";
@@ -163,7 +163,24 @@ document.addEventListener("DOMContentLoaded", async () => {
   })
 
 
+document.addEventListener("DOMContentLoaded", () => {
+  document.querySelectorAll(".SelectAll").forEach(selectAllCheckbox => {
+    selectAllCheckbox.addEventListener("change", () => {
+      const rewardGrid = selectAllCheckbox.closest(".rewards-grid");
+      if (!rewardGrid) return;
 
+      const checkboxes = rewardGrid.querySelectorAll("input[type='checkbox']");
+
+      checkboxes.forEach(cb => {
+        const isSelectAll = cb.classList.contains("SelectAll");
+        const isEnableCheckbox = ["Seeds", "Gears", "Eggs", "Events"].includes(cb.id);
+        if (!isSelectAll && !isEnableCheckbox) {
+          cb.checked = selectAllCheckbox.checked;
+        }
+      });
+    });
+  });
+});
 
 
 

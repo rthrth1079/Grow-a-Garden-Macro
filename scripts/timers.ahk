@@ -35,9 +35,6 @@ RewardChecker() {
     if (Mod(A_Min,30) == 0) {
         Rewardlist.Push("Eggs")
     }
-    if (A_Min == 0) {
-        Rewardlist.Push("Events")
-    }
     if (FourHours() && IniRead(settingsFile, "Settings", "TravelingMerchant") + 0 == 1) {
         Rewardlist.Push("TravelingMerchant")
     }
@@ -78,9 +75,6 @@ RewardInterupt() {
         if (v = "Eggs") {
             BuyEggs()
         }
-        if (v = "Events") {
-            BuyEvent()
-        }
         if (v = "GearCrafting") {
             GearCraft()
             Sleep(2000)
@@ -104,7 +98,6 @@ RewardInterupt() {
             relativeMouseMove(0.5, 0.5)
             thing := 60 - A_Sec 
             loop thing {
-                collectChi()
                 ShowToolTip()
                 Sleep(1000)
             }

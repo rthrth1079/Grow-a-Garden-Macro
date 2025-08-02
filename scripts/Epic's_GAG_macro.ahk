@@ -75,13 +75,19 @@ HyperSleep(ms) {
     }
 }
 
-
-Walk(tiles, MoveKey1, MoveKey2:=0){ 
-	Send "{" MoveKey1  " down}" (MoveKey2 ? "{" MoveKey2  " down}" : "") 
-	Sleep( tiles )
+Walk(studs, MoveKey1, MoveKey2:=0) {
+	Send "{" MoveKey1  " down}" (MoveKey2 ? "{" MoveKey2  " down}" : "")
+	Sleep studs
 	Send "{" MoveKey1  " up}" (MoveKey2 ? "{" MoveKey2  " up}" : "")
-	
 }
+; Walk(studs, MoveKey1, MoveKey2:=0) {
+; 	speed := 0.022
+; 	sleepTime := studs / speed
+; 	Send "{" MoveKey1  " down}" (MoveKey2 ? "{" MoveKey2  " down}" : "")
+; 	Sleep sleepTime
+; 	Send "{" MoveKey1  " up}" (MoveKey2 ? "{" MoveKey2  " up}" : "")
+; }
+
 
 CheckDisconnnect(){
     static VipLink := IniRead(settingsFile, "Settings", "VipLink")
@@ -217,10 +223,9 @@ openBag(){
     hwnd := GetRobloxHWND()
     GetRobloxClientPos(hwnd)
     pBMScreen := Gdip_BitmapFromScreen(windowX "|" windowY "|" windowWidth * 0.5 "|" windowHeight //8)
-    if (Gdip_ImageSearch(pBMScreen, bitmaps["Openbag"] , &OutputList, , , , , 50,,8) = 1) {
+    if (Gdip_ImageSearch(pBMScreen, bitmaps["Openbag"] , &OutputList, , , , , 25,,8) = 1) {
         Cords := StrSplit(OutputList, ",")
         x := Cords[1] + windowX 
-        ; x := Cords[1] + windowX + 50
         y := Cords[2] + windowY
         MouseMove(x, y)
         Sleep(300)
@@ -228,7 +233,6 @@ openBag(){
         Sleep(500)
     }
     Gdip_DisposeImage(pBMScreen)
-
 }
 
 closeBag(){
@@ -241,10 +245,10 @@ clearSearch(){
     hwnd := GetRobloxHWND()
     GetRobloxClientPos(hwnd)
     pBMScreen := Gdip_BitmapFromScreen(windowX + windowWidth // 2 "|" windowY + 30 "|" windowWidth // 2 "|" windowHeight - 30)
-    if (Gdip_ImageSearch(pBMScreen, bitmaps["x"] , &OutputList, , , , , 20,,6) = 1) {
+    if (Gdip_ImageSearch(pBMScreen, bitmaps["x"] , &OutputList, , , , , 15,,3) = 1) {
         Cords := StrSplit(OutputList, ",")
         x := Cords[1] + windowX + windowWidth // 2 
-        y := Cords[2] + windowY + 31
+        y := Cords[2] + windowY + 33
         MouseMove(x, y)
         Sleep(750)
         Click
@@ -360,7 +364,7 @@ equipRecall(){
 
 
 
-CheckSetting(value, item){
+CheckSetting(item,value){
     if (IniRead(settingsFile, item, value) == 1){
         return true
     }
@@ -386,7 +390,6 @@ Clickbutton(button, clickit := 1){
         capY := windowY + 30
         capW := windowWidth // 2
         capH := 100
-    ; } else if (button == "Xbutton" || button == "Xbutton2") {
     } else if (button == "Xbutton") {
         capX := windowX + windowWidth * 0.6411
         capY := windowY + windowHeight * 0.2065
@@ -432,7 +435,7 @@ Clickbutton(button, clickit := 1){
 
 ChangeCamera(type){
     Send("{" EscKey "}")
-    HyperSleep(333)
+    HyperSleep(750)
     Send("{Tab}")
     HyperSleep(333)
     Send("{Down}")
@@ -625,6 +628,9 @@ CheckStock(index, list, crafting := false){
 buyShop(itemList, itemType, crafting := false){
     for (item in itemlist){
         if (A_index == 1){
+            relativeMouseMove(0.4,0.8)
+            Click
+            Sleep(300)
             relativeMouseMove(0.5,0.4)
             Sleep(100)
             Loop 50 {
@@ -650,7 +656,7 @@ buyShop(itemList, itemType, crafting := false){
         }
         Click
         Sleep(350)
-        if (CheckSetting(StrReplace(item, " ", ""), itemType)){
+        if (CheckSetting(itemType, StrReplace(item, " ", ""))){
             CheckStock(A_Index, itemlist, crafting)
         } else {
             Sleep(200)
@@ -738,7 +744,6 @@ DetectShop(shop){
     loop 15 {
         Sleep(500)
         if (Clickbutton("Xbutton",0) == 1){
-        ; if (Clickbutton("Xbutton",0) == 1 || Clickbutton("Xbutton2",0) == 1){
             Sleep(2500)
             PlayerStatus("Detected " shop " shop opened", "0x22e6a8",,false,,false)
             return 1
@@ -756,7 +761,6 @@ CloseShop(crafting := false){
     loop 15 {
         Sleep(500)
         if (Clickbutton("Xbutton") == 1){
-        ; if (Clickbutton("Xbutton") == 1 || Clickbutton("Xbutton2") == 1){
             Sleep(1000)
             PlayerStatus("Closed shop!", "0x22e6a8",,false,,false)
             return 1
@@ -771,7 +775,6 @@ CloseShop(crafting := false){
 CloseClutter(){
     Clickbutton("Xbutton")
     Sleep(100)
-    ; Clickbutton("Xbutton2")
     Clickbutton("Robux")
     Sleep(300)
 }
@@ -804,7 +807,9 @@ getItems(item){
 
 BuySeeds(){
     seedItems := getItems("Seeds")
-
+    if !(CheckSetting("Seeds", "Seeds")){
+        return
+    }
     loop 3 {
         PlayerStatus("Going to buy Seeds!", "0x22e6a8",,false,,false)
         relativeMouseMove(0.5, 0.5)
@@ -831,7 +836,9 @@ BuySeeds(){
 
 BuyGears(){
     gearItems := getItems("Gears")
-
+    if !(CheckSetting("Gears", "Gears")){
+        return
+    }
     loop 3 {
         PlayerStatus("Going to buy Gears!", "0x22e6a8",,false,,false)
         ActivateRoblox()
@@ -861,6 +868,9 @@ BuyGears(){
 
 
 BuyEggs(){
+    if !(CheckSetting("Eggs", "Eggs")){
+        return
+    }
     eggitems := getItems("Eggs")
     loop 3 {
         PlayerStatus("Going to buy Eggs!", "0x22e6a8",,false,,false)
@@ -889,7 +899,7 @@ BuyEggs(){
 
 
 GearCraft(){
-    if (IniRead(settingsFile, "GearCrafting", "GearCrafting") + 0 == 0){
+    if !(CheckSetting("GearCrafting", "GearCrafting")){
         return
     }
     PlayerStatus("Going to craft Gears!", "0x22e6a8",,false,,false)
@@ -907,6 +917,7 @@ GearCraft(){
     Sleep(1000)
     GearRecipe := [
         { Name: "Lighting Rod", Materials: ["Basic Sprinkler", "Advanced Sprinkler", "Godly Sprinkler"], CraftTime: 2700 },
+        { Name: "Tanning Mirror", Materials: ["Basic Sprinkler", "Advanced Sprinkler", "Godly Sprinkler"], CraftTime: 2700 },
         { Name: "Reclaimer", Materials: ["Common Egg item", "Harvest Tool"], CraftTime: 1500 },
         { Name: "Tropical Mist Sprinkler", Materials: ["Coconut", "Dragon Fruit", "Mango", "Godly Sprinkler"], CraftTime: 3600 },
         { Name: "Berry Blusher Sprinkler", Materials: ["Grape", "Blueberry", "Strawberry", "Godly Sprinkler"], CraftTime: 3600 },
@@ -918,8 +929,8 @@ GearCraft(){
         { Name: "Mutation Spray Chilled", Materials: ["Cleaning Spray", "Godly Sprinkler"], CraftTime: 300 },
         { Name: "Mutation Spray Shocked", Materials: ["Cleaning Spray", "Lighting Rod"], CraftTime: 1800 },
         { Name: "Anti Bee Egg", Materials: ["Bee Egg item"], CraftTime: 7200 },
-        { Name: "Small Toy", Materials: ["Common Egg item", "Seed Coconut", "Coconut"], CraftTime: 600 },
-        { Name: "Small Treat", Materials: ["Common Egg item", "Seed Dragon Fruit", "Blueberry"], CraftTime: 600 },
+        { Name: "Small Toy", Materials: ["Common Egg item", "Coconut Seed", "Coconut"], CraftTime: 600 },
+        { Name: "Small Treat", Materials: ["Common Egg item", "Dragon Fruit Seed", "Blueberry"], CraftTime: 600 },
         { Name: "Pack Bee", Materials: ["Anti Bee Egg item", "Sunflower", "Purple Dahila"], CraftTime: 14400 },
         
         
@@ -934,7 +945,7 @@ GearCraft(){
 
 
 SeedCraft(){
-    if (IniRead(settingsFile, "SeedCrafting", "SeedCrafting") + 0 == 0){
+    if !(CheckSetting("SeedCrafting", "SeedCrafting")){
         return
     }
     PlayerStatus("Going to craft Seeds!", "0x22e6a8",,false,,false)
@@ -951,11 +962,11 @@ SeedCraft(){
     Send("{" WKey " up}")
     Sleep(1000)
     SeedRecipe := [
-        { Name: "Horsetail", Materials: ["Stonebite Seed", "Bamboo", "Corn"], CraftTime: 900 },
+        { Name: "Twisted Tangle", Materials: ["Cactus Seed", "Bamboo", "Cactus", "Mango"], CraftTime: 900 },
+        { Name: "Veinpetal", Materials: ["Orange Tulip", "Daffodil", "Beanstalk", "Burning bud"], CraftTime: 1200 },
+        { Name: "Horsetail", Materials: ["Daffodil", "Bamboo", "Corn"], CraftTime: 900 },
         { Name: "Lingonberry", Materials: ["Blueberry", "Blueberry", "Blueberry", "Horsetail"], CraftTime: 900 },
-        { Name: "Amber Spine", Materials: ["Cactus", "Pumpkin", "Horsetail"], CraftTime: 1800 },
-        { Name: "Grand Volcania", Materials: ["Ember Lily", "Dinosaur Egg item", "Ancient Seed Pack"], CraftTime: 2700 },
-        
+        { Name: "Amber Spine", Materials: ["Cactus", "Pumpkin", "Horsetail"], CraftTime: 1800 },        
         
     ]
     SeedNames := getItems("SeedCrafting")
@@ -970,7 +981,7 @@ SeedCraft(){
 
 
 BuyMerchant(){
-    if (IniRead(settingsFile, "Settings", "TravelingMerchant") + 0  == 0){
+    if !(CheckSetting("Settings", "TravelingMerchant")){
         return
     }
 
@@ -1063,14 +1074,13 @@ MainLoop() {
     BuySeeds()
     BuyGears()
     BuyEggs()
-    BuyEvent()
+    ; CookingEvent()
     GearCraft()
     global LastGearCraftingTime := nowUnix()
     SeedCraft()
     global LastSeedCraftingTime := nowUnix()
     BuyMerchant()
     global LastEventCraftingtime := nowUnix()
-    SetTimer(ShowToolTip,1000)
     loop {
         RewardInterupt()
         if (Disconnect()){
@@ -1079,7 +1089,7 @@ MainLoop() {
             Sleep(500)
             CameraCorrection()
         }
-        collectChi()
+        ShowToolTip()
         Sleep(1000)
     }
     
@@ -1094,6 +1104,9 @@ ShowToolTip(){
     global SeedCraftingTime
 
 
+    static SeedsEnabled := IniRead(settingsFile, "Seeds", "Seeds") + 0
+    static GearsEnabled := IniRead(settingsFile, "Gears", "Gears") + 0
+    static EggsEnabled := IniRead(settingsFile, "Eggs", "Eggs") + 0
     static gearCraftingEnabled := IniRead(settingsFile, "GearCrafting", "GearCrafting") + 0
     static seedCraftingEnabled := IniRead(settingsFile, "SeedCrafting", "SeedCrafting") + 0
     static merchantEnabled := IniRead(settingsFile, "Settings", "TravelingMerchant") + 0
@@ -1103,15 +1116,15 @@ ShowToolTip(){
     eggR := Mod(1800 - Mod(A_Min*60 + A_Sec, 1800), 1800)
 
     tooltipText := ""
-    tooltipText .= "Seed Shop: " shopR//60 ":" Format("{:02}", Mod(shopR, 60)) "`n"
-    tooltipText .= "Gear Shop: " shopR//60 ":" Format("{:02}", Mod(shopR, 60)) "`n"
-    tooltipText .= "Egg Shop: " eggR//60 ":" Format("{:02}", Mod(eggR, 60)) "`n"
-
-    eventRemaining := (60 - A_Min - 1) * 60 + (60 - A_Sec)
-    eventM := eventRemaining // 60
-    eventS := Mod(eventRemaining, 60)
-    tooltipText .= "Zen Shop: " eventM ":" Format("{:02}", eventS) "`n"
-
+    if (SeedsEnabled) {
+        tooltipText .= "Seeds: " shopR//60 ":" Format("{:02}", Mod(shopR, 60)) "`n"
+    }
+    if (GearsEnabled) {
+        tooltipText .= "Gears: " shopR//60 ":" Format("{:02}", Mod(shopR, 60)) "`n"
+    }
+    if (EggsEnabled) {
+        tooltipText .= "Eggs: " eggR//60 ":" Format("{:02}", Mod(eggR, 60)) "`n"
+    }
     if (merchantEnabled) {
         utcNow := A_NowUTC
         utcHour := FormatTime(utcNow, "H")
@@ -1148,6 +1161,7 @@ ShowToolTip(){
 }
 
 
+
 F3::
 {
 
@@ -1159,126 +1173,37 @@ F3::
     ; pBMScreen := Gdip_BitmapFromScreen(windowX "|" windowY + 30 "|" windowWidth "|" windowHeight - 30)
     ; Gdip_SaveBitmapToFile(pBMScreen,"ss.png")
     ; Gdip_DisposeImage(pBMScreen)
-        collectChi()
     PauseMacro()
 }
 
 
-collectChi(){
-    if (IniRead(settingsFile, "Settings", "Channeller") + 0  == 0){
-        return
-    }
-    Clickbutton("Garden")
-    Sleep(250)
-    pBMScreen := Gdip_BitmapFromScreen(
-        windowX + windowWidth * 0.05 "|"  
-        windowY + windowHeight * 0.2 "|"
-        windowWidth * 0.2 "|"            
-        windowHeight * 0.3               
-    )
-    if !(Gdip_ImageSearch(pBMScreen, bitmaps["Ground"],,,,,,30) = 1) {
-        global WKey:="sc01f" ; w 
-        global AKey:="sc020" ; a 
-        global SKey:="sc011" ; s 
-        global Dkey:="sc01e" ; d 
-    }
-    Gdip_DisposeImage(pBMScreen)
+; CookingEvent(){
+;     if !(CheckSetting("Settings", "CookingEvent")){
+;         return 0
+;     }
 
-    Send("{o down}")
-    Sleep 350
-    Send("{o up}")
-    Sleep(200)
-    ; Go to garden area, 
-    Walk(4000,Wkey)
-    Walk(1400,Dkey)
-
-    ; Start collecting zen fruits
-    Send("{e Down}")
-
-    Sleep(9000)
-    Walk(500,Dkey)
-    Sleep(10000)
-
-
-    Send("{e Up}")
-    ; Ended Collected zen fruits
-    PlayerStatus("Collected Chi!", "0x0046f7",,false)
-    Sleep(1000)
-
-    global WKey:="sc011" ; w
-    global AKey:="sc01e" ; a
-    global SKey:="sc01f" ; s
-    global Dkey:="sc020" ; d
-
-    Clickbutton("Sell")
-    Sleep(250)
-    Walk(7000,AKey)
-    Walk(700,WKey)
-    Walk(700, Akey)
-    Walk(350,WKey)
-    Walk(350,Akey)
-    loop 2 {
-        Sleep(500)
-        Send("{e}")
-        clickOption(3,4)
-        PlayerStatus("Submited CHI to the Channeller", "0x0046f7",,false)
-        Sleep(1000)
-    }
-    Clickbutton("Sell")
-    Sleep(500)
-    Send("{e}")
-    clickOption(1,4)
-    Sleep(1000)
-
-}
+;     Clickbutton("Sell")
+;     Sleep(250)
+;     Walk(7000,AKey)
+;     Walk(700,WKey)
+; }
 
 
 
 
-BuyEvent(){
-    PlayerStatus("Going to Zen Event Shop!", "0x22e6a8",,false,,false)
-    Sleep(300)
-    Send("1")
-    Sleep(300)
-    relativeMouseMove(0.5, 0.5)
-    Sleep(200)
-    Click
-    Sleep(1500)
+; BuyEvent(){
+;     if !(CheckSetting("Events", "Events")){
+;         return 0
+;     }
+;     PlayerStatus("Going to Event Shop!", "0x22e6a8",,false,,false)
 
-    ; Move down from gear shop as there is a new tree in the way.
-    Send("{s Down}")
-    HyperSleep(1200)
-    Send("{s Up}")
-
-    Send("{" Dkey " down}")
-    HyperSleep(10000)
-    Send("{" Dkey " up}")
-    Sleep(500)
-    Send("{" Wkey " down}")
-
-    HyperSleep(1500)
-    Send("{" Wkey " up}")
-
-    Sleep(500)
-    Send("{" Dkey " down}")
-    HyperSleep(500)
-    Send("{" Dkey " up}")
-
-    Sleep(500)
-    Send("{" WKey " down}")
-    HyperSleep(100)
-    Send("{" WKey " up}")
-
-    Sleep(1500)
-    Send("{" Ekey "}")
-    clickOption(1,5)
-    if !DetectShop("Zen"){
-        return 0 
-    }
-    buyShop(getItems("Events"), "Events")
-    CloseClutter()
-    return 1
-}
+;     if !DetectShop("Zen"){
+;         return 0 
+;     }
+;     buyShop(getItems("Events"), "Events")
+;     CloseClutter()
+;     return 1
+; }
 
 
 
