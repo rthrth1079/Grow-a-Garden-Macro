@@ -248,7 +248,7 @@ clearSearch(){
     if (Gdip_ImageSearch(pBMScreen, bitmaps["x"] , &OutputList, , , , , 15,,3) = 1) {
         Cords := StrSplit(OutputList, ",")
         x := Cords[1] + windowX + windowWidth // 2 
-        y := Cords[2] + windowY + 33
+        y := Cords[2] + windowY + 31
         MouseMove(x, y)
         Sleep(750)
         Click
@@ -1173,6 +1173,7 @@ F3::
     ; pBMScreen := Gdip_BitmapFromScreen(windowX "|" windowY + 30 "|" windowWidth "|" windowHeight - 30)
     ; Gdip_SaveBitmapToFile(pBMScreen,"ss.png")
     ; Gdip_DisposeImage(pBMScreen)
+    clearSearch()
     PauseMacro()
 }
 
