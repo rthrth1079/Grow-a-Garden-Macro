@@ -7,6 +7,8 @@ LastGearCraftingTime := nowUnix()
 LastSeedCraftingTime := nowUnix()
 LastEventCraftingtime := nowUnix()
 
+LastCookingTime := nowUnix()
+
 FourHours(){
     UtcNow := A_NowUTC
     UtcHour := FormatTime(UtcNow, "H")
@@ -19,8 +21,9 @@ FourHours(){
 
 
 RewardChecker() {
-    global LastGearCraftingTime, EventCraftingtime, LastSeedCraftingTime
+    global LastGearCraftingTime, EventCraftingtime, LastSeedCraftingTime, LastCookingTime
 
+    static CookingTime := Integer(IniRead(settingsFile, "Settings", "CookingTime") * 1.1)
 
     Rewardlist := []
 
@@ -47,6 +50,12 @@ RewardChecker() {
     if (currentTime - LastSeedCraftingTime >= SeedCraftingTime && IniRead(settingsFile, "SeedCrafting", "SeedCrafting") + 0 == 1) {
         if !(A_Min == 4 || A_Min == 9) {
             Rewardlist.Push("SeedCrafting")
+        }
+        
+    }
+    if (currentTime - LastCookingTime >= CookingTime && CheckSetting("Settings", "CookingEvent")) {
+        if !(A_Min == 4 || A_Min == 9) {
+            Rewardlist.Push("Event")
         }
         
     }
@@ -89,6 +98,12 @@ RewardInterupt() {
         }
         if (v = "TravelingMerchant") {
             BuyMerchant()
+        }
+        if (v = "Event") {
+            CookingEvent()
+            Sleep(2000)
+            global LastCookingTime
+            LastCookingTime := nowUnix()
         }
     }
     

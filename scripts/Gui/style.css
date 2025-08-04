@@ -39,6 +39,8 @@ body {
   padding: 4px;
   gap: 1%;
   width: 100%;
+  align-items: center;
+  justify-content: center;
 }
 
 .tabs button {
@@ -49,7 +51,7 @@ body {
   cursor: pointer;
   border-radius: 6px;
   padding: 1.5% 2%;
-  width: 15.75%;
+  width: 15%;
   transition: all 0.2s ease;
   display: flex;
   align-items: center;

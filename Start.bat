@@ -19,28 +19,44 @@ if /i "%arch%"=="AMD64" (
 	)
 )
 
-if exist "scripts\Epic's_GAG_macro.ahk" (
-	if defined ahkExe (
-		if not [%~3]==[] (
-			set /a "delay=%~3" 2>nul
-			echo Starting Epic's GAG macro in !delay! seconds.
-			<nul set /p =Press any key to skip . . . 
-			timeout /t !delay! >nul
-		)
-		start "" "%~dp0!ahkExe!" "%~dp0scripts\Epic's_GAG_macro.ahk" %*
-		exit
-	)
-)
-
 for /f "delims=#" %%E in ('"prompt #$E# & for %%E in (1) do rem"') do set "\e=%%E"
 set red=%\e%[91m
 set reset=%\e%[0m
 
-echo %red%Could not find a compatible AutoHotkey executable!%reset%
-echo %red%Expected one of the following in 'scripts' folder:%reset%
-echo %red%- AutoHotkey64.exe (for 64-bit systems)%reset%
-echo %red%- AutoHotkey32.exe (for all systems)%reset%
-echo:
+if exist "scripts\Epic's_GAG_macro.ahk" (
+
+	if defined ahkExe (
+
+		start "" "%~dp0!ahkExe!" "%~dp0scripts\Epic's_GAG_macro.ahk" %*
+		exit
+		
+	) else (
+
+		echo %red%No compatible AutoHotkey executable found!%reset%
+		echo %red%Please ensure 'AutoHotkey64.exe' or 'AutoHotkey32.exe' is in the 'scripts' folder.%reset%
+		echo:
+		<nul set /p "=%red%Press any key to exit . . . %reset%"
+		pause >nul
+		exit
+
+	)
+
+) else (
+
+	echo %red%Could not find 'Epic's_GAG_macro.ahk' script!%reset%
+	echo %red%Please ensure it is located in the 'scripts' folder.%reset%
+	echo %red%It might be because you did not extract this file.%reset%
+	echo:
+	<nul set /p "=%red%Press any key to exit . . . %reset%"
+	pause >nul
+	exit
+	
+)
+
+
+
+
+echo:	
 <nul set /p "=%red%Press any key to exit . . . %reset%"
 pause >nul
 exit

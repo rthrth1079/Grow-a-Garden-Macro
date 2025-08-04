@@ -223,10 +223,10 @@ openBag(){
     hwnd := GetRobloxHWND()
     GetRobloxClientPos(hwnd)
     pBMScreen := Gdip_BitmapFromScreen(windowX "|" windowY "|" windowWidth * 0.5 "|" windowHeight //8)
-    if (Gdip_ImageSearch(pBMScreen, bitmaps["Openbag"] , &OutputList, , , , , 25,,8) = 1) {
+    if (Gdip_ImageSearch(pBMScreen, bitmaps["Openbag"] , &OutputList, , , , , 20,,8) = 1) {
         Cords := StrSplit(OutputList, ",")
-        x := Cords[1] + windowX 
-        y := Cords[2] + windowY
+        x := Cords[1] + windowX + 2
+        y := Cords[2] + windowY + 2
         MouseMove(x, y)
         Sleep(300)
         Click
@@ -245,7 +245,7 @@ clearSearch(){
     hwnd := GetRobloxHWND()
     GetRobloxClientPos(hwnd)
     pBMScreen := Gdip_BitmapFromScreen(windowX + windowWidth // 2 "|" windowY + 30 "|" windowWidth // 2 "|" windowHeight - 30)
-    if (Gdip_ImageSearch(pBMScreen, bitmaps["x"] , &OutputList, , , , , 15,,3) = 1) {
+    if (Gdip_ImageSearch(pBMScreen, bitmaps["x"] , &OutputList, , , , , 25,,3) = 1) {
         Cords := StrSplit(OutputList, ",")
         x := Cords[1] + windowX + windowWidth // 2 
         y := Cords[2] + windowY + 31
@@ -314,7 +314,7 @@ clickItem(keyword, searchbitmap){
         closeBag()
         Gdip_DisposeImage(pBMScreen)
     } else {
-        PlayerStatus("Missing " StrReplace(keyword, "%S+", " ") " in inventory!", "0xff0000")
+        PlayerStatus("Missing " keyword " in inventory!", "0xff0000")
         closeBag()
         Gdip_DisposeImage(pBMScreen)
     }
@@ -556,7 +556,7 @@ Crafting(Recipeitems, settingName, Names){
             Sleep(2500)
             if (Clickbutton("Robux") == 1){
                 PlayerStatus("Crafting not finished. Closing Robux prompt.","0xe67e22",,false)
-                return Integer(item.CraftTime * 1.1)
+                return Integer(item.CraftTime * 0.3)
             }
             CloseClutter()
             PlayerStatus("Claimed " item.Name "!", "0x22e6a8",,false)
@@ -568,10 +568,10 @@ Crafting(Recipeitems, settingName, Names){
             buyShop(Names, settingName, true)
 
             for Material in item.Materials {
-                searchTerm := StrReplace(Material, " item", "")
-                searchTerm := StrReplace(searchTerm, " ", "%S+")
+                searchTermraw := StrReplace(Material, " item", "")
+                searchTerm := StrReplace(searchTermraw, " ", "%S+")
                 searchItem(searchTerm)
-                clickItem(searchTerm,Material)
+                clickItem(searchTermraw,Material)
                 Sleep(500)
                 Send("{" Ekey "}")
                 Send("{" Ekey "}")
@@ -1074,7 +1074,8 @@ MainLoop() {
     BuySeeds()
     BuyGears()
     BuyEggs()
-    ; CookingEvent()
+    CookingEvent()
+    global LastCookingTime := nowUnix()
     GearCraft()
     global LastGearCraftingTime := nowUnix()
     SeedCraft()
@@ -1102,7 +1103,7 @@ ShowToolTip(){
     global LastGearCraftingTime
     global LastSeedCraftingTime
     global SeedCraftingTime
-
+    global LastCookingTime
 
     static SeedsEnabled := IniRead(settingsFile, "Seeds", "Seeds") + 0
     static GearsEnabled := IniRead(settingsFile, "Gears", "Gears") + 0
@@ -1110,6 +1111,8 @@ ShowToolTip(){
     static gearCraftingEnabled := IniRead(settingsFile, "GearCrafting", "GearCrafting") + 0
     static seedCraftingEnabled := IniRead(settingsFile, "SeedCrafting", "SeedCrafting") + 0
     static merchantEnabled := IniRead(settingsFile, "Settings", "TravelingMerchant") + 0
+    static CookingEnabled := IniRead(settingsFile, "Settings", "CookingEvent") + 0
+
 
     currentTime := nowUnix()
     shopR := Mod(300 - Mod(A_Min*60 + A_Sec, 300), 300)
@@ -1124,6 +1127,13 @@ ShowToolTip(){
     }
     if (EggsEnabled) {
         tooltipText .= "Eggs: " eggR//60 ":" Format("{:02}", Mod(eggR, 60)) "`n"
+    }
+    if (CookingEnabled) {
+        static CookingTime := Integer(IniRead(settingsFile, "Settings", "CookingTime") * 1.1)
+        CookingRemaining := Max(0, CookingTime - (currentTime - LastCookingTime))
+        eventM := CookingRemaining // 60
+        eventS := Mod(CookingRemaining, 60)
+        tooltipText .= "Cooking for: " eventM ":" Format("{:02}", eventS) "`n"
     }
     if (merchantEnabled) {
         utcNow := A_NowUTC
@@ -1173,21 +1183,53 @@ F3::
     ; pBMScreen := Gdip_BitmapFromScreen(windowX "|" windowY + 30 "|" windowWidth "|" windowHeight - 30)
     ; Gdip_SaveBitmapToFile(pBMScreen,"ss.png")
     ; Gdip_DisposeImage(pBMScreen)
-    clearSearch()
     PauseMacro()
 }
 
 
-; CookingEvent(){
-;     if !(CheckSetting("Settings", "CookingEvent")){
-;         return 0
-;     }
+CookingEvent(){
+    if !(CheckSetting("Settings", "CookingEvent")){
+        return 0
+    }
 
-;     Clickbutton("Sell")
-;     Sleep(250)
-;     Walk(7000,AKey)
-;     Walk(700,WKey)
-; }
+    PlayerStatus("Going to Cooking Event!", "0x22e6a8",,false,,false)
+    Clickbutton("Sell")
+    Sleep(750)
+    Walk(9500,AKey)
+    Walk(700,WKey)
+    Sleep(1500)
+    Send("{" Ekey "}")
+    Send("{" Ekey "}")
+    Sleep(2500)
+    if (Clickbutton("Robux") == 1){
+        PlayerStatus("Crafting not finished. Closing Robux prompt.","0xe67e22",,false)
+        return 0
+    }
+    PlayerStatus("Claimed food!", "0x22e6a8",,false)
+    searchListraw := IniRead(settingsFile, "Settings", "SearchList")
+    searchList := StrSplit(searchListRaw, ",")
+    for index, item in searchList {
+        item := Trim(item)
+        cookingItem := StrReplace(item, " ", "%S+")
+        searchItem(cookingItem ".*kg")
+        clickItem(item, "Any")
+        Sleep(500)
+        Send("{" Ekey "}")
+        Send("{" Ekey "}")
+        Sleep(500)
+    }
+
+    relativeMouseMove(0.5,0.5)
+    Click
+    Loop 40 {
+        Send("{WheelUp}")
+        Sleep 20
+    }
+    Click
+    Click
+    ZoomAlign()
+    PlayerStatus("Cooking food!", "0x22e6a8",,false)
+}
 
 
 

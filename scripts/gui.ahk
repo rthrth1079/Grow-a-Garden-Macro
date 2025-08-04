@@ -1,7 +1,7 @@
 
 #Requires AutoHotkey v2.0
 
-version := "v1.1.3"
+version := "v1.1.4"
 settingsFile := "settings.ini"
 
 
@@ -120,7 +120,7 @@ SaveSettings(settingsJson) {
     IniFile := A_WorkingDir . "\settings.ini"
 
     for key, val in settings {
-        if (key == "url" || key == "discordID" || key == "VipLink" || key == "TravelingMerchant" || key == "CookingEvent") {
+        if (key == "url" || key == "discordID" || key == "VipLink" || key == "TravelingMerchant" || key == "CookingEvent" || key == "SearchList" || key == "CookingTime") {
             IniWrite(val, IniFile, "Settings", key)
         }
     }
@@ -173,7 +173,9 @@ SendSettings(){
         IniWrite("", settingsFile, "Settings", "discordID")
         IniWrite("", settingsFile, "Settings", "VipLink")
         IniWrite("1", settingsFile, "Settings", "TravelingMerchant")
-        ; IniWrite("0", settingsFile, "Settings", "CookingEvent")
+        IniWrite("0", settingsFile, "Settings", "CookingEvent")
+        IniWrite("", settingsFile, "Settings", "SearchList")
+        IniWrite("", settingsFile, "Settings", "CookingTime")
         for i in seedItems {
             IniWrite("1", settingsFile, "Seeds", StrReplace(i, " ", ""))
         }
@@ -197,7 +199,7 @@ SendSettings(){
 
     Other := [
         "TravelingMerchant",
-        ; "CookingEvent"
+        "CookingEvent"
     ]
 
     for item in Other {
@@ -211,7 +213,9 @@ SendSettings(){
       , discordID: IniRead(settingsFile, "Settings", "discordID")
       , VipLink:   IniRead(settingsFile, "Settings", "VipLink")
       , TravelingMerchant:  IniRead(settingsFile, "Settings", "TravelingMerchant")
-    ;   , CookingEvent:  IniRead(settingsFile, "Settings", "CookingEvent")
+      , CookingEvent:  IniRead(settingsFile, "Settings", "CookingEvent")
+      , SearchList:  IniRead(settingsFile, "Settings", "SearchList")
+      , CookingTime:  IniRead(settingsFile, "Settings", "CookingTime")
       , SeedItems: Map()
       , GearItems: Map()
       , EggItems:  Map()
@@ -318,11 +322,38 @@ CheckUpdate(req)
 
             if MsgBox(message, "Update Available", 0x40004 | 0x40 | 0x4 ) = "Yes" ; 0x4 = Yes/No, 0x40 = info icon, 0x1 = OK/Cancel default button
             {
-                Run "https://github.com/epicisgood/Grow-a-Garden-Macro/releases/latest"
+                handleUpdate(LatestVer)
             }
 
         }
 	}
+}
+
+handleUpdate(ver){
+    confirmMsg := "
+    (
+    Do you want to update the macro now and delete the current folder?
+
+    Click Yes to auto update and migrate settings.
+    No to just open the release page.
+    )"
+
+    choice := MsgBox(confirmMsg, "Confirm Update", 0x40004 | 0x40 | 0x4) 
+
+    if choice = "Yes"
+    {
+        url := "https://github.com/epicisgood/Grow-a-Garden-Macro/releases/download/v" ver "/Epics_GAG_macro_v" ver ".zip"
+        CopySettings := 1
+        olddir := A_WorkingDir
+        DeleteOld := 1
+
+        Run '"' A_WorkingDir '\scripts\update.bat" "' url '" "' olddir '" "' CopySettings '" "' DeleteOld '" "' ver '"'
+        StopMacro()
+    }
+    else
+    {
+        Run "https://github.com/epicisgood/Grow-a-Garden-Macro/releases/latest"
+    }
 }
 
 AsyncHttpRequest("GET", "https://api.github.com/repos/epicisgood/Grow-a-Garden-Macro/releases/latest", CheckUpdate, Map("accept", "application/vnd.github+json"))
