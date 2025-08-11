@@ -305,8 +305,8 @@ clickItem(keyword, searchbitmap){
     pBMScreen := Gdip_BitmapFromScreen(windowX "|" windowY + 30 "|" windowWidth "|" windowHeight - 30)
     if (Gdip_ImageSearch(pBMScreen, bitmaps[searchbitmap], &OutputList, , , , , 25) = 1) {
         Cords := StrSplit(OutputList, ",")
-        x := Cords[1] + windowX
-        y := Cords[2] + windowY + 30
+        x := Cords[1] + windowX + 2
+        y := Cords[2] + windowY + 32
         MouseMove(x, y)
         Sleep(250)
         Click
@@ -577,7 +577,7 @@ Crafting(Recipeitems, settingName, Names){
     GetRobloxClientPos(hwnd)
     
     for item in Recipeitems {
-        if (IniRead(settingsFile, settingName, StrReplace(item.name, " ", "")) == "1"){
+        if (IniRead(settingsFile, settingName, StrReplace(item.name, " ", "")) + 0 == 1){
             ; Claim Crafting item
             Send("{c}")
             Sleep(300)
@@ -597,9 +597,9 @@ Crafting(Recipeitems, settingName, Names){
             buyShop(Names, settingName, true)
 
             for Material in item.Materials {
-                searchTerm := StrReplace(searchTerm, " ", "%S+")
+                searchTerm := StrReplace(Material, " ", "%S+")
                 searchItem(searchTerm)
-                clickItem(searchTerm, "Any")
+                clickItem(searchTerm, Material)
                 Sleep(500)
                 Send("{" Ekey "}")
                 Send("{" Ekey "}")
@@ -1280,6 +1280,7 @@ F3::
     ; pBMScreen := Gdip_BitmapFromScreen(windowX "|" windowY + 30 "|" windowWidth "|" windowHeight - 30)
     ; Gdip_SaveBitmapToFile(pBMScreen,"ss.png")
     ; Gdip_DisposeImage(pBMScreen)
+    GearCraft()
     PauseMacro()
 }
 

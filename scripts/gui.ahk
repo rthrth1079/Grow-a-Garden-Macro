@@ -22,7 +22,7 @@ if (A_IsCompiled) {
 
 
 
-MyWindow := WebViewGui("+Resize -Caption ",,,WebViewSettings) ; ignore error it somehow works with it.....
+MyWindow := WebViewGui("-Resize -Caption ",,,WebViewSettings) ; ignore error it somehow works with it.....
 MyWindow.OnEvent("Close", (*) => StopMacro())
 MyWindow.Navigate("scripts/Gui/index.html")
 MyWindow.AddHostObjectToScript("ButtonClick", { func: WebButtonClickEvent })
