@@ -1,7 +1,7 @@
 
 #Requires AutoHotkey v2.0
 
-version := "v1.1.4"
+version := "v1.1.5"
 settingsFile := "settings.ini"
 
 
@@ -22,12 +22,13 @@ if (A_IsCompiled) {
 
 
 
-MyWindow := WebViewGui("-Resize -Caption ",,,WebViewSettings) ; ignore error it somehow works with it.....
+MyWindow := WebViewGui("+Resize -Caption ",,,WebViewSettings) ; ignore error it somehow works with it.....
 MyWindow.OnEvent("Close", (*) => StopMacro())
 MyWindow.Navigate("scripts/Gui/index.html")
 MyWindow.AddHostObjectToScript("ButtonClick", { func: WebButtonClickEvent })
 MyWindow.AddHostObjectToScript("Save", { func: SaveSettings })
 MyWindow.AddHostObjectToScript("ReadSettings", { func: SendSettings })
+; MyWindow.Show("w650 h300")
 MyWindow.Show("w650 h470")
 
 

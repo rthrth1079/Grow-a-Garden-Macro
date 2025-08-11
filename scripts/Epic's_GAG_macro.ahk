@@ -245,7 +245,7 @@ clearSearch(){
     hwnd := GetRobloxHWND()
     GetRobloxClientPos(hwnd)
     pBMScreen := Gdip_BitmapFromScreen(windowX + windowWidth // 2 "|" windowY + 30 "|" windowWidth // 2 "|" windowHeight - 30)
-    if (Gdip_ImageSearch(pBMScreen, bitmaps["x"] , &OutputList, , , , , 25,,3) = 1) {
+    if (Gdip_ImageSearch(pBMScreen, bitmaps["x"] , &OutputList, , , , , 25,,3) = 1 || Gdip_ImageSearch(pBMScreen, bitmaps["x2"] , &OutputList, , , , , 25,,3) = 1) {
         Cords := StrSplit(OutputList, ",")
         x := Cords[1] + windowX + windowWidth // 2 
         y := Cords[2] + windowY + 31
@@ -403,7 +403,7 @@ Clickbutton(button, clickit := 1){
     }
 
     pBMScreen := Gdip_BitmapFromScreen(capX "|" capY "|" capW "|" capH)
-    if (Gdip_ImageSearch(pBMScreen, bitmaps[button], &OutputList, , , , , 25,,7) = 1) {
+    if (Gdip_ImageSearch(pBMScreen, bitmaps[button], &OutputList, , , , , 10,,7) = 1) {
         if (clickit == 1){
             Cords := StrSplit(OutputList, ",")
             x := Cords[1] + capX - 2
@@ -415,8 +415,21 @@ Clickbutton(button, clickit := 1){
         Gdip_DisposeImage(pBMScreen)
         return 1
     }
-    if ("Seeds" || "Sell") {    
+    if (button == "Seeds" || button == "Sell" || button == "Xbutton") {    
         if (Gdip_ImageSearch(pBMScreen, bitmaps[button], &OutputList, , , , , 100,,7) = 1) {
+            if (clickit == 1){
+                Cords := StrSplit(OutputList, ",")
+                x := Cords[1] + capX - 2
+                y := Cords[2] + capY 
+                MouseMove(x, y)
+                Sleep(50)
+                Click
+            }
+            Gdip_DisposeImage(pBMScreen)
+            return 1
+        }
+    } else if (button == "Robux"){
+        if (Gdip_ImageSearch(pBMScreen, bitmaps["RobuxOld"], &OutputList, , , , , 10,,7) = 1) {
             if (clickit == 1){
                 Cords := StrSplit(OutputList, ",")
                 x := Cords[1] + capX - 2
@@ -626,24 +639,26 @@ CheckStock(index, list, crafting := false){
 }
 
 buyShop(itemList, itemType, crafting := false){
+    if (itemType == "Event" || itemType == "Eggs"){
+        pos := 0.8
+    } else {
+        pos := 0.845
+    }
+
     for (item in itemlist){
         if (A_index == 1){
-            relativeMouseMove(0.4,0.8)
+            relativeMouseMove(0.4,pos)
             Click
             Sleep(300)
             relativeMouseMove(0.5,0.4)
             Sleep(100)
-            Loop 50 {
+            Loop 55 {
                 Send("{WheelUp}")
                 Sleep 20
             }
             Sleep(500)
         } else {
-            if (itemType == "Event" || itemType == "Eggs"){
-                relativeMouseMove(0.4,0.8)
-            } else {
-                relativeMouseMove(0.4,0.845)
-            }
+            relativeMouseMove(0.4,pos)
         }
         if (A_index >= 19){
             if ((A_Index - 19) / 8 == 0.5){
@@ -1183,6 +1198,7 @@ F3::
     ; pBMScreen := Gdip_BitmapFromScreen(windowX "|" windowY + 30 "|" windowWidth "|" windowHeight - 30)
     ; Gdip_SaveBitmapToFile(pBMScreen,"ss.png")
     ; Gdip_DisposeImage(pBMScreen)
+    ; CookingEvent()
     PauseMacro()
 }
 
@@ -1195,8 +1211,10 @@ CookingEvent(){
     PlayerStatus("Going to Cooking Event!", "0x22e6a8",,false,,false)
     Clickbutton("Sell")
     Sleep(750)
-    Walk(9500,AKey)
-    Walk(700,WKey)
+    Walk(250,SKey)
+    Sleep(500)
+    Walk(9570,AKey)
+    Walk(1100,WKey)
     Sleep(1500)
     Send("{" Ekey "}")
     Send("{" Ekey "}")
@@ -1212,6 +1230,23 @@ CookingEvent(){
         item := Trim(item)
         cookingItem := StrReplace(item, " ", "%S+")
         searchItem(cookingItem ".*kg")
+        Sleep(500)
+        ActivateRoblox()
+        hwnd := GetRobloxHWND()
+        GetRobloxClientPos(hwnd)
+        pBMScreen := Gdip_BitmapFromScreen(windowX "|" windowY "|" windowWidth "|" windowHeight )
+        if (Gdip_ImageSearch(pBMScreen, bitmaps["Fruit"] , &OutputList, , , , , 20) = 1) {
+            Cords := StrSplit(OutputList, ",")
+            x := Cords[1] + windowX
+            y := Cords[2] + windowY
+            MouseMove(x, y)
+            Sleep(300)
+            Click
+        }
+        Gdip_DisposeImage(pBMScreen)
+        Sleep(100)
+        relativeMouseMove(0.5, 0.5)
+        Sleep(500)
         clickItem(item, "Any")
         Sleep(500)
         Send("{" Ekey "}")
