@@ -635,21 +635,34 @@ CheckStock(index, list, crafting := false){
         x := Cords[1] + captureX 
         y := Cords[2] + captureY 
         MouseMove(x, y)
-        Gdip_DisposeImage(pBMScreen)
         Sleep(100)
-        if (list[index] == "Carrot Seed" || list[index] == "Orange Tulip" || list[index] == "Bamboo Seed" || list[index] == "Mushroom Seed"){
-            SpamClick(25)
-        } else if (crafting == true){
-            Click
-        } else {
-            SpamClick(6)
-        }
-        Sleep(200)
-        PlayerStatus("Bought " list[index] "s!", "0x22e6a8",,false)
-        return 1
+        Click
+        Gdip_DisposeImage(pBMScreen)
+    } else {
+        Gdip_DisposeImage(pBMScreen)
+        return 0
     }
-    Gdip_DisposeImage(pBMScreen)
-    return 0
+
+    loop {
+        pBMScreen := Gdip_BitmapFromScreen(captureX "|" captureY "|" captureWidth "|" captureHeight)
+        If (Gdip_ImageSearch(pBMScreen, bitmaps["GreenStock"], &OutputList, , , , , 3,,3) = 1 || Gdip_ImageSearch(pBMScreen, bitmaps["GreenStock2"], &OutputList , , , , , 3,,3) = 1) {
+            Cords := StrSplit(OutputList, ",")
+            x := Cords[1] + captureX 
+            y := Cords[2] + captureY 
+            MouseMove(x, y)
+            Click
+            Gdip_DisposeImage(pBMScreen)
+            Sleep(10)
+        } else {
+            Gdip_DisposeImage(pBMScreen)
+            PlayerStatus("Bought " list[index] "s!", "0x22e6a8",,false)
+            return 1
+        }
+
+        if (A_index == 50) {
+            return 0
+        }
+    }
 
 }
 
@@ -1280,7 +1293,6 @@ F3::
     ; pBMScreen := Gdip_BitmapFromScreen(windowX "|" windowY + 30 "|" windowWidth "|" windowHeight - 30)
     ; Gdip_SaveBitmapToFile(pBMScreen,"ss.png")
     ; Gdip_DisposeImage(pBMScreen)
-    GearCraft()
     PauseMacro()
 }
 
