@@ -390,20 +390,23 @@ Clickbutton(button, clickit := 1){
         capY := windowY + 30
         capW := windowWidth // 2
         capH := 100
+        varation := 10
     } else if (button == "Xbutton") {
-        capX := windowX + windowWidth * 0.6411
-        capY := windowY + windowHeight * 0.2065
-        capW := windowWidth * 0.1
-        capH := windowHeight * 0.1667
+        capX := windowX + windowWidth * 0.60
+        capY := windowY + windowHeight * 0.15
+        capW := windowWidth * 0.38
+        capH := windowHeight * 0.25
+        varation := 50
     } else if (button == "Robux"){
         capX := windowX windowWidth // 4
         capY := windowY 
         capW := windowWidth //2
         capH := windowHeight
+        varation := 10
     }
 
     pBMScreen := Gdip_BitmapFromScreen(capX "|" capY "|" capW "|" capH)
-    if (Gdip_ImageSearch(pBMScreen, bitmaps[button], &OutputList, , , , , 10,,7) = 1) {
+    if (Gdip_ImageSearch(pBMScreen, bitmaps[button], &OutputList, , , , , varation,,7) = 1) {
         if (clickit == 1){
             Cords := StrSplit(OutputList, ",")
             x := Cords[1] + capX - 2
@@ -415,7 +418,7 @@ Clickbutton(button, clickit := 1){
         Gdip_DisposeImage(pBMScreen)
         return 1
     }
-    if (button == "Seeds" || button == "Sell" || button == "Xbutton") {    
+    if (button == "Seeds" || button == "Sell") {    
         if (Gdip_ImageSearch(pBMScreen, bitmaps[button], &OutputList, , , , , 100,,7) = 1) {
             if (clickit == 1){
                 Cords := StrSplit(OutputList, ",")
@@ -430,6 +433,19 @@ Clickbutton(button, clickit := 1){
         }
     } else if (button == "Robux"){
         if (Gdip_ImageSearch(pBMScreen, bitmaps["RobuxOld"], &OutputList, , , , , 10,,7) = 1) {
+            if (clickit == 1){
+                Cords := StrSplit(OutputList, ",")
+                x := Cords[1] + capX - 2
+                y := Cords[2] + capY 
+                MouseMove(x, y)
+                Sleep(50)
+                Click
+            }
+            Gdip_DisposeImage(pBMScreen)
+            return 1
+        }
+    } else if (button == "Xbutton"){
+        if (Gdip_ImageSearch(pBMScreen, bitmaps["Xbutton2"], &OutputList, , , , , varation,,7) = 1) {
             if (clickit == 1){
                 Cords := StrSplit(OutputList, ",")
                 x := Cords[1] + capX - 2
@@ -581,10 +597,9 @@ Crafting(Recipeitems, settingName, Names){
             buyShop(Names, settingName, true)
 
             for Material in item.Materials {
-                searchTermraw := StrReplace(Material, " item", "")
-                searchTerm := StrReplace(searchTermraw, " ", "%S+")
+                searchTerm := StrReplace(searchTerm, " ", "%S+")
                 searchItem(searchTerm)
-                clickItem(searchTermraw,Material)
+                clickItem(searchTerm, "Any")
                 Sleep(500)
                 Send("{" Ekey "}")
                 Send("{" Ekey "}")
@@ -912,6 +927,55 @@ BuyEggs(){
     }
 }
 
+BuyCosmetics(){
+    if !(CheckSetting("Settings", "Cosmetics")){
+        return 0 
+    }
+
+    PlayerStatus("Going to buy Cosmetics!", "0x22e6a8",,false,,false)
+    ActivateRoblox()
+    Clickbutton("Garden")
+    Sleep(500)
+    Send("1")
+    MouseMove windowX + windowWidth//2, windowY + windowHeight//2
+    Click
+    Sleep(2000)
+    Send("{w Down}")
+    HyperSleep(500)
+    Send("{w Up}")
+    Sleep(1500)
+    Send("{" Ekey "}")
+    if !DetectShop("Cosmetic"){
+        return 0
+    }
+    loop {
+        ActivateRoblox()
+        hwnd := GetRobloxHWND()
+        GetRobloxClientPos(hwnd)
+        pBMScreen := Gdip_BitmapFromScreen(windowX "|" windowY "|" windowWidth "|" windowHeight)
+
+        if (Gdip_ImageSearch(pBMScreen, bitmaps["Cosmetics"] , &OutputList, , , , , 10) = 1) {
+            Cords := StrSplit(OutputList, ",")
+            x := Cords[1] + windowX
+            y := Cords[2] + windowY
+            MouseMove(x, y)
+            Sleep(200)
+            Click
+        } else {
+            Gdip_DisposeImage(pBMScreen)
+            break
+        }
+        if (A_Index == 50) {
+            Gdip_DisposeImage(pBMScreen)
+            break
+        }
+        Gdip_DisposeImage(pBMScreen)
+    }
+    PlayerStatus("Finished buying Cosmetics!", "0x22e6a8",,false)
+    CloseShop()
+    return 1
+}
+
 
 GearCraft(){
     if !(CheckSetting("GearCrafting", "GearCrafting")){
@@ -931,9 +995,9 @@ GearCraft(){
     Send("{" WKey " up}")
     Sleep(1000)
     GearRecipe := [
-        { Name: "Lighting Rod", Materials: ["Basic Sprinkler", "Advanced Sprinkler", "Godly Sprinkler"], CraftTime: 2700 },
+        { Name: "Lightning Rod", Materials: ["Basic Sprinkler", "Advanced Sprinkler", "Godly Sprinkler"], CraftTime: 2700 },
         { Name: "Tanning Mirror", Materials: ["Basic Sprinkler", "Advanced Sprinkler", "Godly Sprinkler"], CraftTime: 2700 },
-        { Name: "Reclaimer", Materials: ["Common Egg item", "Harvest Tool"], CraftTime: 1500 },
+        { Name: "Reclaimer", Materials: ["Common Egg", "Harvest Tool"], CraftTime: 1500 },
         { Name: "Tropical Mist Sprinkler", Materials: ["Coconut", "Dragon Fruit", "Mango", "Godly Sprinkler"], CraftTime: 3600 },
         { Name: "Berry Blusher Sprinkler", Materials: ["Grape", "Blueberry", "Strawberry", "Godly Sprinkler"], CraftTime: 3600 },
         { Name: "Spice Spirtzer Sprinkler", Materials: ["Pepper", "Ember Lily", "Cacao", "Master Sprinkler"], CraftTime: 3600 },
@@ -942,11 +1006,11 @@ GearCraft(){
         { Name: "Stalk Sprout Sprinkler", Materials: ["Bamboo", "Beanstalk", "Mushroom", "Advanced Sprinkler"], CraftTime: 3600 },
         { Name: "Mutation Spray Choc", Materials: ["Cleaning Spray", "Cacao"], CraftTime: 720 },
         { Name: "Mutation Spray Chilled", Materials: ["Cleaning Spray", "Godly Sprinkler"], CraftTime: 300 },
-        { Name: "Mutation Spray Shocked", Materials: ["Cleaning Spray", "Lighting Rod"], CraftTime: 1800 },
-        { Name: "Anti Bee Egg", Materials: ["Bee Egg item"], CraftTime: 7200 },
-        { Name: "Small Toy", Materials: ["Common Egg item", "Coconut Seed", "Coconut"], CraftTime: 600 },
-        { Name: "Small Treat", Materials: ["Common Egg item", "Dragon Fruit Seed", "Blueberry"], CraftTime: 600 },
-        { Name: "Pack Bee", Materials: ["Anti Bee Egg item", "Sunflower", "Purple Dahila"], CraftTime: 14400 },
+        { Name: "Mutation Spray Shocked", Materials: ["Cleaning Spray", "Lightning Rod"], CraftTime: 1800 },
+        { Name: "Anti Bee Egg", Materials: ["Bee Egg"], CraftTime: 7200 },
+        { Name: "Small Toy", Materials: ["Common Egg", "Coconut Seed", "Coconut"], CraftTime: 600 },
+        { Name: "Small Treat", Materials: ["Common Egg", "Dragon Fruit Seed", "Blueberry"], CraftTime: 600 },
+        { Name: "Pack Bee", Materials: ["Anti Bee Egg", "Sunflower", "Purple Dahila"], CraftTime: 14400 },
         
         
     ]
@@ -1089,6 +1153,7 @@ MainLoop() {
     BuySeeds()
     BuyGears()
     BuyEggs()
+    BuyCosmetics()
     CookingEvent()
     global LastCookingTime := nowUnix()
     GearCraft()
@@ -1125,6 +1190,7 @@ ShowToolTip(){
     static EggsEnabled := IniRead(settingsFile, "Eggs", "Eggs") + 0
     static gearCraftingEnabled := IniRead(settingsFile, "GearCrafting", "GearCrafting") + 0
     static seedCraftingEnabled := IniRead(settingsFile, "SeedCrafting", "SeedCrafting") + 0
+    static cosmeticEnabled := IniRead(settingsFile, "Settings", "Cosmetics") + 0
     static merchantEnabled := IniRead(settingsFile, "Settings", "TravelingMerchant") + 0
     static CookingEnabled := IniRead(settingsFile, "Settings", "CookingEvent") + 0
 
@@ -1149,6 +1215,22 @@ ShowToolTip(){
         eventM := CookingRemaining // 60
         eventS := Mod(CookingRemaining, 60)
         tooltipText .= "Cooking for: " eventM ":" Format("{:02}", eventS) "`n"
+    }
+    if (cosmeticEnabled) {
+        utcNow := A_NowUTC
+        utcHour := FormatTime(utcNow, "H")
+        utcMin := FormatTime(utcNow, "m")
+        utcSec := FormatTime(utcNow, "s")
+
+        totalSecNow := utcHour * 3600 + utcMin * 60 + utcSec
+        nextcosmeticSec := Ceil(totalSecNow / (4 * 3600)) * 4 * 3600
+        remainingSec := Mod(nextcosmeticSec - totalSecNow, 14400)  ; every 4 hours
+
+        cosmeticH := remainingSec // 3600
+        cosmeticM := Mod(remainingSec, 3600) // 60
+        cosmeticS := Mod(remainingSec, 60)
+
+        tooltipText .= "Cosmetics: " cosmeticH ":" Format("{:02}", cosmeticM) ":" Format("{:02}", cosmeticS) "`n"
     }
     if (merchantEnabled) {
         utcNow := A_NowUTC
@@ -1234,7 +1316,7 @@ CookingEvent(){
         hwnd := GetRobloxHWND()
         GetRobloxClientPos(hwnd)
         pBMScreen := Gdip_BitmapFromScreen(windowX "|" windowY "|" windowWidth "|" windowHeight )
-        if (Gdip_ImageSearch(pBMScreen, bitmaps["Fruit"] , &OutputList, , , , , 20) = 1) {
+        if (Gdip_ImageSearch(pBMScreen, bitmaps["Fruit"] , &OutputList, , , , , 100) = 1) {
             Cords := StrSplit(OutputList, ",")
             x := Cords[1] + windowX
             y := Cords[2] + windowY

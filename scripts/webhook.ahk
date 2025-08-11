@@ -3,14 +3,18 @@
  * @param {string} statusColor RGB color codes. Example: 0xe67e22
  */
 PlayerStatus(statusTitle, statusColor, statusDescription := "", Mentions := True, content := "", statusImage := True, statusTimestamp := True) {
-    url := IniRead(settingsFile, "Settings", "url")
+    static url := IniRead(settingsFile, "Settings", "url", "")
+    if (url == "") {
+        return
+    }
+    
     try {
         FileExist("ss.jpg") ? FileDelete("ss.jpg") : ""
     } catch Error as e {
         return 0
     }
 
-    DiscordUserId := IniRead("settings.ini", "Settings", "discordID")
+    static DiscordUserId := IniRead(settingsFile, "Settings", "discordID", "")
     mentionStr := Mentions ? "<@" DiscordUserId ">" : ""
 
     ; Create a timestamp in the proper ISO 8601 format

@@ -110,7 +110,11 @@ CloseRoblox() {
 ResizeRoblox() {
     ActivateRoblox()
 	winTitle := "ahk_exe RobloxPlayerBeta.exe"
-	WinMove(0, 0, 1920, 1080, winTitle)
+	WinMaximize(winTitle)
+	if (windowHeight < 1080 || windowWidth < 1920)
+	{
+		WinMove(0, 0, 1920, 1080, winTitle)
+	}
     hwnd := GetRobloxHWND()
     GetRobloxClientPos(hwnd)
 }

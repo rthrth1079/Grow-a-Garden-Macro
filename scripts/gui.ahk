@@ -22,14 +22,13 @@ if (A_IsCompiled) {
 
 
 
-MyWindow := WebViewGui("-Resize -Caption ",,,WebViewSettings) ; ignore error it somehow works with it.....
+MyWindow := WebViewGui("+Resize -Caption ",,,WebViewSettings) ; ignore error it somehow works with it.....
 MyWindow.OnEvent("Close", (*) => StopMacro())
 MyWindow.Navigate("scripts/Gui/index.html")
 MyWindow.AddHostObjectToScript("ButtonClick", { func: WebButtonClickEvent })
 MyWindow.AddHostObjectToScript("Save", { func: SaveSettings })
 MyWindow.AddHostObjectToScript("ReadSettings", { func: SendSettings })
-; MyWindow.Show("w650 h300")
-MyWindow.Show("w650 h470")
+MyWindow.Show("w650 h450")
 
 
 
@@ -121,7 +120,7 @@ SaveSettings(settingsJson) {
     IniFile := A_WorkingDir . "\settings.ini"
 
     for key, val in settings {
-        if (key == "url" || key == "discordID" || key == "VipLink" || key == "TravelingMerchant" || key == "CookingEvent" || key == "SearchList" || key == "CookingTime") {
+        if (key == "url" || key == "discordID" || key == "VipLink" || key == "Cosmetics" || key == "TravelingMerchant" || key == "CookingEvent" || key == "SearchList" || key == "CookingTime") {
             IniWrite(val, IniFile, "Settings", key)
         }
     }
@@ -173,6 +172,7 @@ SendSettings(){
         IniWrite("", settingsFile, "Settings", "url")
         IniWrite("", settingsFile, "Settings", "discordID")
         IniWrite("", settingsFile, "Settings", "VipLink")
+        IniWrite("0", settingsFile, "Settings", "Cosmetics")
         IniWrite("1", settingsFile, "Settings", "TravelingMerchant")
         IniWrite("0", settingsFile, "Settings", "CookingEvent")
         IniWrite("", settingsFile, "Settings", "SearchList")
@@ -200,6 +200,7 @@ SendSettings(){
 
     Other := [
         "TravelingMerchant",
+        "Cosmetics",
         "CookingEvent"
     ]
 
@@ -213,6 +214,7 @@ SendSettings(){
         url:       IniRead(settingsFile, "Settings", "url")
       , discordID: IniRead(settingsFile, "Settings", "discordID")
       , VipLink:   IniRead(settingsFile, "Settings", "VipLink")
+      , Cosmetics:  IniRead(settingsFile, "Settings", "Cosmetics")
       , TravelingMerchant:  IniRead(settingsFile, "Settings", "TravelingMerchant")
       , CookingEvent:  IniRead(settingsFile, "Settings", "CookingEvent")
       , SearchList:  IniRead(settingsFile, "Settings", "SearchList")
@@ -278,9 +280,7 @@ SendSettings(){
 
 
 
-if (IniRead(settingsFile, "Settings", "url",0)){
-    PlayerStatus("Connected to discord!", "0x34495E", , false, , false)
-}
+PlayerStatus("Connected to discord!", "0x34495E", , false, , false)
 
 
 

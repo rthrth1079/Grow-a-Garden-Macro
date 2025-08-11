@@ -41,10 +41,8 @@ A macro for **Grow a Garden** that automatically buys your selected seeds, gear,
 
 ## 📦 Macro Setup
 
-### 🔧 Crafting Tab
-
-> 🍓 **Fruit Detection Tip**:
-> For fruits required in the crafting menu, **make sure the “KG” text is visible** in your inventory. Essentially try to have unmuted fruits in your inventory so it can see the "KG" text.
+> ⚙️ **Font styling**:
+> Ensure your font is default and if its not then it will not detect items in your inventory.
 
 
 

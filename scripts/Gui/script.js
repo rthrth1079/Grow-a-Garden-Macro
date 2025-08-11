@@ -52,6 +52,7 @@ async function onSaveClick() {
     discordID: document.getElementById('discordID').value,
     VipLink: document.getElementById('VipLink').value,
     TravelingMerchant: +document.getElementById('TravelingMerchant').checked,
+    Cosmetics: +document.getElementById('Cosmetics').checked,
     CookingEvent:  +document.getElementById('CookingEvent').checked,
     SearchList:  document.getElementById('SearchList').value,
     CookingTime:  document.getElementById('CookingTime').value,
@@ -95,6 +96,7 @@ function applySettings(a) {
     document.getElementById('url').value       = s.url;
     document.getElementById('discordID').value = s.discordID;
     document.getElementById('VipLink').value   = s.VipLink;
+    document.getElementById('Cosmetics').checked  = !!+s.Cosmetics
     document.getElementById('TravelingMerchant').checked  = !!+s.TravelingMerchant
     document.getElementById('CookingEvent').checked  = !!+s.CookingEvent
     document.getElementById('SearchList').value  = s.SearchList

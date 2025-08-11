@@ -38,16 +38,19 @@ RewardChecker() {
     if (Mod(A_Min,30) == 0) {
         Rewardlist.Push("Eggs")
     }
-    if (FourHours() && IniRead(settingsFile, "Settings", "TravelingMerchant") + 0 == 1) {
+    if (FourHours() && CheckSetting("Settings", "Cosmetics")) {
+        Rewardlist.Push("Cosmetics")
+    }
+    if (FourHours() && CheckSetting("Settings", "TravelingMerchant")) {
         Rewardlist.Push("TravelingMerchant")
     }
-    if (currentTime - LastGearCraftingTime >= GearCraftingTime && IniRead(settingsFile, "GearCrafting", "GearCrafting") + 0 == 1) {
+    if (currentTime - LastGearCraftingTime >= GearCraftingTime && CheckSetting("GearCrafting", "GearCrafting")) {
         if !(A_Min == 4 || A_Min == 9) {
             Rewardlist.Push("GearCrafting")
         }
         
     }
-    if (currentTime - LastSeedCraftingTime >= SeedCraftingTime && IniRead(settingsFile, "SeedCrafting", "SeedCrafting") + 0 == 1) {
+    if (currentTime - LastSeedCraftingTime >= SeedCraftingTime && CheckSetting("SeedCrafting", "SeedCrafting")) {
         if !(A_Min == 4 || A_Min == 9) {
             Rewardlist.Push("SeedCrafting")
         }
@@ -99,6 +102,9 @@ RewardInterupt() {
         if (v = "TravelingMerchant") {
             BuyMerchant()
         }
+        if (v = "Cosmetics") {
+            BuyCosmetics()
+        }
         if (v = "Event") {
             CookingEvent()
             Sleep(2000)
@@ -107,10 +113,8 @@ RewardInterupt() {
         }
     }
     
-    if (variable.Length > 0)
+    if (variable.Length > 0) {
         if (Mod(A_Min,5) == 0){
-            Clickbutton("Garden")
-            relativeMouseMove(0.5, 0.5)
             thing := 60 - A_Sec 
             loop thing {
                 ShowToolTip()
@@ -118,7 +122,10 @@ RewardInterupt() {
             }
 
         }
+        Clickbutton("Garden")
+        relativeMouseMove(0.5, 0.5)
         return 1
+    }
 }
 
 
