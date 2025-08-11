@@ -223,7 +223,7 @@ openBag(){
     hwnd := GetRobloxHWND()
     GetRobloxClientPos(hwnd)
     pBMScreen := Gdip_BitmapFromScreen(windowX "|" windowY "|" windowWidth * 0.5 "|" windowHeight //8)
-    if (Gdip_ImageSearch(pBMScreen, bitmaps["Openbag"] , &OutputList, , , , , 20,,8) = 1) {
+    if (Gdip_ImageSearch(pBMScreen, bitmaps["Openbag"] , &OutputList, , , , , 100,,8) = 1) {
         Cords := StrSplit(OutputList, ",")
         x := Cords[1] + windowX + 2
         y := Cords[2] + windowY + 2
@@ -1198,8 +1198,8 @@ F3::
     ; pBMScreen := Gdip_BitmapFromScreen(windowX "|" windowY + 30 "|" windowWidth "|" windowHeight - 30)
     ; Gdip_SaveBitmapToFile(pBMScreen,"ss.png")
     ; Gdip_DisposeImage(pBMScreen)
-    ; CookingEvent()
-    PauseMacro()
+    openBag()
+    ; PauseMacro()
 }
 
 
