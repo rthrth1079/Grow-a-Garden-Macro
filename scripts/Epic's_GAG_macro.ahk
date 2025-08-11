@@ -652,14 +652,15 @@ CheckStock(index, list, crafting := false){
             MouseMove(x, y)
             Click
             Gdip_DisposeImage(pBMScreen)
-            Sleep(10)
+            Sleep(25)
         } else {
             Gdip_DisposeImage(pBMScreen)
             PlayerStatus("Bought " list[index] "s!", "0x22e6a8",,false)
             return 1
         }
-
+        
         if (A_index == 50) {
+            Gdip_DisposeImage(pBMScreen)
             return 0
         }
     }
