@@ -301,27 +301,69 @@ searchItem(keyword){
 }
 
 clickItem(keyword, searchbitmap){
+    ActivateRoblox()
+    hwnd := GetRobloxHWND()
+    GetRobloxClientPos(hwnd)
     Sleep(500)
-    pBMScreen := Gdip_BitmapFromScreen(windowX "|" windowY + 30 "|" windowWidth "|" windowHeight - 30)
-    if (Gdip_ImageSearch(pBMScreen, bitmaps[searchbitmap], &OutputList, , , , , 25) = 1) {
+    capX := windowX
+    capY := windowY + 200 + windowHeight - 600
+    capW := windowWidth
+    capH := windowHeight - (200 + windowHeight - 600)
+    pBMScreen := Gdip_BitmapFromScreen(capX "|" capY "|" capW "|" capH)
+    if (searchbitmap == "Bracket"){
+        if (Gdip_ImageSearch(pBMScreen, bitmaps["Bracket2"], &OutputList, , , , , 20) = 1) {
+            Cords := StrSplit(OutputList, ",")
+            x := Cords[1] + capX + 4
+            y := Cords[2] + capY + 4
+            MouseMove(x, y)
+            Sleep(250)
+            Click
+            Sleep(250)
+            Gdip_DisposeImage(pBMScreen)
+            closeBag()
+            return true
+        }
+    }
+
+    if (Gdip_ImageSearch(pBMScreen, bitmaps[searchbitmap], &OutputList, , , , , 20) = 1) {
         Cords := StrSplit(OutputList, ",")
-        x := Cords[1] + windowX + 2
-        y := Cords[2] + windowY + 32
+        x := Cords[1] + capX + 4
+        y := Cords[2] + capY + 4
         MouseMove(x, y)
         Sleep(250)
         Click
         Sleep(250)
-        closeBag()
         Gdip_DisposeImage(pBMScreen)
+        closeBag()
+        return true
     } else {
         PlayerStatus("Missing " keyword " in inventory!", "0xff0000")
-        closeBag()
         Gdip_DisposeImage(pBMScreen)
+        closeBag()
+        return false
     }
 }
 
 
-
+clickCategory(category){
+    ActivateRoblox()
+    hwnd := GetRobloxHWND()
+    GetRobloxClientPos(hwnd)
+    capX := windowX
+    capY := windowY + 200 + windowHeight - 600
+    capW := windowWidth
+    capH := windowHeight - (200 + windowHeight - 600)
+    pBMScreen := Gdip_BitmapFromScreen(capX "|" capY "|" capW "|" capH)
+    if (Gdip_ImageSearch(pBMScreen, bitmaps[category] , &OutputList, , , , , 100) = 1) {
+        Cords := StrSplit(OutputList, ",")
+        x := Cords[1] + capX
+        y := Cords[2] + capY
+        MouseMove(x, y)
+        Sleep(300)
+        Click
+    }
+    Gdip_DisposeImage(pBMScreen)
+}
 
 
 equipRecall(){
@@ -412,7 +454,7 @@ Clickbutton(button, clickit := 1){
             x := Cords[1] + capX - 2
             y := Cords[2] + capY 
             MouseMove(x, y)
-            Sleep(50)
+            Sleep(10)
             Click
         }
         Gdip_DisposeImage(pBMScreen)
@@ -425,7 +467,7 @@ Clickbutton(button, clickit := 1){
                 x := Cords[1] + capX - 2
                 y := Cords[2] + capY 
                 MouseMove(x, y)
-                Sleep(50)
+                Sleep(10)
                 Click
             }
             Gdip_DisposeImage(pBMScreen)
@@ -438,7 +480,7 @@ Clickbutton(button, clickit := 1){
                 x := Cords[1] + capX - 2
                 y := Cords[2] + capY 
                 MouseMove(x, y)
-                Sleep(50)
+                Sleep(10)
                 Click
             }
             Gdip_DisposeImage(pBMScreen)
@@ -451,7 +493,7 @@ Clickbutton(button, clickit := 1){
                 x := Cords[1] + capX - 2
                 y := Cords[2] + capY 
                 MouseMove(x, y)
-                Sleep(50)
+                Sleep(10)
                 Click
             }
             Gdip_DisposeImage(pBMScreen)
@@ -485,7 +527,7 @@ checkCamera(type){
     GetRobloxClientPos(hwnd)
     loop 8 {
         pBMScreen := Gdip_BitmapFromScreen(windowX "|" windowY "|" windowWidth "|" windowHeight)
-        if (Gdip_ImageSearch(pBMScreen, bitmaps[type] , &OutputList, , , , , 25) = 1) {
+        if (Gdip_ImageSearch(pBMScreen, bitmaps[type] , , , , , , 25) = 1) {
             Gdip_DisposeImage(pBMScreen)
             return 1
         } else {
@@ -599,7 +641,17 @@ Crafting(Recipeitems, settingName, Names){
             for Material in item.Materials {
                 searchTerm := StrReplace(Material, " ", "%S+")
                 searchItem(searchTerm)
-                clickItem(searchTerm, Material)
+                searchBitmap := Material
+                if RegExMatch(Material, ".*kg")
+                {
+                    searchBitmap := "Bracket"
+                    clickCategory("Fruit")
+                } else if RegExMatch(Material, "Seed")
+                {
+                    searchBitmap := "Seed"
+                }
+                searchTerm := StrReplace(searchTerm, ".*kg", "")
+                clickItem(searchTerm, searchBitmap)
                 Sleep(500)
                 Send("{" Ekey "}")
                 Send("{" Ekey "}")
@@ -962,16 +1014,19 @@ BuyCosmetics(){
     if !DetectShop("Cosmetic"){
         return 0
     }
+    ActivateRoblox()
+    hwnd := GetRobloxHWND()
+    GetRobloxClientPos(hwnd)
+    capX := windowX + windowWidth * 0.15
+    capY := windowY + windowHeight * 0.3
+    capW := windowWidth * 0.65
+    capH := windowHeight * 0.5
     loop {
-        ActivateRoblox()
-        hwnd := GetRobloxHWND()
-        GetRobloxClientPos(hwnd)
-        pBMScreen := Gdip_BitmapFromScreen(windowX "|" windowY "|" windowWidth "|" windowHeight)
-
-        if (Gdip_ImageSearch(pBMScreen, bitmaps["Cosmetics"] , &OutputList, , , , , 10) = 1) {
+        pBMScreen := Gdip_BitmapFromScreen(capX "|" capY "|" capW "|" capH)
+        if (Gdip_ImageSearch(pBMScreen, bitmaps["Cosmetics"] , &OutputList, , , , , 25) = 1) {
             Cords := StrSplit(OutputList, ",")
-            x := Cords[1] + windowX
-            y := Cords[2] + windowY
+            x := Cords[1] + capX
+            y := Cords[2] + capY
             MouseMove(x, y)
             Sleep(200)
             Click
@@ -1012,19 +1067,19 @@ GearCraft(){
         { Name: "Lightning Rod", Materials: ["Basic Sprinkler", "Advanced Sprinkler", "Godly Sprinkler"], CraftTime: 2700 },
         { Name: "Tanning Mirror", Materials: ["Basic Sprinkler", "Advanced Sprinkler", "Godly Sprinkler"], CraftTime: 2700 },
         { Name: "Reclaimer", Materials: ["Common Egg", "Harvest Tool"], CraftTime: 1500 },
-        { Name: "Tropical Mist Sprinkler", Materials: ["Coconut", "Dragon Fruit", "Mango", "Godly Sprinkler"], CraftTime: 3600 },
-        { Name: "Berry Blusher Sprinkler", Materials: ["Grape", "Blueberry", "Strawberry", "Godly Sprinkler"], CraftTime: 3600 },
-        { Name: "Spice Spirtzer Sprinkler", Materials: ["Pepper", "Ember Lily", "Cacao", "Master Sprinkler"], CraftTime: 3600 },
-        { Name: "Sweet Soaker Sprinkler", Materials: ["Watermelon", "Watermelon", "Watermelon", "Master Sprinkler"], CraftTime: 3600 },
-        { Name: "Flower Froster Sprinkler", Materials: ["Orange Tulip", "Daffodil", "Advanced Sprinkler", "Basic Sprinkler"], CraftTime: 3600 },
-        { Name: "Stalk Sprout Sprinkler", Materials: ["Bamboo", "Beanstalk", "Mushroom", "Advanced Sprinkler"], CraftTime: 3600 },
-        { Name: "Mutation Spray Choc", Materials: ["Cleaning Spray", "Cacao"], CraftTime: 720 },
+        { Name: "Tropical Mist Sprinkler", Materials: ["Coconut.*kg", "Dragon Fruit.*kg", "Mango.*kg", "Godly Sprinkler"], CraftTime: 3600 },
+        { Name: "Berry Blusher Sprinkler", Materials: ["Grape.*kg", "Blueberry.*kg", "Strawberry.*kg", "Godly Sprinkler"], CraftTime: 3600 },
+        { Name: "Spice Spirtzer Sprinkler", Materials: ["Pepper.*kg", "Ember Lily.*kg", "Cacao.*kg", "Master Sprinkler"], CraftTime: 3600 },
+        { Name: "Sweet Soaker Sprinkler", Materials: ["Watermelon.*kg", "Watermelon.*kg", "Watermelon.*kg", "Master Sprinkler"], CraftTime: 3600 },
+        { Name: "Flower Froster Sprinkler", Materials: ["Orange Tulip.*kg", "Daffodil.*kg", "Advanced Sprinkler", "Basic Sprinkler"], CraftTime: 3600 },
+        { Name: "Stalk Sprout Sprinkler", Materials: ["Bamboo.*kg", "Beanstalk.*kg", "Mushroom.*kg", "Advanced Sprinkler"], CraftTime: 3600 },
+        { Name: "Mutation Spray Choc", Materials: ["Cleaning Spray", "Cacao.*kg"], CraftTime: 720 },
         { Name: "Mutation Spray Chilled", Materials: ["Cleaning Spray", "Godly Sprinkler"], CraftTime: 300 },
         { Name: "Mutation Spray Shocked", Materials: ["Cleaning Spray", "Lightning Rod"], CraftTime: 1800 },
         { Name: "Anti Bee Egg", Materials: ["Bee Egg"], CraftTime: 7200 },
-        { Name: "Small Toy", Materials: ["Common Egg", "Coconut Seed", "Coconut"], CraftTime: 600 },
-        { Name: "Small Treat", Materials: ["Common Egg", "Dragon Fruit Seed", "Blueberry"], CraftTime: 600 },
-        { Name: "Pack Bee", Materials: ["Anti Bee Egg", "Sunflower", "Purple Dahila"], CraftTime: 14400 },
+        { Name: "Small Toy", Materials: ["Common Egg", "Coconut Seed", "Coconut.*kg"], CraftTime: 600 },
+        { Name: "Small Treat", Materials: ["Common Egg", "Dragon Fruit Seed", "Blueberry.*kg"], CraftTime: 600 },
+        { Name: "Pack Bee", Materials: ["Anti Bee Egg", "Sunflower.*kg", "Purple Dahila.*kg"], CraftTime: 14400 },
         
         
     ]
@@ -1055,11 +1110,11 @@ SeedCraft(){
     Send("{" WKey " up}")
     Sleep(1000)
     SeedRecipe := [
-        { Name: "Twisted Tangle", Materials: ["Cactus Seed", "Bamboo", "Cactus", "Mango"], CraftTime: 900 },
-        { Name: "Veinpetal", Materials: ["Orange Tulip", "Daffodil", "Beanstalk", "Burning bud"], CraftTime: 1200 },
-        { Name: "Horsetail", Materials: ["Daffodil", "Bamboo", "Corn"], CraftTime: 900 },
-        { Name: "Lingonberry", Materials: ["Blueberry", "Blueberry", "Blueberry", "Horsetail"], CraftTime: 900 },
-        { Name: "Amber Spine", Materials: ["Cactus", "Pumpkin", "Horsetail"], CraftTime: 1800 },        
+        { Name: "Twisted Tangle", Materials: ["Cactus Seed", "Bamboo Seed", "Cactus.*kg", "Mango.*kg"], CraftTime: 900 },
+        { Name: "Veinpetal", Materials: ["Orange Tulip Seed", "Daffodil Seed", "Beanstalk.*kg", "Burning bud.*kg"], CraftTime: 1200 },
+        { Name: "Horsetail", Materials: ["Daffodil Seed", "Bamboo.*kg", "Corn.*kg"], CraftTime: 900 },
+        { Name: "Lingonberry", Materials: ["Blueberry Seed", "Blueberry Seed", "Blueberry Seed", "Horsetail.*kg"], CraftTime: 900 },
+        { Name: "Amber Spine", Materials: ["Cactus Seed", "Pumpkin.*kg", "Horsetail.*kg"], CraftTime: 1800 },        
         
     ]
     SeedNames := getItems("SeedCrafting")
@@ -1161,6 +1216,7 @@ MainLoop() {
         return
     }
 
+    MyWindow.Destroy()
     CloseChat() 
     equipRecall()
     CameraCorrection()
@@ -1297,7 +1353,6 @@ F3::
     PauseMacro()
 }
 
-
 CookingEvent(){
     if !(CheckSetting("Settings", "CookingEvent")){
         return 0
@@ -1326,23 +1381,9 @@ CookingEvent(){
         cookingItem := StrReplace(item, " ", "%S+")
         searchItem(cookingItem ".*kg")
         Sleep(500)
-        ActivateRoblox()
-        hwnd := GetRobloxHWND()
-        GetRobloxClientPos(hwnd)
-        pBMScreen := Gdip_BitmapFromScreen(windowX "|" windowY "|" windowWidth "|" windowHeight )
-        if (Gdip_ImageSearch(pBMScreen, bitmaps["Fruit"] , &OutputList, , , , , 100) = 1) {
-            Cords := StrSplit(OutputList, ",")
-            x := Cords[1] + windowX
-            y := Cords[2] + windowY
-            MouseMove(x, y)
-            Sleep(300)
-            Click
-        }
-        Gdip_DisposeImage(pBMScreen)
-        Sleep(100)
-        relativeMouseMove(0.5, 0.5)
+        clickCategory("Fruit")
         Sleep(500)
-        clickItem(item, "Any")
+        clickItem(item, "Bracket")
         Sleep(500)
         Send("{" Ekey "}")
         Send("{" Ekey "}")
@@ -1359,6 +1400,9 @@ CookingEvent(){
     Click
     ZoomAlign()
     PlayerStatus("Cooking food!", "0x22e6a8",,false)
+    Send("1")
+    Sleep(250)
+    Send("1")
 }
 
 
