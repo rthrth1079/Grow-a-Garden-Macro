@@ -6,8 +6,8 @@ nowUnix() {
 LastGearCraftingTime := nowUnix()
 LastSeedCraftingTime := nowUnix()
 LastEventCraftingtime := nowUnix()
-
 LastCookingTime := nowUnix()
+LastBeanstalkTime := nowUnix()
 
 FourHours(){
     UtcNow := A_NowUTC
@@ -21,7 +21,7 @@ FourHours(){
 
 
 RewardChecker() {
-    global LastGearCraftingTime, EventCraftingtime, LastSeedCraftingTime, LastCookingTime
+    global LastGearCraftingTime, EventCraftingtime, LastSeedCraftingTime, LastCookingTime, LastBeanstalkTime
 
     static CookingTime := Integer(IniRead(settingsFile, "Settings", "CookingTime") * 1.1)
 

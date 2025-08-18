@@ -1244,7 +1244,6 @@ MainLoop() {
     global LastSeedCraftingTime := nowUnix()
     BuyMerchant()
     global LastEventCraftingtime := nowUnix()
-    global LastBeanstalkTime := nowUnix()
     loop {
         RewardInterupt()
         if (Disconnect()){
