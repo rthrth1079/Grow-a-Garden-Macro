@@ -1,7 +1,7 @@
 
 #Requires AutoHotkey v2.0
 
-version := "v1.1.5"
+version := "v1.1.6"
 settingsFile := "settings.ini"
 
 
@@ -43,7 +43,7 @@ F2::{
 Start(*) {
     
     PlayerStatus("Starting " version " Grow A Garden Macro by epic", "0xFFFF00", , false, , false)
-    ; OnError (e, mode) => (mode = "return") * (-1)
+    OnError (e, mode) => (mode = "return") * (-1)
     Loop {
         MainLoop() 
     }
@@ -87,6 +87,7 @@ ScreenResolution() {
         (
         Your Display Scale seems to be ≠100%. The macro will NOT work correctly!
         Set Scale to 100% in Display Settings, then restart Roblox & this macro.
+        Windows key > change the resolution of display > Scale > 100%
         )", "WARNING!!", 0x1030 " T60"
     }
 }

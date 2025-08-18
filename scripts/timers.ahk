@@ -56,12 +56,12 @@ RewardChecker() {
         }
         
     }
-    if (currentTime - LastCookingTime >= CookingTime && CheckSetting("Settings", "CookingEvent")) {
-        if !(A_Min == 4 || A_Min == 9) {
-            Rewardlist.Push("Event")
-        }
+    ; if (currentTime - LastCookingTime >= CookingTime && CheckSetting("Settings", "CookingEvent")) {
+    ;     if !(A_Min == 4 || A_Min == 9) {
+    ;         Rewardlist.Push("Event")
+    ;     }
         
-    }
+    ; }
 
     return Rewardlist
 }
@@ -105,12 +105,12 @@ RewardInterupt() {
         if (v = "Cosmetics") {
             BuyCosmetics()
         }
-        if (v = "Event") {
-            CookingEvent()
-            Sleep(2000)
-            global LastCookingTime
-            LastCookingTime := nowUnix()
-        }
+        ; if (v = "Event") {
+        ;     CookingEvent()
+        ;     Sleep(2000)
+        ;     global LastCookingTime
+        ;     LastCookingTime := nowUnix()
+        ; }
     }
     
     if (variable.Length > 0) {

@@ -37,8 +37,8 @@ SlashKey := "vk6F" ; /
 SC_LShift:="sc02a" ; LShift
 
 
-#Include "%A_ScriptDir%\..\"
-#include lib
+#Include "%A_ScriptDir%"
+#include ..\lib\
 
 #Include FormData.ahk
 #Include Gdip_All.ahk
@@ -57,7 +57,6 @@ SC_LShift:="sc02a" ; LShift
 #Include gui.ahk
 #Include webhook.ahk
 #Include timers.ahk
-
 
 
 
@@ -271,6 +270,7 @@ clearSearch(){
 
 
 searchItem(keyword){
+    keyword := StrReplace(keyword, " ", "%S+")
     ActivateRoblox()
     hwnd := GetRobloxHWND()
     GetRobloxClientPos(hwnd)
@@ -639,18 +639,19 @@ Crafting(Recipeitems, settingName, Names){
             buyShop(Names, settingName, true)
 
             for Material in item.Materials {
-                searchTerm := StrReplace(Material, " ", "%S+")
+                searchTerm := StrReplace(Material, " kg", "")
+                searchTerm := StrReplace(Material, " fd", "")
                 searchItem(searchTerm)
-                searchBitmap := Material
-                if RegExMatch(Material, ".*kg")
-                {
+                searchBitmap := searchTerm
+                if RegExMatch(Material, " kg") {
                     searchBitmap := "Bracket"
                     clickCategory("Fruit")
-                } else if RegExMatch(Material, "Seed")
-                {
+                } else if RegExMatch(Material, "Seed") {
                     searchBitmap := "Seed"
+
+                } else if RegExMatch(Material, " fd") {
+                    clickCategory("Food")
                 }
-                searchTerm := StrReplace(searchTerm, ".*kg", "")
                 clickItem(searchTerm, searchBitmap)
                 Sleep(500)
                 Send("{" Ekey "}")
@@ -778,6 +779,12 @@ clickOption(option, optionamount){
     Sleep(500)
 
     switch optionamount {
+        case 2:
+            if (option == 1){
+                MouseMove windowWidth * (1500 / 1920), windowHeight * (540  / 1080)
+            } else if (option == 2){
+                MouseMove windowWidth * (1500 / 1920), windowHeight * (750  / 1080)
+            }
         case 3: 
             if (option == 1){
                 MouseMove windowWidth * (1500 / 1920), windowHeight * (390 / 1080)
@@ -946,7 +953,7 @@ BuyGears(){
         Click
         Sleep(1500)
         Send("{" Ekey "}")
-        clickOption(1,3)
+        clickOption(1,2)
         if !DetectShop("gear"){
             CameraCorrection()
             continue
@@ -1067,19 +1074,20 @@ GearCraft(){
         { Name: "Lightning Rod", Materials: ["Basic Sprinkler", "Advanced Sprinkler", "Godly Sprinkler"], CraftTime: 2700 },
         { Name: "Tanning Mirror", Materials: ["Basic Sprinkler", "Advanced Sprinkler", "Godly Sprinkler"], CraftTime: 2700 },
         { Name: "Reclaimer", Materials: ["Common Egg", "Harvest Tool"], CraftTime: 1500 },
-        { Name: "Tropical Mist Sprinkler", Materials: ["Coconut.*kg", "Dragon Fruit.*kg", "Mango.*kg", "Godly Sprinkler"], CraftTime: 3600 },
-        { Name: "Berry Blusher Sprinkler", Materials: ["Grape.*kg", "Blueberry.*kg", "Strawberry.*kg", "Godly Sprinkler"], CraftTime: 3600 },
-        { Name: "Spice Spirtzer Sprinkler", Materials: ["Pepper.*kg", "Ember Lily.*kg", "Cacao.*kg", "Master Sprinkler"], CraftTime: 3600 },
-        { Name: "Sweet Soaker Sprinkler", Materials: ["Watermelon.*kg", "Watermelon.*kg", "Watermelon.*kg", "Master Sprinkler"], CraftTime: 3600 },
-        { Name: "Flower Froster Sprinkler", Materials: ["Orange Tulip.*kg", "Daffodil.*kg", "Advanced Sprinkler", "Basic Sprinkler"], CraftTime: 3600 },
-        { Name: "Stalk Sprout Sprinkler", Materials: ["Bamboo.*kg", "Beanstalk.*kg", "Mushroom.*kg", "Advanced Sprinkler"], CraftTime: 3600 },
-        { Name: "Mutation Spray Choc", Materials: ["Cleaning Spray", "Cacao.*kg"], CraftTime: 720 },
+        { Name: "Tropical Mist Sprinkler", Materials: ["Coconut kg", "Dragon Fruit kg", "Mango kg", "Godly Sprinkler"], CraftTime: 3600 },
+        { Name: "Berry Blusher Sprinkler", Materials: ["Grape kg", "Blueberry kg", "Strawberry kg", "Godly Sprinkler"], CraftTime: 3600 },
+        { Name: "Spice Spirtzer Sprinkler", Materials: ["Pepper kg", "Ember Lily kg", "Cacao kg", "Master Sprinkler"], CraftTime: 3600 },
+        { Name: "Sweet Soaker Sprinkler", Materials: ["Watermelon kg", "Watermelon kg", "Watermelon kg", "Master Sprinkler"], CraftTime: 3600 },
+        { Name: "Flower Froster Sprinkler", Materials: ["Orange Tulip kg", "Daffodil kg", "Advanced Sprinkler", "Basic Sprinkler"], CraftTime: 3600 },
+        { Name: "Stalk Sprout Sprinkler", Materials: ["Bamboo kg", "Beanstalk kg", "Mushroom kg", "Advanced Sprinkler"], CraftTime: 3600 },
+        { Name: "Mutation Spray Choc", Materials: ["Cleaning Spray", "Cacao kg"], CraftTime: 720 },
         { Name: "Mutation Spray Chilled", Materials: ["Cleaning Spray", "Godly Sprinkler"], CraftTime: 300 },
         { Name: "Mutation Spray Shocked", Materials: ["Cleaning Spray", "Lightning Rod"], CraftTime: 1800 },
         { Name: "Anti Bee Egg", Materials: ["Bee Egg"], CraftTime: 7200 },
-        { Name: "Small Toy", Materials: ["Common Egg", "Coconut Seed", "Coconut.*kg"], CraftTime: 600 },
-        { Name: "Small Treat", Materials: ["Common Egg", "Dragon Fruit Seed", "Blueberry.*kg"], CraftTime: 600 },
-        { Name: "Pack Bee", Materials: ["Anti Bee Egg", "Sunflower.*kg", "Purple Dahila.*kg"], CraftTime: 14400 },
+        { Name: "Small Toy", Materials: ["Common Egg", "Coconut Seed", "Coconut kg"], CraftTime: 600 },
+        { Name: "Small Treat", Materials: ["Common Egg", "Dragon Fruit Seed", "Blueberry kg"], CraftTime: 600 },
+        { Name: "Pet Pouch", Materials: ["Common Egg", "Corndog fd", "Small Pet Treat", "Small Pet Toy"], CraftTime: 1800 },
+        { Name: "Pack Bee", Materials: ["Anti Bee Egg", "Sunflower kg", "Purple Dahila kg"], CraftTime: 14400 },
         
         
     ]
@@ -1110,11 +1118,11 @@ SeedCraft(){
     Send("{" WKey " up}")
     Sleep(1000)
     SeedRecipe := [
-        { Name: "Twisted Tangle", Materials: ["Cactus Seed", "Bamboo Seed", "Cactus.*kg", "Mango.*kg"], CraftTime: 900 },
-        { Name: "Veinpetal", Materials: ["Orange Tulip Seed", "Daffodil Seed", "Beanstalk.*kg", "Burning bud.*kg"], CraftTime: 1200 },
-        { Name: "Horsetail", Materials: ["Daffodil Seed", "Bamboo.*kg", "Corn.*kg"], CraftTime: 900 },
-        { Name: "Lingonberry", Materials: ["Blueberry Seed", "Blueberry Seed", "Blueberry Seed", "Horsetail.*kg"], CraftTime: 900 },
-        { Name: "Amber Spine", Materials: ["Cactus Seed", "Pumpkin.*kg", "Horsetail.*kg"], CraftTime: 1800 },        
+        { Name: "Twisted Tangle", Materials: ["Cactus Seed", "Bamboo Seed", "Cactus kg", "Mango kg"], CraftTime: 900 },
+        { Name: "Veinpetal", Materials: ["Orange Tulip Seed", "Daffodil Seed", "Beanstalk kg", "Burning bud kg"], CraftTime: 1200 },
+        { Name: "Horsetail", Materials: ["Daffodil Seed", "Bamboo kg", "Corn kg"], CraftTime: 900 },
+        { Name: "Lingonberry", Materials: ["Blueberry Seed", "Blueberry Seed", "Blueberry Seed", "Horsetail kg"], CraftTime: 900 },
+        { Name: "Amber Spine", Materials: ["Cactus Seed", "Pumpkin kg", "Horsetail kg"], CraftTime: 1800 },        
         
     ]
     SeedNames := getItems("SeedCrafting")
@@ -1224,7 +1232,7 @@ MainLoop() {
     BuyGears()
     BuyEggs()
     BuyCosmetics()
-    CookingEvent()
+    ; CookingEvent()
     global LastCookingTime := nowUnix()
     GearCraft()
     global LastGearCraftingTime := nowUnix()
@@ -1279,7 +1287,8 @@ ShowToolTip(){
     if (EggsEnabled) {
         tooltipText .= "Eggs: " eggR//60 ":" Format("{:02}", Mod(eggR, 60)) "`n"
     }
-    if (CookingEnabled) {
+    if (false) {
+    ; if (CookingEnabled) {
         static CookingTime := Integer(IniRead(settingsFile, "Settings", "CookingTime") * 1.1)
         CookingRemaining := Max(0, CookingTime - (currentTime - LastCookingTime))
         eventM := CookingRemaining // 60
@@ -1350,6 +1359,7 @@ F3::
     ; pBMScreen := Gdip_BitmapFromScreen(windowX "|" windowY + 30 "|" windowWidth "|" windowHeight - 30)
     ; Gdip_SaveBitmapToFile(pBMScreen,"ss.png")
     ; Gdip_DisposeImage(pBMScreen)
+    GearCraft()
     PauseMacro()
 }
 
@@ -1359,12 +1369,7 @@ CookingEvent(){
     }
 
     PlayerStatus("Going to Cooking Event!", "0x22e6a8",,false,,false)
-    Clickbutton("Sell")
-    Sleep(750)
-    Walk(250,SKey)
-    Sleep(500)
-    Walk(9570,AKey)
-    Walk(1100,WKey)
+    Clickbutton("Garden")
     Sleep(1500)
     Send("{" Ekey "}")
     Send("{" Ekey "}")
@@ -1378,8 +1383,7 @@ CookingEvent(){
     searchList := StrSplit(searchListRaw, ",")
     for index, item in searchList {
         item := Trim(item)
-        cookingItem := StrReplace(item, " ", "%S+")
-        searchItem(cookingItem ".*kg")
+        searchItem(item)
         Sleep(500)
         clickCategory("Fruit")
         Sleep(500)
