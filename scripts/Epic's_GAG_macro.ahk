@@ -1244,7 +1244,7 @@ MainLoop() {
     global LastSeedCraftingTime := nowUnix()
     BuyMerchant()
     global LastEventCraftingtime := nowUnix()
-    global LastBeanstalkEventTime := nowUnix()
+    global LastBeanstalkTime := nowUnix()
     loop {
         RewardInterupt()
         if (Disconnect()){
@@ -1267,7 +1267,7 @@ ShowToolTip(){
     global LastSeedCraftingTime
     global SeedCraftingTime
     global LastCookingTime
-    global LastBeanstalkEventTime
+    global LastBeanstalkTime
 
     static SeedsEnabled := IniRead(settingsFile, "Seeds", "Seeds") + 0
     static GearsEnabled := IniRead(settingsFile, "Gears", "Gears") + 0
@@ -1296,8 +1296,8 @@ ShowToolTip(){
     }
     
     if (beanstalkEventEnabled) {
-        static beanstalkEventTime := 600
-        beanstalkRemaining := Max(0, beanstalkEventTime - (currentTime - LastBeanstalkEventTime))
+        static beanstalkTime := 600
+        beanstalkRemaining := Max(0, beanstalkTime - (currentTime - LastBeanstalkTime))
         beanstalkM := beanstalkRemaining // 60
         beanstalkS := Mod(beanstalkRemaining, 60)
         tooltipText .= "Beanstalk: " beanstalkM ":" Format("{:02}", beanstalkS) "`n"

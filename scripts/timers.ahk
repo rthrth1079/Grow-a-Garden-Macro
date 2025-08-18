@@ -60,8 +60,12 @@ RewardChecker() {
     ;     if !(A_Min == 4 || A_Min == 9) {
     ;         Rewardlist.Push("Event")
     ;     }
-        
     ; }
+    if (currentTime - LastBeanstalkTime >= BeanstalkTime && CheckSetting("Events", "Events")) {
+        if !(A_Min == 4 || A_Min == 9) {
+            Rewardlist.Push("Event")
+        }
+    }
 
     return Rewardlist
 }
