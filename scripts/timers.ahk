@@ -111,6 +111,12 @@ RewardInterupt() {
         ;     global LastCookingTime
         ;     LastCookingTime := nowUnix()
         ; }
+        if (v = "Event") {
+            BuyBeanstalkEvent()
+            Sleep(2000)
+            global LastBeanstalkTime := nowUnix()
+            LastBeanstalkTime := nowUnix()
+        }
     }
     
     if (variable.Length > 0) {

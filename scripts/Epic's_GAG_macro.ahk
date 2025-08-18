@@ -1232,14 +1232,19 @@ MainLoop() {
     BuyGears()
     BuyEggs()
     BuyCosmetics()
+    BuyBeanstalkEvent()
+    global LastBeanstalkTime := nowUnix()
     ; CookingEvent()
     global LastCookingTime := nowUnix()
+
+
     GearCraft()
     global LastGearCraftingTime := nowUnix()
     SeedCraft()
     global LastSeedCraftingTime := nowUnix()
     BuyMerchant()
     global LastEventCraftingtime := nowUnix()
+    global LastBeanstalkEventTime := nowUnix()
     loop {
         RewardInterupt()
         if (Disconnect()){
@@ -1262,6 +1267,7 @@ ShowToolTip(){
     global LastSeedCraftingTime
     global SeedCraftingTime
     global LastCookingTime
+    global LastBeanstalkEventTime
 
     static SeedsEnabled := IniRead(settingsFile, "Seeds", "Seeds") + 0
     static GearsEnabled := IniRead(settingsFile, "Gears", "Gears") + 0
@@ -1270,6 +1276,7 @@ ShowToolTip(){
     static seedCraftingEnabled := IniRead(settingsFile, "SeedCrafting", "SeedCrafting") + 0
     static cosmeticEnabled := IniRead(settingsFile, "Settings", "Cosmetics") + 0
     static merchantEnabled := IniRead(settingsFile, "Settings", "TravelingMerchant") + 0
+    static beanstalkEventEnabled := IniRead(settingsFile, "Events", "Events") + 0
     static CookingEnabled := IniRead(settingsFile, "Settings", "CookingEvent") + 0
 
 
@@ -1287,6 +1294,15 @@ ShowToolTip(){
     if (EggsEnabled) {
         tooltipText .= "Eggs: " eggR//60 ":" Format("{:02}", Mod(eggR, 60)) "`n"
     }
+    
+    if (beanstalkEventEnabled) {
+        static beanstalkEventTime := 600
+        beanstalkRemaining := Max(0, beanstalkEventTime - (currentTime - LastBeanstalkEventTime))
+        beanstalkM := beanstalkRemaining // 60
+        beanstalkS := Mod(beanstalkRemaining, 60)
+        tooltipText .= "Beanstalk: " beanstalkM ":" Format("{:02}", beanstalkS) "`n"
+    }
+
     if (false) {
     ; if (CookingEnabled) {
         static CookingTime := Integer(IniRead(settingsFile, "Settings", "CookingTime") * 1.1)
@@ -1295,6 +1311,7 @@ ShowToolTip(){
         eventS := Mod(CookingRemaining, 60)
         tooltipText .= "Cooking for: " eventM ":" Format("{:02}", eventS) "`n"
     }
+
     if (cosmeticEnabled) {
         utcNow := A_NowUTC
         utcHour := FormatTime(utcNow, "H")
@@ -1311,6 +1328,7 @@ ShowToolTip(){
 
         tooltipText .= "Cosmetics: " cosmeticH ":" Format("{:02}", cosmeticM) ":" Format("{:02}", cosmeticS) "`n"
     }
+
     if (merchantEnabled) {
         utcNow := A_NowUTC
         utcHour := FormatTime(utcNow, "H")
@@ -1363,6 +1381,81 @@ F3::
     PauseMacro()
 }
 
+BuyBeanstalkEvent(){
+    if !(CheckSetting("Events", "Events")){
+        return 0
+    }
+    PlayerStatus("Going to Event Shop!", "0x22e6a8",,false,,false)
+
+    ; Step 1: Click the Sell button
+    Clickbutton("Sell")
+    Sleep(1500)
+
+    ; go right (s)
+    Send("{" Skey " down}")
+    HyperSleep(400)
+    Send("{" Skey " up}")
+
+    ; down (s)
+    Send("{" Akey " down}")
+    HyperSleep(9800)
+    Send("{" Akey " up}")
+
+    ; Step 4: click E (entering a portal)
+    Send("{" Ekey "}")
+    Sleep(1200)
+
+    ; go right (s)
+    Send("{" Skey " down}")
+    HyperSleep(100)
+    Send("{" Skey " up}")
+
+    ; down (a)
+    Send("{" Akey " down}")
+    HyperSleep(1200)
+    Send("{" Akey " up}")
+
+    ; go left (w)
+    Send("{" Wkey " down}")
+    HyperSleep(600)
+    Send("{" Wkey " up}")
+
+    ; down (a)
+    Send("{" Akey " down}")
+    HyperSleep(1900)
+    Send("{" Akey " up}")
+
+    ; down (s)
+    Send("{" Skey " down}")
+    HyperSleep(700)
+    Send("{" Skey " up}")
+
+    ; left (a)
+    Send("{" Akey " down}")
+    HyperSleep(700)
+    Send("{" Akey " up}")
+
+    ; click E (buying from a vendor)
+    Send("{" Ekey "}")
+
+    beanstalkItems := [
+        "BeanstalkItem", "BeanstalkItem", "BeanstalkItem", "BeanstalkItem", "BeanstalkItem", "BeanstalkItem",
+        "BeanstalkItem", "BeanstalkItem", "BeanstalkItem", "BeanstalkItem", "BeanstalkItem", "BeanstalkItem",
+        "BeanstalkItem", "BeanstalkItem"
+    ]
+
+    PlayerStatus("Going to buy Beanstalk!", "0x22e6a8",,false,,false)
+    clickOption(1,2)
+    if !DetectShop("Beanstalk"){
+        PlayerStatus("Failed to open beanstalk shop.", "0x001a12")
+        return 0
+    }
+    buyShop(beanstalkItems, "Events")
+    CloseClutter()
+    return 1
+}
+
+
 CookingEvent(){
     if !(CheckSetting("Settings", "CookingEvent")){
         return 0
@@ -1409,22 +1502,19 @@ CookingEvent(){
     Send("1")
 }
 
+;BuyEvent(){
+;   if !(CheckSetting("Events", "Events")){
+;        return 0
+;    }
+;    PlayerStatus("Going to Event Shop!", "0x22e6a8",,false,,false)
 
-
-
-; BuyEvent(){
-;     if !(CheckSetting("Events", "Events")){
-;         return 0
-;     }
-;     PlayerStatus("Going to Event Shop!", "0x22e6a8",,false,,false)
-
-;     if !DetectShop("Zen"){
-;         return 0 
-;     }
-;     buyShop(getItems("Events"), "Events")
-;     CloseClutter()
-;     return 1
-; }
+;    if !DetectShop("Beanstalk"){
+;        return 0 
+;    }
+;    buyShop(getItems("Events"), "Events")
+;    CloseClutter()
+;    return 1
+;}
 
 
 
