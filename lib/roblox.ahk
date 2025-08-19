@@ -127,7 +127,3 @@ ResizeRoblox() {
     hwnd := GetRobloxHWND()
     GetRobloxClientPos(hwnd)
 }
-
-
-
-
