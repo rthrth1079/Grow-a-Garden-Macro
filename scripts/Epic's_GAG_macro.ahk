@@ -487,7 +487,7 @@ Clickbutton(button, clickit := 1){
             return 1
         }
     } else if (button == "Xbutton"){
-        if (Gdip_ImageSearch(pBMScreen, bitmaps["Xbutton2"], &OutputList, , , , , 50,,7) = 1) {
+        if (Gdip_ImageSearch(pBMScreen, bitmaps["Xbutton2"], &OutputList, , , , , varation,,7) = 1) {
             if (clickit == 1){
                 Cords := StrSplit(OutputList, ",")
                 x := Cords[1] + capX - 2
