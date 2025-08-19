@@ -1303,7 +1303,6 @@ ShowToolTip(){
     }
 
     if (false) {
-    ; if (CookingEnabled) {
         static CookingTime := Integer(IniRead(settingsFile, "Settings", "CookingTime") * 1.1)
         CookingRemaining := Max(0, CookingTime - (currentTime - LastCookingTime))
         eventM := CookingRemaining // 60

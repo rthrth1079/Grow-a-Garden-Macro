@@ -61,7 +61,8 @@ RewardChecker() {
     ;         Rewardlist.Push("Event")
     ;     }
     ; }
-    if (currentTime - LastBeanstalkTime >= BeanstalkTime && CheckSetting("Events", "Events")) {
+    ; if (currentTime - LastBeanstalkTime >= BeanstalkTime && CheckSetting("Events", "Events"))
+    if (Mod(A_Min,10) == 0) {
         if !(A_Min == 4 || A_Min == 9) {
             Rewardlist.Push("Event")
         }
