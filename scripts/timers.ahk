@@ -38,6 +38,9 @@ RewardChecker() {
     if (Mod(A_Min,30) == 0) {
         Rewardlist.Push("Eggs")
     }
+    ; if (A_Min == 0) {
+    ;     Rewardlist.Push("Event")
+    ; }
     if (FourHours() && CheckSetting("Settings", "Cosmetics")) {
         Rewardlist.Push("Cosmetics")
     }
@@ -56,12 +59,12 @@ RewardChecker() {
         }
         
     }
-    ; if (currentTime - LastCookingTime >= CookingTime && CheckSetting("Settings", "CookingEvent")) {
-    ;     if !(A_Min == 4 || A_Min == 9) {
-    ;         Rewardlist.Push("Event")
-    ;     }
+    if (currentTime - LastCookingTime >= CookingTime && CheckSetting("Settings", "CookingEvent")) {
+        if !(A_Min == 4 || A_Min == 9) {
+            Rewardlist.Push("Cooking")
+        }
         
-    ; }
+    }
 
     return Rewardlist
 }
@@ -87,6 +90,9 @@ RewardInterupt() {
         if (v = "Eggs") {
             BuyEggs()
         }
+        ; if (v = "Event"){
+        ;     BuyEvent()
+        ; }
         if (v = "GearCrafting") {
             GearCraft()
             Sleep(2000)
@@ -105,12 +111,12 @@ RewardInterupt() {
         if (v = "Cosmetics") {
             BuyCosmetics()
         }
-        ; if (v = "Event") {
-        ;     CookingEvent()
-        ;     Sleep(2000)
-        ;     global LastCookingTime
-        ;     LastCookingTime := nowUnix()
-        ; }
+        if (v = "Cooking") {
+            CookingEvent()
+            Sleep(2000)
+            global LastCookingTime
+            LastCookingTime := nowUnix()
+        }
     }
     
     if (variable.Length > 0) {
