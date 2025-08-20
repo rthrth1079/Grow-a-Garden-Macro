@@ -733,15 +733,19 @@ buyShop(itemList, itemType, crafting := false){
     for (item in itemlist){
         if (A_index == 1){
             relativeMouseMove(0.4,pos)
-            Click
-            Sleep(300)
-            relativeMouseMove(0.5,0.4)
-            Sleep(100)
-            Loop 55 {
+            Loop itemList.length * 2 {
                 Send("{WheelUp}")
                 Sleep 20
             }
-            Sleep(500)
+            Sleep(250)
+            Click
+            Sleep(250)
+            Loop 12 {
+                Send("{WheelUp}")
+                Sleep 20
+            }
+            relativeMouseMove(0.5,0.4)
+            Sleep(250)
         } else {
             relativeMouseMove(0.4,pos)
         }
@@ -915,7 +919,7 @@ getItems(item){
             MyWindow.ExecuteScriptAsync("document.querySelector('#random-message').textContent = '" fileContent["message"] "'")
             
         } catch as e {
-            MsgBox "Request failed " e.Message
+            PlayerStatus("This is a very rare error! " e.Message, "0xFF0000",,true,,false)
         }
     }
     names := []
