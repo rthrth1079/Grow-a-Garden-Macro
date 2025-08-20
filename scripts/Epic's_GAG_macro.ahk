@@ -1369,8 +1369,6 @@ ShowToolTip(){
 
 F3::
 {
-
-
     ; ActivateRoblox()
     ; ResizeRoblox()
     ; hwnd := GetRobloxHWND()
