@@ -109,16 +109,25 @@ CloseRoblox() {
 ; Added by _epic.
 ResizeRoblox() {
     ActivateRoblox()
+    hwnd := GetRobloxHWND()
+    GetRobloxClientPos(hwnd)
 	winTitle := "ahk_exe RobloxPlayerBeta.exe"
 	WinMaximize(winTitle)
-	if (windowHeight < 1080 || windowWidth < 1920)
+	Sleep(333)
+	if (windowHeight == A_ScreenHeight && windowWidth == A_ScreenWidth)
 	{
-		WinMove(0, 0, 1920, 1080, winTitle)
+		Send("{F11}")
+		Sleep(333)
+		WinMaximize(winTitle)
+		Sleep(333)
 	}
+	resHeight := 1080
+	resWidth := 1920
+	if (windowHeight > resHeight || windowWidth > resWidth)
+	{
+		WinMove(0, 0, resWidth, resHeight, winTitle)
+	}
+	Sleep(250)
     hwnd := GetRobloxHWND()
     GetRobloxClientPos(hwnd)
 }
-
-
-
-

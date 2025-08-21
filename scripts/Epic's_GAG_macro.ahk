@@ -438,7 +438,7 @@ Clickbutton(button, clickit := 1){
         capY := windowY + windowHeight * 0.15
         capW := windowWidth * 0.38
         capH := windowHeight * 0.25
-        varation := 50
+        varation := 60
     } else if (button == "Robux"){
         capX := windowX windowWidth // 4
         capY := windowY 
@@ -640,7 +640,7 @@ Crafting(Recipeitems, settingName, Names){
 
             for Material in item.Materials {
                 searchTerm := StrReplace(Material, " kg", "")
-                searchTerm := StrReplace(Material, " fd", "")
+                searchTerm := StrReplace(searchTerm, " fd", "")
                 searchItem(searchTerm)
                 searchBitmap := searchTerm
                 if RegExMatch(Material, " kg") {
@@ -685,8 +685,8 @@ CheckStock(index, list, crafting := false){
     pBMScreen := Gdip_BitmapFromScreen(captureX "|" captureY "|" captureWidth "|" captureHeight)
     If (Gdip_ImageSearch(pBMScreen, bitmaps["GreenStock"], &OutputList, , , , , 3,,3) = 1 || Gdip_ImageSearch(pBMScreen, bitmaps["GreenStock2"], &OutputList , , , , , 3,,3) = 1) {
         Cords := StrSplit(OutputList, ",")
-        x := Cords[1] + captureX 
-        y := Cords[2] + captureY 
+        x := Cords[1] + captureX - 5
+        y := Cords[2] + captureY - 10
         MouseMove(x, y)
         Sleep(100)
         Click
@@ -700,8 +700,8 @@ CheckStock(index, list, crafting := false){
         pBMScreen := Gdip_BitmapFromScreen(captureX "|" captureY "|" captureWidth "|" captureHeight)
         If (Gdip_ImageSearch(pBMScreen, bitmaps["GreenStock"], &OutputList, , , , , 3,,3) = 1 || Gdip_ImageSearch(pBMScreen, bitmaps["GreenStock2"], &OutputList , , , , , 3,,3) = 1) {
             Cords := StrSplit(OutputList, ",")
-            x := Cords[1] + captureX 
-            y := Cords[2] + captureY 
+            x := Cords[1] + captureX - 5
+            y := Cords[2] + captureY - 10
             MouseMove(x, y)
             Click
             Gdip_DisposeImage(pBMScreen)
@@ -711,7 +711,10 @@ CheckStock(index, list, crafting := false){
             PlayerStatus("Bought " list[index] "s!", "0x22e6a8",,false)
             return 1
         }
-        
+        if (A_index >= 5){
+            SpamClick(5)
+        }
+
         if (A_index == 50) {
             Gdip_DisposeImage(pBMScreen)
             return 0
@@ -730,15 +733,19 @@ buyShop(itemList, itemType, crafting := false){
     for (item in itemlist){
         if (A_index == 1){
             relativeMouseMove(0.4,pos)
-            Click
-            Sleep(300)
-            relativeMouseMove(0.5,0.4)
-            Sleep(100)
-            Loop 55 {
+            Loop itemList.length * 2 {
                 Send("{WheelUp}")
                 Sleep 20
             }
-            Sleep(500)
+            Sleep(250)
+            Click
+            Sleep(250)
+            Loop 12 {
+                Send("{WheelUp}")
+                Sleep 20
+            }
+            relativeMouseMove(0.5,0.4)
+            Sleep(250)
         } else {
             relativeMouseMove(0.4,pos)
         }
@@ -753,6 +760,10 @@ buyShop(itemList, itemType, crafting := false){
         }
         Click
         Sleep(350)
+        if (A_Index >= 23) {
+            ScrollDown(0.25)
+            Sleep(350)
+        }
         if (CheckSetting(itemType, StrReplace(item, " ", ""))){
             CheckStock(A_Index, itemlist, crafting)
         } else {
@@ -764,7 +775,19 @@ buyShop(itemList, itemType, crafting := false){
 
 
 ScrollDown(amount := 1) {
-    DllCall("user32.dll\mouse_event", "UInt", 0x0800, "UInt", 0, "UInt", 0, "UInt", -amount * 120, "UPtr", 0)
+    BaseHeight := 1080
+
+    ; Scale factor (based mostly on height, since scroll is vertical)
+    Scale := WindowHeight / BaseHeight
+
+    AdjustedAmount := Round(-amount * 120 * Scale)
+
+    DllCall("user32.dll\mouse_event"
+        , "UInt", 0x0800   ; MOUSEEVENTF_WHEEL
+        , "UInt", 0
+        , "UInt", 0
+        , "UInt", AdjustedAmount
+        , "UPtr", 0)
 }
 
 ; 1 = 1st option, 2 = 2nd option, etc for example the gear shop to open the shop
@@ -896,7 +919,7 @@ getItems(item){
             MyWindow.ExecuteScriptAsync("document.querySelector('#random-message').textContent = '" fileContent["message"] "'")
             
         } catch as e {
-            MsgBox "Request failed " e.Message
+            PlayerStatus("This is a very rare error! " e.Message, "0xFF0000",,true,,false)
         }
     }
     names := []
@@ -1228,9 +1251,11 @@ MainLoop() {
     CloseChat() 
     equipRecall()
     CameraCorrection()
+    CookingEvent()
     BuySeeds()
     BuyGears()
     BuyEggs()
+    ; BuyEvent()
     BuyCosmetics()
     BuyBeanstalkEvent()
     global LastBeanstalkTime := nowUnix()
@@ -1302,7 +1327,7 @@ ShowToolTip(){
         tooltipText .= "Beanstalk: " beanstalkM ":" Format("{:02}", beanstalkS) "`n"
     }
 
-    if (false) {
+    if (CookingEnabled) {
         static CookingTime := Integer(IniRead(settingsFile, "Settings", "CookingTime") * 1.1)
         CookingRemaining := Max(0, CookingTime - (currentTime - LastCookingTime))
         eventM := CookingRemaining // 60
@@ -1366,8 +1391,6 @@ ShowToolTip(){
 
 F3::
 {
-
-
     ; ActivateRoblox()
     ; ResizeRoblox()
     ; hwnd := GetRobloxHWND()
@@ -1375,7 +1398,6 @@ F3::
     ; pBMScreen := Gdip_BitmapFromScreen(windowX "|" windowY + 30 "|" windowWidth "|" windowHeight - 30)
     ; Gdip_SaveBitmapToFile(pBMScreen,"ss.png")
     ; Gdip_DisposeImage(pBMScreen)
-    GearCraft()
     PauseMacro()
 }
 
@@ -1484,35 +1506,34 @@ CookingEvent(){
         Send("{" Ekey "}")
         Sleep(500)
     }
-
-    relativeMouseMove(0.5,0.5)
-    Click
-    Loop 40 {
-        Send("{WheelUp}")
-        Sleep 20
-    }
-    Click
-    Click
     ZoomAlign()
+    thing := 0.2
+    loop 25 {
+        thing += 0.025
+        relativeMouseMove(0.5, thing)
+        Click
+    }
     PlayerStatus("Cooking food!", "0x22e6a8",,false)
     Send("1")
     Sleep(250)
     Send("1")
 }
 
-;BuyEvent(){
-;   if !(CheckSetting("Events", "Events")){
-;        return 0
-;    }
-;    PlayerStatus("Going to Event Shop!", "0x22e6a8",,false,,false)
 
-;    if !DetectShop("Beanstalk"){
-;        return 0 
-;    }
-;    buyShop(getItems("Events"), "Events")
-;    CloseClutter()
-;    return 1
-;}
+
+
+BuyEvent(){
+    if !(CheckSetting("Events", "Events")){
+        return 0
+    }
+    PlayerStatus("Going to Event Shop!", "0x22e6a8",,false,,false)
+    if !DetectShop("Event"){
+        return 0 
+    }
+    buyShop(getItems("Events"), "Events")
+    CloseClutter()
+    return 1
+}
 
 
 
