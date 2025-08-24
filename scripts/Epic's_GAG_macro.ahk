@@ -1465,7 +1465,7 @@ BuyBeanstalkEvent(){
     ]
 
     PlayerStatus("Going to buy Beanstalk!", "0x22e6a8",,false,,false)
-    clickOption(1,2)
+    clickOption(2,3)
     if !DetectShop("Beanstalk"){
         PlayerStatus("Failed to open beanstalk shop.", "0x001a12")
         return 0
